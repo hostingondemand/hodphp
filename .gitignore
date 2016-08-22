@@ -1,4 +1,5 @@
 .idea
 /project/*
 /modules/*
+!/modules/developer
 /config.php

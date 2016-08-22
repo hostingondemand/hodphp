@@ -15,7 +15,7 @@ class Filesystem extends \core\Lib
             $file = $this->path->getApp() . "/" . $file;
         }
 
-        //if it starts with ~/ it will be considered a user file..
+        //if it starts with ~/ it will be considered a developer file..
         if(substr($file,0,2)=="~/"){
             $file=str_replace("~/",$_SERVER["HOME"]."/",$file);
         }
