@@ -10,21 +10,15 @@ class Config extends Lib
     var $invalididated;
 
 
-    //load the config files initially
-    function __construct()
-    {
 
-
-            if ($this->filesystem->exists("config.php")) {
-                $this->data = include "config.php";
+    function get($key,$section="global",$default=""){
+        if(!isset($this->data[$section])){
+            if($this->filesystem->exists("project/config/".$section.".php")){
+                $this->data[$section]=include $this->filesystem->calculatePath("project/config/".$section.".php");
+            }else{
+                $this->data[$section]=array();
             }
-
-            $this->invalididated=false;
-    }
-
-
-
-    function get($key,$default="",$section="global"){
+        }
         if(isset($this->data[$section][$key])){
             return $this->data[$section][$key];
         }
@@ -47,13 +41,13 @@ class Config extends Lib
     }
 
     function save(){
-
-            if($this->invalidated) {
-                $serialized=  "<?php return ".var_export($this->data, true);
-                $this->filesystem->clearWrite("config.php",$serialized);
+        if($this->invalidated) {
+            foreach($this->data as $section=>$data){
+                $serialized=  "<?php return ".var_export($data, true);
+                $this->filesystem->clearWrite("project/config/".$section.".php",$serialized);
                 $this->invalididated=false;
             }
-
+        }
     }
 
     function __destruct()

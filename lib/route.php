@@ -2,16 +2,19 @@
     namespace lib;
     class Route extends \core\lib{
         function createRoute($first=""){
+            if(func_num_args()>1){
+                $first=func_get_args();
+            }
             if(is_array($first)){
                 if(!count($first) || !$first[0])
                 {
-                    return  $this->path->http;
+                    return  $this->path->getHttp();
                 }
-                return $this->path->http."?route=".implode("/",$first);
+                return $this->path->getHttp()."?route=".implode("/",$first);
             }elseif(!$first){
-              return  $this->path->http;
+              return  $this->path->getHttp();
             }else{
-                return $this->path->http."?route=".implode("/", func_get_args());
+                return $this->path->getHttp()."?route=".implode("/", func_get_args());
             }
 
         }

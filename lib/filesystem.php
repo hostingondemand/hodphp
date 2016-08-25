@@ -19,38 +19,59 @@ class Filesystem extends \core\Lib
         if(substr($file,0,2)=="~/"){
             $file=str_replace("~/",$_SERVER["HOME"]."/",$file);
         }
+
         return $file;
     }
 
 
-
-
-    //read a file entirely
-    function getFile($file)
-    {
-
-
+    function findRightPath($file){
         if (!(substr($file, 0, 1) == "/" || substr($file, 0, 2) == "~/")) {
-
-            $fullPath = $this->calculatePath("project/" . $file);
+            $fullPath = $this->calculatePath("project/module/" . Loader::$module . "/" . $file);
             if (file_exists($fullPath)) {
-                return file_get_contents($file);
+                return $fullPath;
             }
 
             $fullPath = $this->calculatePath("module/" . Loader::$module . "/" . $file);
             if (file_exists($fullPath)) {
-                return file_get_contents($file);
+                return $fullPath;
             }
+
+            $fullPath = $this->calculatePath("project/" . $file);
+            if (file_exists($fullPath)) {
+                return $fullPath;
+            }
+
+
+
         }
 
         $fullPath = $this->calculatePath($file);
         if(file_exists($fullPath)) {
-            return file_get_contents($file);
+            return $fullPath;
+        }
+
+        return false;
+    }
+
+    //read a file entirely
+    function getFile($file)
+    {
+        $fullPath = $this->findRightPath($file);
+        if(  $fullPath = $this->findRightPath($file)) {
+            return file_get_contents($fullPath);
         }
         return false;
     }
 
-//check if folder or file exists
+
+    function getContentType($file){
+        if(  $fullPath = $this->findRightPath($file)) {
+            return mime_content_type($fullPath);
+        }
+        return false;
+    }
+
+    //check if folder or file exists
     function exists($path)
     {
         $path=$this->calculatePath($path);
