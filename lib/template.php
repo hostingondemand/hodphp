@@ -13,7 +13,7 @@ class template extends Lib
 
     function __construct()
     {
-        $this->globals["path"]=$this->path->http;
+        $this->globals["path"]=$this->path->getHttp();
     }
     //parse and interpret a template
     function parse($template, $data = Array(),$modules=array())

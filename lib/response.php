@@ -6,6 +6,8 @@
             echo $string;
         }
 
+
+
         function renderView($data=Array(),$path=""){
             if(!is_array($data)){
                 $path=$data;
@@ -37,9 +39,24 @@
             $this->write($this->template->parseFile($path,$data));
         }
 
+        function renderFile($data,$contentType){
+            $this->contentType($contentType);
+            $this->write($data);
+        }
+
 
         function renderJson($data){
+            $this->contentType("application/json");
             $this->write($this->serialization->serialize("json",$data));
+        }
+
+
+        function header($key,$value){
+            header($key.": " .$value);
+        }
+
+        function contentType($type){
+            $this->header("content-type",$type);
         }
 
 

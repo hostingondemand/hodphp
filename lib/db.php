@@ -13,12 +13,12 @@ class Db extends \core\Lib
 
     function connectConfigName($name)
     {
-        if ($this->config->get("db." . $name . ".host") && $this->config->get("db." . $name . ".username") && $this->config->get("db." . $name . ".db") && !isset($this->connections[$name])) {
+        if ($this->config->get( $name . ".host","db") && $this->config->get($name . ".username","db") && $this->config->get($name . ".db","db") && !isset($this->connections[$name])) {
             return $this->connect(
-                $this->config->get("db." . $name . ".host"),
-                $this->config->get("db." . $name . ".username"),
-                $this->config->get("db." . $name . ".password"),
-                $this->config->get("db." . $name . ".db"),
+                $this->config->get($name . ".host","db"),
+                $this->config->get($name . ".username","db"),
+                $this->config->get($name . ".password","db"),
+                $this->config->get($name . ".db","db"),
                 $name
             );
         }
