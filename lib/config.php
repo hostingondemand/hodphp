@@ -13,12 +13,11 @@ class Config extends Lib
 
     function get($key,$section="global",$default=""){
         if(!isset($this->data[$section])){
-            if($this->filesystem->exists("project/config/".$section.".php")){
-                $this->data[$section]=include $this->filesystem->calculatePath("project/config/".$section.".php");
-            }else{
-                $this->data[$section]=array();
-            }
+            $this->data[$section]=$this->filesystem->getArray("project/config/".$section.".php");
         }
+
+
+
         if(isset($this->data[$section][$key])){
             return $this->data[$section][$key];
         }

@@ -3,14 +3,24 @@ namespace core;
 //just a wrapper for controller.. might be useful someday
 class Controller extends Base
 {
-    function authorize(){
+    function __initialize(){
+        $this->language->load(Loader::$controller);
+        $this->language->load("global");
+        $this->language->load("_global");
+
+        if(method_exists($this,"__onLoad")){
+            $this->__onload();
+        }
+    }
+
+    function __authorize(){
         if($this->config->get("access.deny.".Loader::$module)){
             return false;
         }
         return true;
     }
 
-    function onAuthorizationFail(){
+    function __onAuthorizationFail(){
         throw new \Exception("Authorization failed");
     }
 

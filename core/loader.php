@@ -58,10 +58,11 @@ class Loader
         self::$controller=$controllerString;
         self::$action=$method;
 
-        if($controller->authorize()){
+        if($controller->__authorize()){
+            $controller->__initialize();
             call_user_func_array(Array($controller,$method),$params);
         }else{
-            $controller->onAuthorizationFail();
+            $controller->__onAuthorizationFail();
         }
 
         self::$module=$oldModule;

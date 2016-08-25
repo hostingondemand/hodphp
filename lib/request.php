@@ -6,6 +6,7 @@ class Request extends \core\Lib{
     var $session;
     var $get;
     var $post;
+    var $method;
 
     function __construct()
     {
@@ -13,6 +14,7 @@ class Request extends \core\Lib{
         $this->session=$this->initialize($_SESSION);
         $this->get=$this->initialize($_GET);
         $this->post=$this->initialize($_POST);
+        $this->method=$_SERVER['REQUEST_METHOD'];
     }
 
     private function initialize(&$var){

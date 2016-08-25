@@ -16,22 +16,23 @@ class Filesystem extends \core\Lib
         }
 
         //if it starts with ~/ it will be considered a developer file..
-        if(substr($file,0,2)=="~/"){
-            $file=str_replace("~/",$_SERVER["HOME"]."/",$file);
+        if (substr($file, 0, 2) == "~/") {
+            $file = str_replace("~/", $_SERVER["HOME"] . "/", $file);
         }
 
         return $file;
     }
 
 
-    function findRightPath($file){
+    function findRightPath($file)
+    {
         if (!(substr($file, 0, 1) == "/" || substr($file, 0, 2) == "~/")) {
-            $fullPath = $this->calculatePath("project/module/" . Loader::$module . "/" . $file);
+            $fullPath = $this->calculatePath("project/modules/" . Loader::$module . "/" . $file);
             if (file_exists($fullPath)) {
                 return $fullPath;
             }
 
-            $fullPath = $this->calculatePath("module/" . Loader::$module . "/" . $file);
+            $fullPath = $this->calculatePath("modules/" . Loader::$module . "/" . $file);
             if (file_exists($fullPath)) {
                 return $fullPath;
             }
@@ -41,12 +42,10 @@ class Filesystem extends \core\Lib
                 return $fullPath;
             }
 
-
-
         }
 
         $fullPath = $this->calculatePath($file);
-        if(file_exists($fullPath)) {
+        if (file_exists($fullPath)) {
             return $fullPath;
         }
 
@@ -56,16 +55,16 @@ class Filesystem extends \core\Lib
     //read a file entirely
     function getFile($file)
     {
-        $fullPath = $this->findRightPath($file);
-        if(  $fullPath = $this->findRightPath($file)) {
+        if ($fullPath = $this->findRightPath($file)) {
             return file_get_contents($fullPath);
         }
         return false;
     }
 
 
-    function getContentType($file){
-        if(  $fullPath = $this->findRightPath($file)) {
+    function getContentType($file)
+    {
+        if ($fullPath = $this->findRightPath($file)) {
             return mime_content_type($fullPath);
         }
         return false;
@@ -74,7 +73,7 @@ class Filesystem extends \core\Lib
     //check if folder or file exists
     function exists($path)
     {
-        $path=$this->calculatePath($path);
+        $path = $this->calculatePath($path);
         return file_exists($path);
     }
 
@@ -82,16 +81,17 @@ class Filesystem extends \core\Lib
     //create a directory
     function mkDir($folder)
     {
-        return mkdir($this->calculatePath($folder),0744,true);
+        return mkdir($this->calculatePath($folder), 0744, true);
     }
 
     //create an array of all directories
-    function getDirs($dir){
-        $dirs=array();
+    function getDirs($dir)
+    {
+        $dirs = array();
         if ($handle = opendir($this->calculatePath($dir))) {
             while (false !== ($entry = readdir($handle))) {
-                if ($entry != "." && $entry != ".." && is_dir($dir."/".$entry)) {
-                   $dirs[]=$entry;
+                if ($entry != "." && $entry != ".." && is_dir($dir . "/" . $entry)) {
+                    $dirs[] = $entry;
                 }
             }
             closedir($handle);
@@ -101,12 +101,13 @@ class Filesystem extends \core\Lib
     }
 
     //create an array of all files
-    function getFiles($dir,$type=false){
-        $files=array();
+    function getFiles($dir, $type = false)
+    {
+        $files = array();
         if ($handle = opendir($this->calculatePath($dir))) {
             while (false !== ($entry = readdir($handle))) {
-                if ($entry != "." && $entry != ".." && !is_dir($dir."/".$entry) && (!$type || substr($entry,-strlen($type))==$type)) {
-                    $files[]=$entry;
+                if ($entry != "." && $entry != ".." && !is_dir($dir . "/" . $entry) && (!$type || substr($entry, -strlen($type)) == $type)) {
+                    $files[] = $entry;
                 }
             }
             closedir($handle);
@@ -119,10 +120,20 @@ class Filesystem extends \core\Lib
     //write to content file if file exists clear it first
     function clearWrite($path, $content)
     {
-        $path=$this->calculatePath($path);
+        $path = $this->calculatePath($path);
         $handle = fopen($path, "w+");
         fwrite($handle, $content);
         fclose($handle);
+    }
+
+    function getArray($file)
+    {
+
+        if ($path = $this->findRightPath($file)) {
+            return include $path;
+        }
+        return array();
+
     }
 }
 

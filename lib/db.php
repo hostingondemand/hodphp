@@ -13,12 +13,12 @@ class Db extends \core\Lib
 
     function connectConfigName($name)
     {
-        if ($this->config->get( $name . ".host","db") && $this->config->get($name . ".username","db") && $this->config->get($name . ".db","db") && !isset($this->connections[$name])) {
+        if ($this->config->get( "db.".$name . ".host","server") && $this->config->get("db.".$name . ".username","server") && $this->config->get("db.".$name . ".db","server") && !isset($this->connections[$name])) {
             return $this->connect(
-                $this->config->get($name . ".host","db"),
-                $this->config->get($name . ".username","db"),
-                $this->config->get($name . ".password","db"),
-                $this->config->get($name . ".db","db"),
+                $this->config->get("db.".$name . ".host","server"),
+                $this->config->get("db.".$name . ".username","server"),
+                $this->config->get("db.".$name . ".password","server"),
+                $this->config->get("db.".$name . ".db","server"),
                 $name
             );
         }
@@ -35,10 +35,10 @@ class Db extends \core\Lib
 
     function __construct()
     {
-        $this->connectConfigName("default");
+        $this->connectConfigName("en");
     }
 
-    function execute($queryString, $connection = "default", $params)
+    function execute($queryString, $connection = "en", $params)
     {
         if (!isset($this->connections[$connection])) {
             $this->connectConfigName($connection); //to avoid manual connecting  a lot
@@ -74,7 +74,7 @@ class Db extends \core\Lib
         return $arr;
     }
 
-    function query($query, $connection = "default")
+    function query($query, $connection = "en")
     {
         if (!isset($this->connections[$connection])) {
             $this->connectConfigName($connection); //to avoid manual connecting  a lot
@@ -87,7 +87,7 @@ class Db extends \core\Lib
         return $result;
     }
 
-    function lastId($connection = "default")
+    function lastId($connection = "en")
     {
         return MySqli_Insert_Id($this->connections[$connection]);
     }
@@ -150,12 +150,12 @@ class Db extends \core\Lib
         return $result;
     }
 
-    function escape($string, $con = "default")
+    function escape($string, $con = "en")
     {
         return $this->connections[$con]->real_escape_string($string);
     }
 
-    function saveModel($model, $table,$con="default")
+    function saveModel($model, $table,$con="en")
     {
         if (!isset($this->fields[$table])) {
             $this->fields[$table] = $this->db->query("SHOW columns FROM `" . $table . "`",$con)->fetchAll();

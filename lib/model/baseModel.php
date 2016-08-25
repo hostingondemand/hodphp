@@ -68,6 +68,11 @@ use core\Base;
             return $this;
         }
 
+        function fromRequest(){
+                return $this->fromArray($this->request->request);
+        }
+
+
         function toArray(){
            $result = array();
             foreach ($this->_data as $key=>$val)

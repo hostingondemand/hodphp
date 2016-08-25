@@ -34,9 +34,9 @@ class template extends Lib
     //use parse to parse the content of a file
     function parseFile($file, $data = array(),$fallback=false, $modules=array())
     {
-        $content = $this->filesystem->getFile("templates/" . $file . ".tpl");
+        $content = $this->filesystem->getFile("template/" . $file . ".tpl");
         if(!$content && $fallback){
-            $content=$this->filesystem->getFile("templates/" . $fallback . ".tpl");
+            $content=$this->filesystem->getFile("template/" . $fallback . ".tpl");
         }
         return $this->parse($content, $data,$modules);
     }

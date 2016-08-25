@@ -1,0 +1,11 @@
+<?php
+namespace  lib\validation;
+use core\Base;
+
+//just a dummy to use for services.. to avoid a lot of refactoring in the future..
+// can always be useful for result checks etc in the future.
+abstract class ValidationResult{
+    var $success;
+    var $errors;
+}
+?>
