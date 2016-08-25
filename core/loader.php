@@ -77,6 +77,18 @@ class Loader
     static function loadClass($class, $namespace)
     {
 
+        $path = __DIR__ . "/../project/modules/".self::$module."/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+        if (file_exists($path)) {
+            include_once($path);
+            return "\\project\\modules\\".self::$module."\\";
+        }
+
+        $path = __DIR__ . "/../modules/".self::$module."/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+        if (file_exists($path)) {
+            include_once($path);
+            return "\\modules\\".self::$module."\\";
+        }
+
 
         $path = __DIR__ . "/../project/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
         if (file_exists($path)) {
@@ -85,11 +97,7 @@ class Loader
         }
 
 
-        $path = __DIR__ . "/../modules/".self::$module."/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
-        if (file_exists($path)) {
-            include_once($path);
-            return "\\modules\\".self::$module."\\";
-        }
+
 
         $path = __DIR__ . "/../" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
         if (file_exists($path)) {
