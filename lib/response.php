@@ -9,6 +9,9 @@
 
 
         function renderView($data=Array(),$path=""){
+            if(is_object($data)){
+                $data=$data->toArray();
+            }
             if(!is_array($data)){
                 $path=$data;
                 $data=Array();
@@ -28,6 +31,10 @@
         }
 
          function renderPartialView($data,$path){
+             if(is_object($data)){
+                 $data=$data->toArray();
+             }
+
             if(!is_array($data)){
                 $path=$data;
             }
@@ -57,6 +64,12 @@
 
         function contentType($type){
             $this->header("content-type",$type);
+        }
+
+        function redirect(){
+            $this->header("location",$this->route->createRoute(func_get_args()));
+
+            die();
         }
 
 

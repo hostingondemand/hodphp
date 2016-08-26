@@ -14,7 +14,7 @@ class Controller extends Base
     }
 
     function __authorize(){
-        if($this->config->get("access.deny.".Loader::$module)){
+        if($this->config->get("deny.".Loader::$module,"access")){
             return false;
         }
         return true;
