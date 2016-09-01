@@ -30,7 +30,7 @@ class QueryResult extends Lib
         return false;
     }
 
-    function fetchAllModel($class, $namespace)
+    function fetchAllModel($class, $namespace=false)
     {
         $result = [];
         while ($model = $this->fetchModel($class, $namespace)) {

@@ -110,6 +110,7 @@ class Filesystem extends \core\Lib
                     $files[] = $entry;
                 }
             }
+            sort($files,SORT_NATURAL);
             closedir($handle);
         }
 

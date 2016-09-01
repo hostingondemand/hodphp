@@ -7,7 +7,8 @@ class Http extends \core\Lib
     //content type headers
     private $headersFormat;
     private $formatHeaders=array(
-        "json"=>"application/json"
+        "json"=>"application/json",
+        "form"=>"application/x-www-form-urlencoded"
     );
 
 
@@ -106,7 +107,7 @@ class Http extends \core\Lib
         return $this->parse($header,$body);
     }
 
-    public function parse($header, $body)
+    public function parse($header, $body,$assoc=false)
     {
 
         //parse the headers to an array
@@ -120,7 +121,7 @@ class Http extends \core\Lib
             //unserialize the headers
             $type=explode(";",$header[0]["content-type"])[0];
             $serializer=$this->headersFormat[$type];
-            $body= $this->serialization->unserialize($serializer,$body);
+            $body= $this->serialization->unserialize($serializer,$body,$assoc);
         }
         return $body;
 

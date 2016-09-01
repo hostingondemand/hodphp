@@ -7,87 +7,105 @@ class Loader
     static $action;
     static $module;
 
+    static $classMaps = array();
+    static $namespaceMaps = array();
+
     //load an action for a controller.
-    static function loadAction($params){
+    static function loadAction($params)
+    {
 
-        $paramsFrom=0;
-        $oldModule=self::$module;
-        $oldController=self::$controller;
-        $oldAction=self::$action;
+        $paramsFrom = 0;
+        $oldModule = self::$module;
+        $oldController = self::$controller;
+        $oldAction = self::$action;
 
-        if(isset($params[$paramsFrom]) && file_exists("modules/".$params[$paramsFrom]))
-        {
-            self::$module=$params[$paramsFrom];
+        if (isset($params[$paramsFrom]) && file_exists("modules/" . $params[$paramsFrom])) {
+            self::$module = $params[$paramsFrom];
             $paramsFrom++;
         }
 
-        if(!isset($params[$paramsFrom])){
-            $controllerString="home";
-        }else{
-            $controllerString=$params[$paramsFrom];
+        if (!isset($params[$paramsFrom])) {
+            $controllerString = "home";
+        } else {
+            $controllerString = $params[$paramsFrom];
         }
 
-        if($controller = self::getSingleton($controllerString,"controller")){
+        if ($controller = self::getSingleton($controllerString, "controller")) {
             $paramsFrom++;
-        }else{
-            $controllerString="home";
-            $controller=self::getSingleton("home","controller");
+        } else {
+            $controllerString = "home";
+            $controller = self::getSingleton("home", "controller");
         }
 
-        if(!$controller){
+        if (!$controller) {
             return false;
         }
 
 
-        if(!isset($params[$paramsFrom])){
-            $method="home";
-        }else{
-            $method=$params[$paramsFrom];
+        if (!isset($params[$paramsFrom])) {
+            $method = "home";
+        } else {
+            $method = $params[$paramsFrom];
         }
 
-        if(method_exists($controller,$method)){
+        if ($controller->hasMethod($method)) {
             $paramsFrom++;
-        }else{
-            if(!method_exists($controller,"home")){
+        } else {
+            if ($controller->hasMethod("home")) {
                 return false;
             }
-            $method="home";
+            $method = "home";
         }
 
-        $params=array_slice($params,$paramsFrom);
-        self::$controller=$controllerString;
-        self::$action=$method;
+        $params = array_slice($params, $paramsFrom);
+        self::$controller = $controllerString;
+        self::$action = $method;
 
-        if($controller->__authorize()){
+        if ($controller->__authorize()) {
             $controller->__initialize();
-            call_user_func_array(Array($controller,$method),$params);
-        }else{
+            call_user_func_array(Array($controller, $method), $params);
+        } else {
             $controller->__onAuthorizationFail();
         }
 
-        self::$module=$oldModule;
-        self::$controller=$oldController;
-        self::$action=$oldAction;
+        self::$module = $oldModule;
+        self::$controller = $oldController;
+        self::$action = $oldAction;
         return true;
 
     }
-
 
 
     //just a method to load a file where a class can be found
     static function loadClass($class, $namespace)
     {
 
-        $path = __DIR__ . "/../project/modules/".self::$module."/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
-        if (file_exists($path)) {
-            include_once($path);
-            return "\\project\\modules\\".self::$module."\\";
+        if ($map = self::getClassmapFor($class, $namespace)) {
+            $path = __DIR__ . "/../project/modules/" . $map. "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            if (file_exists($path)) {
+                include_once($path);
+                return array("prefix"=>"\\project\\modules\\" . $map . "\\","module"=>$map);
+            }
         }
 
-        $path = __DIR__ . "/../modules/".self::$module."/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+        if ($map = self::getNamespaceFor($namespace)) {
+            $path = __DIR__ . "/../project/modules/" . $map. "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            if (file_exists($path)) {
+                include_once($path);
+                return array("prefix"=>"\\project\\modules\\" . $map . "\\","module"=>$map);
+            }
+        }
+
+        $path = __DIR__ . "/../project/modules/" . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
         if (file_exists($path)) {
             include_once($path);
-            return "\\modules\\".self::$module."\\";
+            return "\\project\\modules\\" . self::$module . "\\";
+        }
+
+        $path = __DIR__ . "/../modules/" . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+        if (file_exists($path)) {
+            include_once($path);
+            return "\\modules\\" . self::$module . "\\";
         }
 
 
@@ -96,8 +114,6 @@ class Loader
             include_once($path);
             return "\\project\\";
         }
-
-
 
 
         $path = __DIR__ . "/../" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
@@ -112,12 +128,26 @@ class Loader
     static function createInstance($class, $namespace = "", $classPrefix = "")
     {
 
-        $namespace=str_replace("/","\\",$namespace);
+        $namespace = str_replace("/", "\\", $namespace);
 
 
-        if ($prefix=self::loadClass($class, $namespace)) {
-            $fullclass = $prefix . $namespace . "\\" . ucfirst($classPrefix) . ucfirst($class);
-            return new $fullclass();
+        if ($loadResult = self::loadClass($class, $namespace)) {
+            if(is_array($loadResult)){
+                $prefix=$loadResult["prefix"];
+                $module=$loadResult["module"];
+            }else{
+                $prefix=$loadResult;
+                $module=false;
+            }
+
+            $className=$class;
+            if(is_numeric(substr($className,0,1))){
+                $exp=explode(".",$className);
+                $className=$exp[1];
+            }
+            $fullclass = $prefix . $namespace . "\\" . ucfirst($classPrefix) . ucfirst($className);
+            $instance = new $fullclass();
+            return new Proxy($instance,$module);
         }
 
         return false;
@@ -128,7 +158,7 @@ class Loader
     //if an instance of the class is already registered: use this instance otherwise return and register a new instance and register.
     static function getSingleton($class, $namespace = "", $prefix = "")
     {
-        $namespace=str_replace("/","\\",$namespace);
+        $namespace = str_replace("/", "\\", $namespace);
 
         $fullclass = "\\" . $namespace . "\\" . ucfirst($prefix) . ucfirst($class);
         if (!isset(self::$instances[$fullclass])) {
@@ -136,6 +166,29 @@ class Loader
         }
         return self::$instances[$fullclass];
 
+    }
+
+
+    private static function getClassmapFor($class, $namespace)
+    {
+        if (isset(self::$classMaps[str_replace("\\", "/", $namespace) . "/" . lcfirst($class)])) {
+            return self::$classMaps[str_replace("\\", "/", $namespace) . "/" . lcfirst($class)];
+        } elseif (isset(self::$classMaps[str_replace("/", "\\", $namespace) . "\\" . lcfirst($class)])) {
+            return self::$classMaps[str_replace("/", "\\", $namespace) . "\\" . lcfirst($class)];
+        }
+        return false;
+    }
+
+    private static function getNamespaceFor($namespace)
+    {
+
+        if (isset(self::$classMaps[str_replace("\\", "/", $namespace)])) {
+            return self::$classMaps[str_replace("\\", "/", $namespace)];
+        } elseif (isset(self::$classMaps[str_replace("/", "\\", $namespace)])) {
+            return self::$classMaps[str_replace("/", "\\", $namespace)];
+        }
+
+        return false;
     }
 
 

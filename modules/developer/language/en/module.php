@@ -4,7 +4,7 @@
 
     "action.install"=>"Install",
     "action.update"=>"Update",
-    "action.installAll"=>"Update",
+    "action.all"=>"Install and update all moduless",
 
 );
 

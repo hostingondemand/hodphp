@@ -5,9 +5,11 @@ use core\Loader;
 
 //simple wrapper to call services
 class Model extends Lib{
+
     public function __construct()
     {
         Loader::loadClass("baseModel","lib\\model");
+        Loader::loadClass("baseFieldHandler","lib\\model");
     }
 
     public function __get($name)
@@ -18,6 +20,12 @@ class Model extends Lib{
             $result->init("model\\".$name);
         }
         return $result;
+    }
+
+    public function fieldHandler($handler)
+    {
+        return Loader::createInstance($handler, "lib\\model\\fieldHandler");
+
     }
 
 

@@ -35,10 +35,10 @@ class Db extends \core\Lib
 
     function __construct()
     {
-        $this->connectConfigName("en");
+        $this->connectConfigName("default");
     }
 
-    function execute($queryString, $connection = "en", $params)
+    function execute($queryString, $connection = "default", $params)
     {
         if (!isset($this->connections[$connection])) {
             $this->connectConfigName($connection); //to avoid manual connecting  a lot
@@ -74,7 +74,7 @@ class Db extends \core\Lib
         return $arr;
     }
 
-    function query($query, $connection = "en")
+    function query($query, $connection = "default")
     {
         if (!isset($this->connections[$connection])) {
             $this->connectConfigName($connection); //to avoid manual connecting  a lot
@@ -87,7 +87,7 @@ class Db extends \core\Lib
         return $result;
     }
 
-    function lastId($connection = "en")
+    function lastId($connection = "default")
     {
         return MySqli_Insert_Id($this->connections[$connection]);
     }
@@ -150,12 +150,12 @@ class Db extends \core\Lib
         return $result;
     }
 
-    function escape($string, $con = "en")
+    function escape($string, $con = "default")
     {
         return $this->connections[$con]->real_escape_string($string);
     }
 
-    function saveModel($model, $table,$con="en")
+    function saveModel($model, $table,$con="default")
     {
         if (!isset($this->fields[$table])) {
             $this->fields[$table] = $this->db->query("SHOW columns FROM `" . $table . "`",$con)->fetchAll();

@@ -13,7 +13,7 @@ class Config extends Lib
 
     function get($key,$section="global",$default=""){
         if(!isset($this->data[$section])){
-            $this->data[$section]=$this->filesystem->getArray("project/config/".$section.".php");
+            $this->data[$section]=$this->filesystem->getArray("config/".$section.".php");
         }
 
 
@@ -43,7 +43,7 @@ class Config extends Lib
         if($this->invalidated) {
             foreach($this->data as $section=>$data){
                 $serialized=  "<?php return ".var_export($data, true);
-                $this->filesystem->clearWrite("project/config/".$section.".php",$serialized);
+                $this->filesystem->clearWrite("config/".$section.".php",$serialized);
                 $this->invalididated=false;
             }
         }

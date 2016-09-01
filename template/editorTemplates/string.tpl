@@ -1,0 +1,1 @@
+<input type="text" value="{{value}}" name="{{name}}" {{if(invalid)}}class="invalid"{{/if}}>

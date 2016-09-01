@@ -28,9 +28,9 @@ class Request extends \core\Lib{
         return file_get_contents("php://input");
     }
 
-    public function getData(){
+    public function getData($assoc=false){
         $data=$this->getRawData();
-        return $this->http->parse($this->getHeaders(),$data);
+        return $this->http->parse($this->getHeaders(),$data,$assoc);
     }
 
     public function getHeaders(){

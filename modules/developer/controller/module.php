@@ -21,6 +21,11 @@
             $this->response->redirect("","","home");
         }
 
+        function all(){
+            $this->model->module->all->process();
+            $this->response->redirect("","","home");
+        }
+
     }
 
 ?>

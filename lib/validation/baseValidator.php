@@ -1,6 +1,7 @@
 <?php
 namespace  lib\validation;
 use core\Base;
+use core\Loader;
 
 abstract class BaseValidator extends Base{
     abstract function validate($data);

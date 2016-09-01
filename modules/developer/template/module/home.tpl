@@ -15,4 +15,7 @@
         </td>
     </tr>
 {{/foreach}}
+
+
 </table>
+<a href="{{url("","","all")}}">{{language("action.all")}}</a>

@@ -1,14 +1,12 @@
 <?php
-namespace  lib\validation\validator;
+namespace  validator;
 
 use core\Loader;
 use lib\validation\BaseValidator;
 
 class model extends BaseValidator{
 
-     var $conditions;
-
-
+     var $conditions=array();
 
      function validate($data){
          $success=true;
@@ -16,18 +14,25 @@ class model extends BaseValidator{
          $data=$data->toArray();
         foreach($this->conditions as $condition){
             $validator= $condition->validator;
-            $subResult=$validator->validate($data[$condition->field]);
+            if(isset($data[$condition->field])){
+                $fieldData=$data[$condition->field];
+            }else{
+                $fieldData="";
+            }
+
+            $subResult=$validator->validate($fieldData);
+
             if(!$subResult->success){
                 $success=false;
                 $errors[$condition->field][]=$subResult->errors;
             }
         }
-
         return $this->result($success,$errors);
      }
 
-     function addCondition($field,$validator){
+     function add($field,$validator){
         $this->conditions[]=(object)array("validator"=>$this->validation->validator($validator),"field"=>$field);
+         return $this;
      }
 }
 ?>

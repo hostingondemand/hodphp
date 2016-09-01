@@ -13,6 +13,7 @@ class App
 
     function IncludeCore()
     {
+        include(__DIR__."/core/proxy.php");
         include(__DIR__."/core/base.php");
         include(__DIR__."/core/controller.php");
         include(__DIR__."/core/lib.php");

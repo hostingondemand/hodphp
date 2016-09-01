@@ -10,13 +10,9 @@ class Validation extends \core\Lib{
         Loader::LoadClass("BaseValidator","lib/validation");
     }
 
-    function modelValidator($model){
-        $validator=$this->createValidator("model");
-        $validator->setModel($model);
-    }
 
     function validator($name){
-       return Loader::createInstance($name,"lib/validation/validator");
+       return Loader::createInstance($name,"validator");
     }
 
 

@@ -7,7 +7,7 @@ use lib\model\BaseModel;
 class Install extends BaseModel
 {
     function Process($name){
-       $this->service->module->install($name);
+        $this->service->module->install($name);
         return $this;
     }
 }
