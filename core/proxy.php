@@ -5,10 +5,14 @@
         private $instance;
 
 
-        function __construct($instance,$module)
+        function __construct($fullclass,$module)
         {
-            $this->instance=$instance;
             $this->module=$module;
+            $this->__setModule();
+            $this->instance=new $fullclass();
+            $this->instance->__module=$this->module;
+            $this->__unsetModule();
+
         }
 
         function __get($name)
@@ -43,14 +47,14 @@
         }
 
         public function __setModule(){
-            if($this->module && method_exists($this->instance,"goModule")){
-                $this->instance->goModule($this->module);
+            if($this->module) {
+                Loader::goModule($this->module);
             }
         }
 
         public function __unsetModule(){
-            if($this->module && method_exists($this->instance,"goBackModule")) {
-                $this->instance->goBackModule();
+            if($this->module) {
+                Loader::goBackModule();
             }
         }
 

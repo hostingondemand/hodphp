@@ -8,7 +8,7 @@ class Event extends \core\Lib
     function raise($name,$data){
         Loader::loadClass("baseListener","lib\\event");
 
-        if($listener=Loader::getSingleton($name,"listener")){
+        if($listener=Loader::getSingleton($name,"project\\listener")){
             $listener->handle($data);
         }
 

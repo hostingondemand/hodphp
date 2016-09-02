@@ -1,11 +1,12 @@
 <?php
 namespace lib\template;
 
+use core\Lib;
 use \core\loader;
 
 
 //this class is there to inteprete the parsed code..
-class Interpreter
+class Interpreter extends Lib
 {
 
     //loop through all elements and interpret those
@@ -119,8 +120,18 @@ class Interpreter
 
 
         if(count($exp)>1) {
+            $renames=$this->config->get("module.rename","template");
+            if(!is_array($renames)){
+                $renames=array();
+            }
             foreach($modules as $module){
-                if($module->_name==$exp[0]){
+                if(isset($renames[$module->_name])){
+                    $renamed=$renames[$module->_name];
+                }else{
+                    $renamed=$module->_name;
+                }
+
+                if($module->_name==$exp[0] || $renamed==$exp[0]){
                     return $module->callFunction($exp[1],$parameters, $data, $expression["content"], $expression["parameters"]);
                 }
             }

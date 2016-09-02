@@ -15,13 +15,15 @@ class Loader
     {
 
         $paramsFrom = 0;
-        $oldModule = self::$module;
         $oldController = self::$controller;
         $oldAction = self::$action;
-
+        $changedModule=false;
         if (isset($params[$paramsFrom]) && file_exists("modules/" . $params[$paramsFrom])) {
-            self::$module = $params[$paramsFrom];
+            self::goModule($params[$paramsFrom]) ;
+            $changedModule=true;
             $paramsFrom++;
+        }else{
+            self::goModule("") ;
         }
 
         if (!isset($params[$paramsFrom])) {
@@ -68,7 +70,10 @@ class Loader
             $controller->__onAuthorizationFail();
         }
 
-        self::$module = $oldModule;
+
+
+            self::goBackModule();
+
         self::$controller = $oldController;
         self::$action = $oldAction;
         return true;
@@ -81,18 +86,18 @@ class Loader
     {
 
         if ($map = self::getClassmapFor($class, $namespace)) {
-            $path = __DIR__ . "/../project/modules/" . $map. "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            $path = __DIR__ . "/../modules/" . $map. "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
             if (file_exists($path)) {
                 include_once($path);
-                return array("prefix"=>"\\project\\modules\\" . $map . "\\","module"=>$map);
+                return array("prefix"=>"\\modules\\" . $map . "\\","module"=>$map);
             }
         }
 
         if ($map = self::getNamespaceFor($namespace)) {
-            $path = __DIR__ . "/../project/modules/" . $map. "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            $path = __DIR__ . "/../modules/" . $map. "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
             if (file_exists($path)) {
                 include_once($path);
-                return array("prefix"=>"\\project\\modules\\" . $map . "\\","module"=>$map);
+                return array("prefix"=>"\\modules\\" . $map . "\\","module"=>$map);
             }
         }
 
@@ -146,8 +151,7 @@ class Loader
                 $className=$exp[1];
             }
             $fullclass = $prefix . $namespace . "\\" . ucfirst($classPrefix) . ucfirst($className);
-            $instance = new $fullclass();
-            return new Proxy($instance,$module);
+            return new Proxy($fullclass,$module);
         }
 
         return false;
@@ -191,6 +195,20 @@ class Loader
         return false;
     }
 
+    static $moduleStack=array();
+    public static function goModule($name){
+
+        self::$moduleStack[]=Loader::$module;
+        self::$module=$name;
+    }
+
+    public static function goBackModule(){
+        self::$module= array_pop( self::$moduleStack);
+    }
+
+    public static  function getCallerModule(){
+        return self::$moduleStack[count(self::$moduleStack)-1];
+    }
 
 }
 

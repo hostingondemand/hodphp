@@ -9,7 +9,10 @@ class Session extends \core\Lib{
 
     function __get($name)
     {
-       return $_SESSION[$name];
+        if (isset($_SESSION[$name]) ){
+            return $_SESSION[$name];
+        }
+        return "";
     }
 
     function __set($name, $value)

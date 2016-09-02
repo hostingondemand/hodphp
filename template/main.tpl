@@ -1,6 +1,7 @@
 <html>
     <head>
         <title></title>
+        {{renderHead()}}
     </head>
 
     <body>

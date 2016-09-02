@@ -10,13 +10,15 @@ abstract class BaseModule extends \core\Base
 
     //functions
     function getFunction($name){
-        return Loader::getSingleton($name, "templateModules\\".$this->_name."\\functions", "func");
+        return Loader::getSingleton($name, "templateModule\\".$this->_name."\\functions", "func");
     }
 
 
     function callFunction($name,$parameters, $data, $content = "", $unparsed = Array()){
+        $this->goMyModule();
         $function = $this->getFunction($name);
         return $function->call($parameters, $data, $content = "", $unparsed = Array(),$this);
+        $this->goBackModule();
     }
 
 }

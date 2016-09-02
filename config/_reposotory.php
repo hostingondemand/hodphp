@@ -10,6 +10,11 @@ return array(
             "name" => "maxuser",
             "type" => "git",
             "source" => "git@github.com:maxpower89/maxuser.git"
+        ),
+        "maxclient"=>array(
+            "name"=>"maxclient",
+            "type"=>"git",
+            "source"=>"git@github.com:maxpower89/maxclient.git"
         )
     )
 );

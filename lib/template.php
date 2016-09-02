@@ -45,7 +45,7 @@ class template extends Lib
     function getModule($name)
     {
         Loader::loadClass("baseModule","lib\\template");
-        $instance= Loader::createInstance("module","templateModules\\".$name);
+        $instance= Loader::createInstance("module","templateModule\\".$name);
         $instance->_name=$name;
         return $instance;
     }

@@ -11,7 +11,8 @@
 
                 foreach($first as $key=>$val){
                     if(!$val){
-                        $parameters[$key]=$this->route->get($key);
+                        $fromRoute=$this->route->get($key);
+                        $parameters[$key]=$fromRoute;
                     }else{
                         $parameters[$key]=$val;
                     }
@@ -50,7 +51,12 @@
 
         function get($key){
             $route = $this->getRoute();
-            return $route[$key];
+            if(isset($route[$key])){
+                return $route[$key];
+            }else{
+                return "";
+            }
+
         }
     }
 ?>

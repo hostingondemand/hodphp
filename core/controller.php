@@ -8,19 +8,21 @@ class Controller extends Base
         $this->language->load("global");
         $this->language->load("_global");
 
-        $maps=$this->config->get("components","maps.class");
+        $maps=$this->config->get("maps.class","components");
         if(is_array($maps)){
             Loader::$classMaps=$maps;
         }
 
-        $maps=$this->config->get("components","maps.namespace");
+        $maps=$this->config->get("maps.namespace","components");
         if(is_array($maps)){
             Loader::$classMaps=$maps;
         }
 
+       $this->event->raise("controllerPreLoad",array("controller"=>$this));
         if(method_exists($this,"__onLoad")){
             $this->__onload();
         }
+        $this->event->raise("controllerPostLoad",array("controller"=>$this));
     }
 
     function __authorize(){
