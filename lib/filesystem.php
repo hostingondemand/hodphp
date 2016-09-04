@@ -87,6 +87,9 @@ class Filesystem extends \core\Lib
     //create an array of all directories
     function getDirs($dir)
     {
+        if(!$this->exists($dir))
+        {return array();}
+
         $dirs = array();
         if ($handle = opendir($this->calculatePath($dir))) {
             while (false !== ($entry = readdir($handle))) {
@@ -103,6 +106,9 @@ class Filesystem extends \core\Lib
     //create an array of all files
     function getFiles($dir, $type = false)
     {
+        if(!$this->exists($dir))
+        {return array();}
+
         $files = array();
         if ($handle = opendir($this->calculatePath($dir))) {
             while (false !== ($entry = readdir($handle))) {

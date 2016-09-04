@@ -8,6 +8,8 @@ class funcContent extends \lib\template\AbstractFunction
     function call($parameters, $data, $content = "", $unparsed = Array(), $module = false)
     {
 
+
+
         if (is_array($parameters[0]) && isset($parameters[0]["module"])) {
             $module = $parameters[0]["module"];
         } elseif (isset($parameters[1])) {

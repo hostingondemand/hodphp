@@ -17,6 +17,8 @@ class FuncRenderHead extends \lib\template\AbstractFunction
         foreach($this->document->getScripts() as $script){
             $result.=$this->template->parseFile("components/script",array("script"=>$script))."\n";
         }
+
+
         $this->event->raise("headPostRender",func_get_args());
         return $result;
     }
