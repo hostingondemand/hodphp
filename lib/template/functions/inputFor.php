@@ -26,6 +26,26 @@ class FuncInputFor extends \lib\template\AbstractFunction
         }else{
             $input["value"]="";
         }
+        $attributes="";
+        if(isset($parameters[2])){
+            $array=json_decode(str_replace("'",'"',$parameters[2]),true);
+
+            if($input["invalid"]){
+                if(isset($array["class"])){
+                    $array["class"].=" invalid";
+                }else{
+                    $array["class"]="invalid";
+                }
+            }
+
+            foreach($array as $attribute=>$value){
+                $attributes.= $attribute.'="'.$value.'"';
+            }
+        }
+
+        $input["attributes"]=$attributes;
+
+
 
         return $this->template->parseFile("editorTemplates/".$input["type"], $input,"editorTemplates/string");
     }
