@@ -10,9 +10,17 @@ class Loader
     static $classMaps = array();
     static $namespaceMaps = array();
 
+    static $setup=false;
+
     //load an action for a controller.
     static function loadAction($params)
     {
+
+        if(!self::$setup){
+            $setupInstance=new Setup();
+            $setupInstance->setup();
+            self::$setup=true;
+        }
 
         $paramsFrom = 0;
         $oldController = self::$controller;

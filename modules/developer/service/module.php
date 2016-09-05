@@ -91,8 +91,10 @@ class Module extends BaseService
 
 
         if($this->filesystem->exists("project/modules/".$name)){
+            $module["parentFolder"]="project/modules";
             $module["folder"]="project/modules/".$name;
         }else{
+            $module["parentFolder"]="modules";
             $module["folder"]="modules/".$name;
         }
         $module["installed"]=$this->isInstalled($name);
