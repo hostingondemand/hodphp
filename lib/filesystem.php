@@ -142,6 +142,20 @@ class Filesystem extends \core\Lib
         return array();
 
     }
+
+    function writeArray($file,$data){
+        $serialized=  "<?php return ".var_export($data, true).";";
+        $this->clearWrite($file,$serialized);
+    }
+
+    function getModified($file){
+        $path = $this->findRightPath($file);
+        if($path) {
+            return filemtime($path);
+        }
+        return -1;
+
+    }
 }
 
 ?>

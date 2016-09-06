@@ -38,6 +38,7 @@ class FuncInputFor extends \lib\template\AbstractFunction
                 }
             }
 
+
             foreach($array as $attribute=>$value){
                 $attributes.= $attribute.'="'.$value.'"';
             }

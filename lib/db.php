@@ -215,6 +215,12 @@ class Db extends \core\Lib
 
     }
 
+    function select($table,$alias=false){
+        $select=Loader::createInstance("select","lib/db");
+        $select->table($table,$alias);
+        return $select;
+    }
+
 }
 
 ?>

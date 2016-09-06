@@ -72,6 +72,15 @@
             die();
         }
 
+        function fakeResponse($data,$function){
+            ob_start();
+            $function($data);
+            $content=ob_get_contents();
+            ob_end_clean();
+
+            return $content;
+        }
+
 
     }
 ?>

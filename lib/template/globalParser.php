@@ -12,17 +12,17 @@ class GlobalParser extends Lib
         Loader::loadClass("expressionParser", "lib\\template");
     }
 
-    function parse($content,$modules=array())
+    function parse($content)
     {
         $result = Array();
-        while ($this->popUntilNextStatement($content, $result,$modules)) {}
+        while ($this->popUntilNextStatement($content, $result)) {}
 
         return $result;
 
     }
 
     //pop all text until the next statement is found
-    function popUntilNextStatement(&$content, &$result,$modules=array())
+    function popUntilNextStatement(&$content, &$result)
     {
         //if there is no content left
         if (strlen($content) == 0) {
@@ -79,7 +79,7 @@ class GlobalParser extends Lib
             }
 
 
-            $expression = new ExpressionParser($this->popExpression($content),$modules);
+            $expression = new ExpressionParser($this->popExpression($content));
             $funcContent = "";
             if ($expression->requireContent) {
                 $funcContent = $this->popContent($expression->function, $content);

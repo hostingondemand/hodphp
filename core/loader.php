@@ -6,6 +6,7 @@ class Loader
     static $controller;
     static $action;
     static $module;
+    static $actionModule;
 
     static $classMaps = array();
     static $namespaceMaps = array();
@@ -15,7 +16,6 @@ class Loader
     //load an action for a controller.
     static function loadAction($params)
     {
-
         if(!self::$setup){
             $setupInstance=new Setup();
             $setupInstance->setup();
@@ -25,13 +25,14 @@ class Loader
         $paramsFrom = 0;
         $oldController = self::$controller;
         $oldAction = self::$action;
-        $changedModule=false;
-        if (isset($params[$paramsFrom]) && file_exists("modules/" . $params[$paramsFrom])) {
+        $oldActionModule=self::$actionModule;
+        if (isset($params[$paramsFrom]) && (file_exists("modules/" . $params[$paramsFrom])||file_exists("project/modules/" . $params[$paramsFrom]))) {
             self::goModule($params[$paramsFrom]) ;
-            $changedModule=true;
+            self::$actionModule=$params[$paramsFrom];
             $paramsFrom++;
         }else{
             self::goModule("") ;
+            self::$actionModule="";
         }
 
         if (!isset($params[$paramsFrom])) {
@@ -40,11 +41,11 @@ class Loader
             $controllerString = $params[$paramsFrom];
         }
 
-        if ($controller = self::getSingleton($controllerString, "controller")) {
+        if ($controller = self::createInstance($controllerString, "controller")) {
             $paramsFrom++;
         } else {
             $controllerString = "home";
-            $controller = self::getSingleton("home", "controller");
+            $controller = self::createInstance("home", "controller");
         }
 
         if (!$controller) {
@@ -61,7 +62,7 @@ class Loader
         if ($controller->hasMethod($method)) {
             $paramsFrom++;
         } else {
-            if ($controller->hasMethod("home")) {
+            if (!$controller->hasMethod("home")) {
                 return false;
             }
             $method = "home";
@@ -84,6 +85,7 @@ class Loader
 
         self::$controller = $oldController;
         self::$action = $oldAction;
+        self::$actionModule = $oldActionModule;
         return true;
 
     }

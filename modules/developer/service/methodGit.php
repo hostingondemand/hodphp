@@ -8,7 +8,7 @@ class MethodGit extends BaseModel
 {
     function install($name){
         $module = $this->service->module->getModuleByName($name);
-        $this->shell->execute("git clone ".$module["source"]." ".$name,$module["parentFolder"]);
+       $this->shell->execute("git clone ".$module["source"]." ".$name,$module["parentFolder"]);
     }
 
 

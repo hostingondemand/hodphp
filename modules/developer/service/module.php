@@ -124,6 +124,8 @@ class Module extends BaseService
             $this->event->raise("modulePostInstall", array("name" => $name));
 
             $this->handled[$name] = true;
+
+
         }
     }
 

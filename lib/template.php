@@ -15,31 +15,51 @@ class template extends Lib
     {
         $this->globals["path"]=$this->path->getHttp();
         $this->globals["isAuthenticated"]=$this->auth->isAuthenticated();
+        Loader::LoadClass("AbstractFunction","lib/template");
     }
     //parse and interpret a template
-    function parse($template, $data = Array(),$modules=array())
+    function parse($template, $data = Array())
     {
         $data=array_merge($data,$this->globals);
-        $modules=array_merge($modules,$this->globalModules);
         //get the parser
         $parser = Loader::getSingleton("globalParser", "lib\\template");
-        $parsed = $parser->parse($template,$modules);
+        $parsed = $parser->parse($template);
 
         //interpret the result of the parser
         $interpreter = Loader::getSingleton("interpreter", "lib\\template");
 
         //return the interpreted result
-        return $interpreter->interpret($parsed, $data,$modules);
+        return $interpreter->interpret($parsed, $data);
     }
 
     //use parse to parse the content of a file
-    function parseFile($file, $data = array(),$fallback=false, $modules=array())
+    function parseFile($file, $data = array(),$fallback=false)
     {
-        $content = $this->filesystem->getFile("template/" . $file . ".tpl");
-        if(!$content && $fallback){
-            $content=$this->filesystem->getFile("template/" . $fallback . ".tpl");
-        }
-        return $this->parse($content, $data,$modules);
+
+
+        $data=array_merge($data,$this->globals);
+        //get the parser
+
+        $parsed= $this->cache->runCached("template",
+            array("unique"=>md5($this->filesystem->findRightPath("template/" . $file . ".tpl")),"file"=>$file,"fallback"=>$fallback),
+            $this->filesystem->getModified("template/" . $file . ".tpl"),
+            function($data) {
+                $content = $this->filesystem->getFile("template/" . $data["file"] . ".tpl");
+                if (!$content && $data["fallback"]) {
+                    $content = $this->filesystem->getFile("template/" . $data["fallback"] . ".tpl");
+                }
+                //get the parser
+                $parser = Loader::getSingleton("globalParser", "lib\\template");
+                $parsed = $parser->parse($content);
+                return $parsed;
+            }
+        );
+
+        //interpret the result of the parser
+        $interpreter = Loader::getSingleton("interpreter", "lib\\template");
+
+        //return the interpreted result
+        return $interpreter->interpret($parsed, $data);
     }
 
     function getModule($name)
@@ -55,7 +75,19 @@ class template extends Lib
     }
 
     function registerGlobalModule($module){
-        $this->globalModules[]=$module;
+        $renames=$this->config->get("module.rename","template");
+        $this->globalModules[$module->_name]=$module;
+        if(isset($renames[$module->_name])){
+            $this->globalModules[$renames[$module->_name]]=$module;
+        }
+
+    }
+
+    function getActiveModule($name){
+        if(isset($this->globalModules[$name])){
+            return $this->globalModules[$name];
+        }
+        return false;
     }
 
 }

@@ -1,1 +1,1 @@
-<input type="password"  name="{{name}}" {{if(invalid)}}class="invalid"{{/if}}  {{attributes}}>
+<input type="password"  name="{{name}}"  {{attributes}}>

@@ -5,7 +5,11 @@ class Language extends \core\Lib{
     var $data=array();
 
     function load($file){
-        $this->data[$file]=$this->filesystem->getArray("language/".$this->config->get("language","website")."/".$file.".php");
+        if(isset($this->data[$file])){
+            $this->data[$file]=array_merge($this->data[$file],$this->filesystem->getArray("language/" . $this->config->get("language", "website") . "/" . $file . ".php"));
+        }else {
+            $this->data[$file] = $this->filesystem->getArray("language/" . $this->config->get("language", "website") . "/" . $file . ".php");
+        }
 
     }
 

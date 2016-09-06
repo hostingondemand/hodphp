@@ -8,8 +8,6 @@ class funcContent extends \lib\template\AbstractFunction
     function call($parameters, $data, $content = "", $unparsed = Array(), $module = false)
     {
 
-
-
         if (is_array($parameters[0]) && isset($parameters[0]["module"])) {
             $module = $parameters[0]["module"];
         } elseif (isset($parameters[1])) {
@@ -29,7 +27,12 @@ class funcContent extends \lib\template\AbstractFunction
         }
 
 
+        if($module){
             $parameters = array_merge(array($module,"_files", "content"), array($path));
+        }else{
+            $parameters = array_merge(array("_files", "content"), array($path));
+        }
+
 
 
         return $this->route->createRoute($parameters);

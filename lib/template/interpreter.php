@@ -9,19 +9,21 @@ use \core\loader;
 class Interpreter extends Lib
 {
 
+
     //loop through all elements and interpret those
-    function interpret($content, $data,$modules=array())
+    function interpret($content, $data)
     {
+
         $result = "";
         foreach ($content as $val) {
-            $result .= $this->interpretElement($val, $data,$modules);
+            $result .= $this->interpretElement($val, $data);
         }
         return $result;
     }
 
 
     //check which type the element is and call the right function to interpret this.
-    function interpretElement($element, $data,$modules=array())
+    function interpretElement($element, $data)
     {
 
         if ($element["type"] == "content") {
@@ -33,7 +35,7 @@ class Interpreter extends Lib
         } elseif ($element["type"] == "array") {
             return $this->getArrayValue($element["parameters"], $data);
         } elseif ($element["type"] == "function") {
-            return $this->callFunction($element, $data,$modules);
+            return $this->callFunction($element, $data);
         } elseif ($element["type"] == "comparison_root") {
             return $this->handleMainComparison($element, $data);
         } elseif ($element["type"] == "comparison_sub") {
@@ -108,7 +110,7 @@ class Interpreter extends Lib
     }
 
     //a simple function call
-    function callFunction($expression, $data,$modules=array())
+    function callFunction($expression, $data)
     {
         $function=$expression["function"];
         $exp=explode(".",$function);
@@ -120,21 +122,10 @@ class Interpreter extends Lib
 
 
         if(count($exp)>1) {
-            $renames=$this->config->get("module.rename","template");
-            if(!is_array($renames)){
-                $renames=array();
-            }
-            foreach($modules as $module){
-                if(isset($renames[$module->_name])){
-                    $renamed=$renames[$module->_name];
-                }else{
-                    $renamed=$module->_name;
-                }
-
-                if($module->_name==$exp[0] || $renamed==$exp[0]){
+                $module=$this->template->getActiveModule($exp[0]);
+                if($module) {
                     return $module->callFunction($exp[1],$parameters, $data, $expression["content"], $expression["parameters"]);
                 }
-            }
         }else {
 
             //load the function class

@@ -24,7 +24,7 @@ return array(
         "hodapikey"=>array(
             "name"=>"hodapikey",
             "type"=>"git",
-            "source"=>"origin git@github.com:hostingondemand/hodapikiey.git"
+            "source"=>"git@github.com:hostingondemand/hodapikiey.git"
         )
     )
 );
