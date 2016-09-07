@@ -2,6 +2,8 @@
     namespace lib;
     class Response extends \core\Lib{
 
+        var $partialMode=false;
+
        function write($string,$options=Array()){
             echo $string;
         }
@@ -9,6 +11,10 @@
 
 
         function renderView($data=Array(),$path=""){
+
+            if($this->partialMode){
+                return $this->renderPartial($data,$path);
+            }
             if(is_object($data)){
                 $data=$data->toArray();
             }
@@ -30,7 +36,7 @@
             $this->write($this->template->parseFile("main",Array("content"=>$content)));
         }
 
-         function renderPartialView($data,$path){
+         function renderPartial($data=Array(),$path=""){
              if(is_object($data)){
                  $data=$data->toArray();
              }
@@ -81,6 +87,9 @@
             return $content;
         }
 
+        function setPartialMode($value){
+            $this->partialMode=$value;
+        }
 
     }
 ?>

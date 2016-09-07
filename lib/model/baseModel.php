@@ -79,17 +79,21 @@ abstract class BaseModel extends Base
 
     function fromArray($data)
     {
-        $this->_data = array_merge($this->_data,$data);
+        if(is_array($data)) {
+            $this->_data = array_merge($this->_data, $data);
+        }
         return $this;
     }
 
     function fromRequest()
     {
         $result = $this->fromArray($this->request->getData(true));
+        if(is_array($this->request->getData(true))) {
+            $validator = $this->__validator();
+            $validationResult = $validator->validate($this);
+            $result->validationResult = $validationResult->toArray();
+        }
 
-        $validator = $this->__validator();
-        $validationResult=$validator->validate($this);
-        $result->validationResult = $validationResult->toArray();
 
         return $result;
     }

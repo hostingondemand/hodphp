@@ -17,8 +17,9 @@ abstract class BaseModule extends \core\Base
     function callFunction($name,$parameters, $data, $content = "", $unparsed = Array()){
         $this->goMyModule();
         $function = $this->getFunction($name);
-        return $function->call($parameters, $data, $content = "", $unparsed = Array(),$this);
+        $result= $function->call($parameters, $data, $content = "", $unparsed = Array(),$this);
         $this->goBackModule();
+        return $result;
     }
 
 }

@@ -11,6 +11,7 @@ namespace lib\db;
         var $_group=array();
         var $_limit=0;
         var $_offset=0;
+        var $_ignoreParent=false;
         var $executed=null;
 
 
@@ -18,6 +19,11 @@ namespace lib\db;
 
         }
 
+
+        function ignoreParent(){
+            $this->_ignoreParent=true;
+            return $this;
+        }
         function table($table,$alias=false){
             if(!is_array($table)) {
                 if (!$alias) {

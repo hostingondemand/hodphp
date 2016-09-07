@@ -11,6 +11,7 @@ class template extends Lib
     var $globals;
     var $globalModules=array();
 
+
     function __construct()
     {
         $this->globals["path"]=$this->path->getHttp();
@@ -89,6 +90,7 @@ class template extends Lib
         }
         return false;
     }
+
 
 }
 

@@ -9,6 +9,7 @@ class Db extends \core\Lib
     private $connections;
     private $errors = array();
     private $fields = array();
+    private $parent=false;
 
 
     function connectConfigName($name)
@@ -219,6 +220,10 @@ class Db extends \core\Lib
         $select=Loader::createInstance("select","lib/db");
         $select->table($table,$alias);
         return $select;
+    }
+
+    function workWithParent($id){
+        $this->parent=array("id"=>$id,"module"=>Loader::$actionModule);
     }
 
 }
