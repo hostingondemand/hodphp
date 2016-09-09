@@ -37,5 +37,19 @@ class Request extends \core\Lib{
         return array(array_change_key_case(getallheaders(),CASE_LOWER));
     }
 
+    public function getHeaderByName($name){
+        $header=$this->getHeaders();
+
+        if(!is_array($header)) {
+            $header = $this->http->headersToArray($header);
+        }
+
+        //if the content type is set
+        if(isset($header[0][$name])){
+            return $header[0][$name];
+        }
+        return "";
+    }
+
 }
 ?>

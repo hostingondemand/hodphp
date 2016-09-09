@@ -9,7 +9,7 @@ class Db extends \core\Lib
     private $connections;
     private $errors = array();
     private $fields = array();
-    private $parent=false;
+    var $parent=false;
 
 
     function connectConfigName($name)
@@ -156,8 +156,13 @@ class Db extends \core\Lib
         return $this->connections[$con]->real_escape_string($string);
     }
 
-    function saveModel($model, $table,$con="default")
+    function saveModel($model, $table,$ignoreParent=false,$con="default")
     {
+        if($this->parent && !$ignoreParent){
+            $model->parent_id=$this->parent["id"];
+            $model->parent_module=$this->parent["module"];
+        }
+
         if (!isset($this->fields[$table])) {
             $this->fields[$table] = $this->db->query("SHOW columns FROM `" . $table . "`",$con)->fetchAll();
         }

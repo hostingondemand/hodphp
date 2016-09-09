@@ -17,15 +17,21 @@ return array(
             "source" => "git@github.com:maxpower89/maxclient.git"
         ),
         "hodaspect" => array(
-            "name"=>"hodaspect",
-            "type"=>"git",
-            "source"=>"git@github.com:hostingondemand/hodaspect.git",
+            "name" => "hodaspect",
+            "type" => "git",
+            "source" => "git@github.com:hostingondemand/hodaspect.git",
         ),
-        "hodapikey"=>array(
-            "name"=>"hodapikey",
-            "type"=>"git",
-            "source"=>"git@github.com:hostingondemand/hodapikiey.git"
+        "hodapikey" => array(
+            "name" => "hodapikey",
+            "type" => "git",
+            "source" => "git@github.com:hostingondemand/hodapikiey.git"
+        ),
+        "maxannotations" => array(
+            "name" => "maxannotations",
+            "type" => "git",
+            "source" => "  git@github.com:maxpower89/maxannotations.git"
         )
+
     )
 );
 ?>

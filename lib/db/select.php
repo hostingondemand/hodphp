@@ -60,10 +60,11 @@ namespace lib\db;
                 }
                 $table=array($table=>$alias);
             }
+
             $this->_joins[]=array(
                 "table"=>$table,
-                "left"=>$this->getFullFieldName($onLeft,$alias),
-                "right"=>$this->getFullFieldName($onRight,$alias),
+                "left"=>$onLeft,
+                "right"=>$onRight,
             );
 
             return $this;
@@ -115,6 +116,11 @@ namespace lib\db;
         }
 
         function execute(){
+
+            if($this->db->parent && !$this->_ignoreParent){
+                $this->where("parent_id='".$this->db->parent["id"]."' && parent_module='".$this->db->parent["module"]."'");
+            }
+
             $queryString="select ";
 
             //fields
@@ -124,7 +130,7 @@ namespace lib\db;
                     if($i){
                         $queryString.=" , ";
                     }
-                    $queryString.="`".$field."`";
+                    $queryString.="".$this->handleFieldName($field)."";
                     if($alias!=$field){
                         $queryString.=" as ".$alias;
                     }
@@ -152,7 +158,7 @@ namespace lib\db;
                 if($alias!=$table){
                     $queryString.=" as ".$alias;
                 }
-                $queryString.=" on ".$join["left"]." = ".$$join["right"];
+                $queryString.=" on ".$join["left"]." = ".$join["right"];
             }
 
             if(count($this->_where)){
@@ -203,7 +209,12 @@ namespace lib\db;
             $this->executed=$this->db->query($queryString);
         }
 
-
+        function handleFieldName($name){
+            $exp=explode(".",$name);
+            $corrected=array_map(function($name){return "`".$name."`";}, $exp);
+            $name=implode(".",$corrected);
+            return $name;
+        }
 
         function fetchAll()
         {

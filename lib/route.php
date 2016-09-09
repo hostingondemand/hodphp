@@ -1,12 +1,17 @@
 <?php
     namespace lib;
     class Route extends \core\lib{
+        private $autoRoute=array();
+
         function createRoute($first=""){
 
 
             if(func_num_args()>1){
                 $first=func_get_args();
             }
+
+            $first=array_merge($this->autoRoute,$first);
+
             if(is_array($first)){
 
                 foreach($first as $key=>$val){
@@ -57,6 +62,13 @@
                 return "";
             }
 
+        }
+
+        function setAutoRoute($arr){
+            $this->autoRoute=$arr;
+        }
+        function removeAutoRoute(){
+            $this->setAutoRoute(array());
         }
     }
 ?>

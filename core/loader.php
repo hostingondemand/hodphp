@@ -82,11 +82,14 @@ class Loader
 
 
             self::goBackModule();
+        $info=array("module"=>self::$actionModule,
+            "controller"=>self::$controller,
+            "action"=>self::$action);
 
         self::$controller = $oldController;
         self::$action = $oldAction;
         self::$actionModule = $oldActionModule;
-        return true;
+        return $info;
 
     }
 

@@ -9,6 +9,7 @@ abstract class BaseModel extends Base
     private $_data = array();
     private $_invalidated = false;
     private $_fieldHandlers;
+    private $_validationResult;
 
     function __construct()
     {
@@ -20,7 +21,7 @@ abstract class BaseModel extends Base
             }
         }
         $this->setupFieldHandlers();
-        $this->validationResult = $this->validation->validator("model")->validate($this);
+        $this->_validationResult = $this->validation->validator("model")->validate($this);
     }
 
     function setupFieldHandlers(){
@@ -91,7 +92,7 @@ abstract class BaseModel extends Base
         if(is_array($this->request->getData(true))) {
             $validator = $this->__validator();
             $validationResult = $validator->validate($this);
-            $result->validationResult = $validationResult->toArray();
+            $result->_validationResult = $validationResult->toArray();
         }
 
 
@@ -105,17 +106,23 @@ abstract class BaseModel extends Base
         foreach ($this->_data as $key => $val) {
             if(is_array($this->_data[$key])){
                 foreach($this->_data[$key] as $akey=>$aval){
-                    if (is_object($this->_data[$key][$akey]) && method_exists($this->_data[$key][$akey], "toArray")) {
-                        $result[$key][$akey] = $this->_data[$key][$akey]->toArray();
-                    } else {
-                        $result[$key][$akey] = $this->_data[$key][$akey];
+                    if(substr($akey,0,1)!="_") {
+                        if (is_object($this->_data[$key][$akey]) && method_exists($this->_data[$key][$akey], "toArray")) {
+                            $result[$key][$akey] = $this->_data[$key][$akey]->toArray();
+                        } else {
+                            $result[$key][$akey] = $this->_data[$key][$akey];
+                        }
                     }
                 }
             }
             elseif (is_object($this->_data[$key]) && method_exists($this->_data[$key], "toArray")) {
-                $result[$key] = $this->_data[$key]->toArray();
+                if(substr($key,0,1)!="_") {
+                    $result[$key] = $this->_data[$key]->toArray();
+                }
             } else {
-                $result[$key] = $this->_data[$key];
+                if(substr($key,0,1)!="_") {
+                    $result[$key] = $this->_data[$key];
+                }
             }
 
         }
@@ -139,7 +146,7 @@ abstract class BaseModel extends Base
 
     function __validator()
     {
-        return $this->validationResult = $this->validation->validator("model");
+        return $this->_validationResult = $this->validation->validator("model");
     }
 
     function __fieldHandlers(){
@@ -148,7 +155,7 @@ abstract class BaseModel extends Base
 
     function isValid()
     {
-        return $this->validationResult["success"];
+        return $this->_validationResult["success"];
     }
 
 
