@@ -34,8 +34,12 @@ class funcContent extends \lib\template\AbstractFunction
         }
 
 
+        $oldAutoRoute=$this->route->autoRoute;
+        $this->route->setAutoRoute(array());
+        $route= $this->route->createRoute($parameters);
+        $this->route->setAutoRoute($oldAutoRoute);
+        return $route;
 
-        return $this->route->createRoute($parameters);
     }
 }
 

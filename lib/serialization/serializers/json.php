@@ -9,7 +9,8 @@ class Json extends \core\Lib
         return json_encode($data,JSON_PRETTY_PRINT);
     }
     function unserialize($data,$assoc=false){
-        return json_decode($data,$assoc);
+        $result= json_decode($data,$assoc);
+        return $result;
     }
 
 }

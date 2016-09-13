@@ -5,9 +5,9 @@ use core\Base;
 
 abstract class BaseFieldHandler extends Base
 {
-    var $model;
+    var $_model;
     function init($model){
-        $this->model=$model;
+        $this->_model=$model;
     }
     function get($inModel){}
 

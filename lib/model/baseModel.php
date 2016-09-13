@@ -80,8 +80,8 @@ abstract class BaseModel extends Base
 
     function fromArray($data)
     {
-        if(is_array($data)) {
-            $this->_data = array_merge($this->_data, $data);
+        foreach($data as $key=>$val){
+            $this->__set($key,$val);
         }
         return $this;
     }

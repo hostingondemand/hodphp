@@ -31,7 +31,7 @@ class DbReference extends BaseFieldHandler
         if(!$this->loaded ){
             if($this->_field){
                 $field=$this->_field;
-                $id=$this->model->$field;
+                $id=$this->_model->$field;
             }else{
                 $id=$inModel;
             }

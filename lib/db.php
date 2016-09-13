@@ -200,7 +200,6 @@ class Db extends \core\Lib
 
     function insertModel($model, $table,$con)
     {
-        $data = $model->toArray();
             $query = "insert into `" . $table . "` set ";
             $data = $model->toArray();
             $i = 0;
@@ -227,8 +226,8 @@ class Db extends \core\Lib
         return $select;
     }
 
-    function workWithParent($id){
-        $this->parent=array("id"=>$id,"module"=>Loader::$actionModule);
+    function workWithParent($id,$module=false){
+        $this->parent=array("id"=>$id,"module"=>$module?$module:Loader::$actionModule);
     }
 
 }

@@ -205,7 +205,6 @@ namespace lib\db;
                 }
                 $queryString.=" ".$this->_limit;
             }
-
             $this->executed=$this->db->query($queryString);
         }
 

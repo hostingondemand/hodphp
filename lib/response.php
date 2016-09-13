@@ -55,6 +55,7 @@
         function renderFile($data,$contentType){
             $this->contentType($contentType);
             $this->write($data);
+            die();
         }
 
 

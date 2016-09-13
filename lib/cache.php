@@ -13,7 +13,6 @@
             $filename="data/cache/".$key."_".md5(print_r($data,true)).".php";
             if($this->filesystem->exists($filename) && $this->filesystem->getModified($filename)>$minDate){
                 return $this->filesystem->getArray($filename);
-                print_r($result);
             }else{
                $result = $function($data);
                $this->filesystem->writeArray($filename,$result);

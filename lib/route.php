@@ -1,7 +1,7 @@
 <?php
     namespace lib;
     class Route extends \core\lib{
-        private $autoRoute=array();
+        var $autoRoute=array();
 
         function createRoute($first=""){
 
