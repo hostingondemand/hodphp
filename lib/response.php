@@ -1,5 +1,7 @@
 <?php
     namespace lib;
+    use core\Loader;
+
     class Response extends \core\Lib{
 
         var $partialMode=false;
@@ -8,6 +10,15 @@
             echo $string;
         }
 
+        function renderAction($parameters=""){
+
+
+            if(func_num_args()>1){
+                $parameters=func_get_args();
+            }
+
+            Loader::loadAction($parameters);
+        }
 
 
         function renderView($data=Array(),$path=""){

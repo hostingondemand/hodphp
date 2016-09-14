@@ -174,6 +174,10 @@ class Db extends \core\Lib
         }
     }
 
+    function deleteModel($model,$table){
+       $this->execute("delete from `".$table."` where id='".$model->id."'");
+    }
+
     function updateModel($model, $table,$con)
     {
         $data = $model->toArray();
