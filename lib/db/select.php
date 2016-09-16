@@ -117,6 +117,11 @@ namespace lib\db;
 
         function execute(){
 
+            $queryString=$this->getQueryString();
+            $this->executed=$this->db->query($queryString);
+        }
+
+        function getQuerystring(){
             if($this->db->parent && !$this->_ignoreParent){
                 $this->where("parent_id='".$this->db->parent["id"]."' && parent_module='".$this->db->parent["module"]."'");
             }
@@ -205,7 +210,7 @@ namespace lib\db;
                 }
                 $queryString.=" ".$this->_limit;
             }
-            $this->executed=$this->db->query($queryString);
+            return $queryString;
         }
 
         function handleFieldName($name){

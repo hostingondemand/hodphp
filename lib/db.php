@@ -169,9 +169,15 @@ class Db extends \core\Lib
 
         if ($model->id) {
             $this->updateModel($model, $table,$con);
+            $mode="update";
+            $id=$this->db->lastId();
         } else {
             $this->insertModel($model, $table,$con);
+            $mode="insert";
+            $id=$model->id;
         }
+
+        return array("mode"=>$mode,"id"=>$id);
     }
 
     function deleteModel($model,$table){
