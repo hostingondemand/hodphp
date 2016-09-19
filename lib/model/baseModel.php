@@ -81,7 +81,9 @@ abstract class BaseModel extends Base
     function fromArray($data)
     {
         foreach($data as $key=>$val){
-            $this->__set($key,$val);
+            if($val!==null) {
+                $this->__set($key, $val);
+            }
         }
         return $this;
     }

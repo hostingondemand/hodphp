@@ -44,6 +44,10 @@ class FuncInputFor extends \lib\template\AbstractFunction
             }
         }
 
+        if(isset($parameters[3])){
+            $input["source"]=$parameters[3];
+        }
+
         $input["attributes"]=$attributes;
 
 

@@ -43,17 +43,31 @@ class DbToMany extends BaseFieldHandler
 
                 $this->obj = array();
                 foreach ($this->_initArray as $val) {
+
                     $model = $this->_toModel;
-                    if ($this->_toModelNamespace) {
-                        $namespace = $this->_toModelNamespace;
-                        $this->obj[] = $this->model->$namespace->$model->fromArray($val);
-                    } else {
-                        $this->obj[] = $this->model->$model->fromArray($val);
+                    if(!is_object($val)) {
+                        if ($this->_toModelNamespace) {
+                            $namespace = $this->_toModelNamespace;
+                            $this->obj[] = $this->model->$namespace->$model->fromArray($val);
+                        } else {
+                            $this->obj[] = $this->model->$model->fromArray($val);
+                        }
+                    }else{
+                        $this->obj[]=$val;
                     }
 
                 }
             } else {
-                $this->obj = $this->db->query("select * from `" . $this->_toTable . "` where `" . $this->_field . "` ='" . $this->_model->id . "'")->fetchAllModel($this->_toModel, $this->_toModelNamespace);
+                if($this->_field=="parent"){
+                    $where="parent_id='".$this->db->parent["id"]."' and parent_module='".$this->db->parent["module"]."'";
+                }
+                elseif($this->db->parent){
+                    $where="parent_id='".$this->db->parent["id"]."' and parent_module='".$this->db->parent["module"]."' and  `" . $this->_field . "` ='" . $this->_model->id . "' ";
+                }else{
+                    $where="`" . $this->_field . "` ='" . $this->_model->id . "'";
+                }
+
+                $this->obj = $this->db->query("select * from `" . $this->_toTable . "` where ".$where)->fetchAllModel($this->_toModel, $this->_toModelNamespace);
 
             }
             $this->loaded = true;
@@ -65,6 +79,7 @@ class DbToMany extends BaseFieldHandler
     {
         if (is_array($value)) {
             $this->_initArray = $value;
+            $this->loaded=false;
         }
     }
 
@@ -78,11 +93,15 @@ class DbToMany extends BaseFieldHandler
 
         if($this->_saveReset){
 
-            if($this->db->parent){
+            if($this->_field=="parent"){
+                $where="parent_id='".$this->db->parent["id"]."' and parent_module='".$this->db->parent["module"]."'";
+            }
+            elseif($this->db->parent){
                 $where="parent_id='".$this->db->parent["id"]."' and parent_module='".$this->db->parent["module"]."' and  `" . $this->_field . "` ='" . $this->_model->id . "' ";
             }else{
                 $where="`" . $this->_field . "` ='" . $this->_model->id . "'";
             }
+
             $this->db->query("delete from ".$this->_toTable." where ".$where);
         }
 

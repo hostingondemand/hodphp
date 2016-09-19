@@ -12,6 +12,9 @@ class FuncRenderAction extends \lib\template\AbstractFunction
         return $this->response->fakeResponse(
             $parameters,
             function ($parameters) {
+                if(is_array($parameters[0])){
+                    $parameters=$parameters[0];
+                }
                 $oldPartialMode=$this->response->partialMode;
                 $this->response->setPartialMode(true);
                 Loader::loadAction($parameters);

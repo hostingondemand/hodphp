@@ -91,6 +91,15 @@ class template extends Lib
         return false;
     }
 
+    function createDataSource($data,$value,$text){
+        return array(
+            "data"=>$data,
+            "value"=>$value,
+            "text"=>$text
+        );
+    }
+
+
 
 }
 

@@ -81,11 +81,14 @@ class DbManyToMany extends BaseFieldHandler
     {
         if (is_array($value)) {
             $this->_initArray = $value;
+            $this->loaded=false;
         }
     }
 
     function save()
     {
+
+
         $originalData = $this->db->query("select tt.* from `" . $this->_toTable . "` as tt
                 left join `" . $this->_glueTable . "` as gt on gt.`" . $this->_toField . "`=tt.id
                 where gt.`" . $this->_fromField . "` ='" . $this->_model->id . "'")
@@ -141,7 +144,6 @@ class DbManyToMany extends BaseFieldHandler
                          parent_module='" . $this->db->parent["module"] . "' ";
                 }
 
-                echo $query;
 
                 $this->db->query($query);
 
