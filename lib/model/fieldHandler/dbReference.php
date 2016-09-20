@@ -10,6 +10,7 @@ class DbReference extends BaseFieldHandler
     private $obj;
     private $loaded;
     private $_toModel;
+    private $_fromTable;
 
     function field($field){
         $this->_field=$field;
@@ -21,12 +22,30 @@ class DbReference extends BaseFieldHandler
         return $this;
     }
 
+    function  fromTable($toTable){
+        $this->_fromTable=$toTable;
+        return $this;
+    }
+
+    function  updateReference(){
+        $this->_updateReference=true;
+        return $this;
+    }
+
     function  toModel($toTable,$namespace=false){
         $this->_toModel=$toTable;
         $this->_toModelNamespace=$namespace;
         return $this;
     }
 
+
+    function save(){
+        if($this->_updateReference){
+            $this->db->query(
+                "update `".$this->_fromTable."` set `".$this->_field."`='".$this->obj->id."' where id='".$this->_model->id."'"
+            );
+        }
+    }
     function get($inModel){
         if(!$this->loaded ){
             if($this->_field){
@@ -39,6 +58,11 @@ class DbReference extends BaseFieldHandler
             $this->loaded=true;
         }
         return $this->obj;
+    }
+
+    function set($obj){
+        $this->obj=$obj;
+        $this->loaded=true;
     }
 
 }
