@@ -30,6 +30,11 @@ return array(
             "name" => "maxannotations",
             "type" => "git",
             "source" => "  git@github.com:maxpower89/maxannotations.git"
+        ),
+        "maxdbconfig" => array(
+            "name" => "maxdbconfig",
+            "type" => "git",
+            "source" => "git@github.com:maxpower89/maxdbconfig.git"
         )
 
     )
