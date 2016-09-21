@@ -22,7 +22,7 @@ class Http extends \core\Lib
     }
 
     //do a post request
-    function post($url, $data, $format,$auth=false){
+    function post($url, $data, $format ,$headers=array()){
 
         //initialize curl
         $ch = curl_init();
@@ -42,16 +42,14 @@ class Http extends \core\Lib
         $dataString=$this->serialization->serialize($format,$data);
         curl_setopt($ch, CURLOPT_POSTFIELDS,$dataString);
 
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+
+        $headers=array_merge($headers,array(
             'Content-Type: '.$this->formatHeaders[$format]
         ));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
 
 
-        //handle authentication
-        if($auth){
-            curl_setopt($ch,CURLOPT_USERPWD,$auth);
-        }
 
 
         //execute the curl command
@@ -70,7 +68,7 @@ class Http extends \core\Lib
 
     }
 
-    function get($url,$auth=false){
+    function get($url,$headers=array()){
         //initialize curl
         $ch = curl_init();
 
@@ -85,10 +83,8 @@ class Http extends \core\Lib
         curl_setopt($ch, CURLOPT_URL,$url);
 
 
-
-        //handle authentication
-        if($auth){
-            curl_setopt($ch,CURLOPT_USERPWD,$auth);
+        if(count($headers)){
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         }
 
 
