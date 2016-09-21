@@ -1,0 +1,1 @@
+<label {{attributes}}><input type="checkbox" value="1" name="{{name}}" {{if(value)}}checked{{/if}}></label>
