@@ -223,7 +223,6 @@ class Db extends \core\Lib
                     $i++;
                 }
             }
-
         $q=$this->query($query,$con);
         $model->id=$this->lastId($con);
         $model->_saved();
