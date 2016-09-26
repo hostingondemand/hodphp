@@ -7,6 +7,7 @@ class Event extends \core\Lib
 {
 
     var $eventListeners = array();
+    var $_noCache;
 
     function raise($name, $data)
     {
@@ -24,24 +25,27 @@ class Event extends \core\Lib
         return $data;
     }
 
+    function noCache(){
+        $this->_noCache=true;
+    }
     function getListenersForEvent($name)
     {
-        if (!isset($eventListeners[$name])) {
-            $eventListeners[$name] = array();
+        if (!isset($this->eventListeners[$name]) || $this->_noCache) {
+            $this->eventListeners[$name] = array();
             if ($listener = Loader::getSingleton($name, "project\\listener")) {
-                $eventListeners[$name][] =array("module"=>"","listener"=>$listener);
+                $this->eventListeners[$name][] =array("module"=>"","listener"=>$listener);
             }
 
             $dirs = $this->filesystem->getDirs("modules");
             foreach ($dirs as $module) {
                 $this->goModule($module);
                 if ($listener = Loader::getSingleton($name, "modules/" . $module . "/listener")) {
-                    $eventListeners[$name][]=array("module"=>$module,"listener"=>$listener);
+                    $this->eventListeners[$name][]=array("module"=>$module,"listener"=>$listener);
                 }
                 $this->goBackModule();
             }
         }
-        return $eventListeners[$name];
+        return $this->eventListeners[$name];
 
     }
 }

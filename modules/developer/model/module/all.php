@@ -7,6 +7,7 @@ use lib\model\BaseModel;
 class All extends BaseModel
 {
     function Process(){
+        $this->event->noCache();
         $modules=$this->service->module->getModules();
         foreach($modules as $module){
             if($module["installed"]){

@@ -12,8 +12,8 @@ class Module extends BaseService
     function getModules()
     {
         $modules = array_merge(
-            $this->getInstalledModules(),
-            $this->getMissingModules()
+            $this->getMissingModules(),
+            $this->getInstalledModules()
         );
         return $modules;
     }
