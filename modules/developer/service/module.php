@@ -52,9 +52,10 @@ class Module extends BaseService
         return $result;
     }
 
-    function getModuleByName($name, $reposotoryOnly = false)
+    function getModuleByName($name, $repositoryOnly = false)
     {
-        if (!$reposotoryOnly) {
+
+        if (!$repositoryOnly) {
             $modules = $this->config->get("requirements.modules", "components");
             foreach ($modules as $key => $val) {
                 if (isset($val["name"]) && $val["name"] == $name) {
@@ -66,7 +67,7 @@ class Module extends BaseService
 
         if (!isset($module)) {
 
-            $modules = $this->config->get("modules", "_reposotory");
+            $modules = $this->config->get("modules", "_repository");
             if (isset($modules[$name])) {
                 $module = $modules[$name];
             }else{
@@ -75,6 +76,17 @@ class Module extends BaseService
                     "type" => "none"
 
                 );
+            }
+
+            $localModules = $this->config->get("modules.local", "repository");
+            if(isset($localModules[$name])) {
+                $localModule=$localModules[$name];
+                if (isset($module) && $module["type"]==$localModule["type"]) {
+                    $module["upstream"]=$module["source"];
+                    $module["source"]=$localModule["source"];
+                } else {
+                    $module=$localModule;
+                }
             }
         }
 
@@ -85,8 +97,6 @@ class Module extends BaseService
                 $module["folder"]="modules/".$name;
             }
             $module["installed"]=$this->isInstalled($name);
-
-
         }
 
 
@@ -99,7 +109,10 @@ class Module extends BaseService
         }
         $module["installed"]=$this->isInstalled($name);
 
-            return $module;
+
+
+
+        return $module;
 
 
     }

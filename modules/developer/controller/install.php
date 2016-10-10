@@ -16,6 +16,12 @@ class Install extends Controller{
         $this->response->redirect("developer/module/all");
     }
 
+    function update(){
+        $model=$this->model->update;
+        $model->update();
+        $this->response->redirect("developer/module/all");
+    }
+
 }
 
 ?>

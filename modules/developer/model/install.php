@@ -20,22 +20,9 @@ class Install extends BaseModel
 
     function install()
     {
-        if ($this->git) {
-            $this->shell->execute("git clone " . $this->git . " project");
-        } else {
-            $this->filesystem->mkdir("project");
-        }
-        if (!$this->filesystem->exists("project/config")) {
-            $this->filesystem->mkdir("project/config");
-        }
-        $this->filesystem->writeArray("project/config/server.php", array(
-            "http.path" => $_SERVER["HTTP_ORIGIN"],
-            "db.default.host" => $this->dbHost,
-            "db.default.username" => $this->dbUser,
-            "db.default.password" => $this->dbPassword,
-            "db.default.db" => $this->dbDb
-        ));
-
+        $this->service->project->create(@$this->git);
+        $this->service->project->setup($this);
+        $this->service->project->updateFramework();
     }
 
 
