@@ -14,6 +14,8 @@ abstract class BaseFieldHandler extends Base
     function set($value){}
 
     function save(){}
+
+    function delete(){}
 }
 
 ?>

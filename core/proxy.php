@@ -101,6 +101,13 @@
             return $result;
         }
 
+        function getType(){
+            if(method_exists($this->instance,"getType")){
+                return $this->instance->getType();
+            }else{
+                return get_class($this->instance);
+            }
+        }
 
     }
 ?>

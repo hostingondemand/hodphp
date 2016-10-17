@@ -83,6 +83,12 @@ class DbToMany extends BaseFieldHandler
         }
     }
 
+    function delete(){
+        if($this->_cascadeDelete){
+            $this->db->query("delete from `" . $this->_toTable . "` where `" . $this->_field . "` ='" . $this->_model->id . "'");
+        }
+    }
+
     function save()
     {
         $originalData = $this->obj = $this->db->query("select * from `" . $this->_toTable . "` where `" . $this->_field . "` ='" . $this->_model->id . "'")->fetchAll();

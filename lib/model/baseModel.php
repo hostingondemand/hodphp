@@ -15,7 +15,7 @@ abstract class BaseModel extends Base
     {
         $vars = get_object_vars($this);
         foreach (get_object_vars($this) as $name => $value) {
-            if ($name != "_data" && $name != "_invalidated") {
+            if (substr($name,0,1)!="_") {
                 unset($this->$name);
                 $this->_data[$name] = $value;
             }
@@ -147,6 +147,14 @@ abstract class BaseModel extends Base
         $this->_invalidated = false;
     }
 
+
+    function _deleted()
+    {
+        foreach($this->_fieldHandlers as $handler){
+            $handler->delete();
+        }
+        $this->_invalidated = false;
+    }
 
     function __validator()
     {

@@ -182,6 +182,7 @@ class Db extends \core\Lib
 
     function deleteModel($model,$table){
        $this->execute("delete from `".$table."` where id='".$model->id."'");
+       $model->_deleted();
     }
 
     function updateModel($model, $table,$con)
