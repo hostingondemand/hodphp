@@ -8,7 +8,10 @@ class Update extends BaseModel
 {
     function Process($name){
         $this->event->noCache();
-        $this->service->module->update($name);
+        $result=$this->service->module->update($name);
+        if(is_object($result)) {
+            $this->message->send($name.":".$result->message, $result->type);
+        }
         return $this;
     }
 }

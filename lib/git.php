@@ -5,21 +5,39 @@ use core\Loader;
 class Git extends \core\Lib{
 
     function addRemote($folder, $name,$url){
-        $this->shell->execute("git remote add ".$name." ".$url,$folder);
+        $result = $this->shell->execute("git remote add ".$name." ".$url,$folder);
+        return $this->result($result);
     }
 
     function removeRemote($folder,$name){
-        $this->shell->execute("git remote remove ".$name,$folder);
+       $result= $this->shell->execute("git remote remove ".$name,$folder);
+        return $this->result($result);
     }
 
     function pull($folder,$branch="master",$remote="origin"){
-        $this->shell->execute("git pull ".$remote." ".$branch,$folder);
+        $result= $this->shell->execute("git pull ".$remote." ".$branch,$folder);
+        return $this->result($result);
     }
 
     function init($folder){
-        $this->shell->execute("git init",$folder);
+        $result = $this->shell->execute("git init",$folder);
+        return $this->result($result);
     }
 
+
+    function result($result){
+        $resultToLower=strtolower($result);
+        $error_level=$this->enum->messageType->info;
+        if(strpos($resultToLower,"warning")!==false){
+            $error_level=$this->enum->messageType->warning;
+        }elseif(strpos($resultToLower,"error")!==false){
+            $error_level=$this->enum->messageType->danger;
+        }
+        return (object)array(
+            "message"=> $result,
+            "type"=>$error_level
+        );
+    }
 
 
 }

@@ -124,33 +124,35 @@ class Module extends BaseService
 
     function install($name)
     {
+        $result=false;
         if (!isset($this->handled[$name]) || !$this->handled[$name]) {
             $this->event->raise("modulePreInstall", array("name" => $name));
 
             $module = $this->getModuleByName($name);
             if ($module) {
                 $installService = "method" . ucfirst($module["type"]);
-                $this->service->$installService->install($module["name"]);
+               $result= $this->service->$installService->install($module["name"]);
             }
             $this->handleRequirements($name);
 
             $this->event->raise("modulePostInstall", array("name" => $name));
 
             $this->handled[$name] = true;
-
-
         }
+
+        return $result;
     }
 
     function update($name)
     {
+        $result=false;
         if (!isset($this->handled[$name]) || !$this->handled[$name]) {
             $this->event->raise("modulePreUpdate", array("name" => $name));
 
             $module = $this->getModuleByName($name);
             if ($module) {
                 $installService = "method" . ucfirst($module["type"]);
-                $this->service->$installService->update($module["name"]);
+                $result=$this->service->$installService->update($module["name"]);
             }
 
             $this->handleRequirements($name);
@@ -159,6 +161,7 @@ class Module extends BaseService
 
             $this->handled[$name] = true;
         }
+        return $result;
     }
 
     function handleRequirements($name)

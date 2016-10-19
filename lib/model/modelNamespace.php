@@ -15,5 +15,6 @@ class ModelNamespace extends Base{
     {
        return   Loader::createInstance($name, $this->namespace);
     }
+    
 }
 ?>

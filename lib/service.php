@@ -14,5 +14,12 @@
         {
             return Loader::getSingleton($name, "service");
         }
+
+
+        public function __call($name,$arguments)
+        {
+            return Loader::createInstance($name, "service");
+        }
+
     }
 ?>

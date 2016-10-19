@@ -24,9 +24,9 @@ class Model extends Lib{
 
     public function fieldHandler($handler)
     {
-        return Loader::createInstance($handler, "lib\\model\\fieldHandler");
+        return Loader::createInstance($handler, "provider\\fieldHandler");
 
-    }
+   }
 
 
 }

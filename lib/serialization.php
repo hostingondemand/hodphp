@@ -39,6 +39,6 @@ class Serialization extends \core\Lib
 
 
     private function LoadSerializer($name){
-        return Loader::getSingleton($name,"lib\\serialization\\serializers");
+        return $this->provider->serializer->$name;
     }
 }
