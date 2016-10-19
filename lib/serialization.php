@@ -19,8 +19,8 @@ class Serialization extends \core\Lib
             }
             $type ="array";
         }
-        else if(is_object($data) && method_exists($data,"toArray")){
-            $type= get_class($data);
+        else if(is_object($data) && method_exists($data,"toArray") && method_exists($data,"getType")){
+            $type= $data->getType();
             $data=$data->toArray();
         }
         $eventData=array(
