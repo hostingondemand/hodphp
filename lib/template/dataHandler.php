@@ -12,27 +12,30 @@ class DataHandler extends Lib
         $this->__data[] = $data;
     }
 
-    function addOnKey($key,$data){
-        $this->__data[$key]=$data;
+    function addOnKey($key, $data)
+    {
+        $this->__data[$key] = $data;
     }
 
-    function removeOnKey($key){
+    function removeOnKey($key)
+    {
         unset($this->__data[$key]);
     }
 
-    function getData($key=0){
-        $data=$this->__data[$key];
+    function getData($key = 0)
+    {
+        $data = $this->__data[$key];
         //in case its nested by some internal construction
-        if(is_object($data)&&$data->getType()==$this->getType){
+        if (is_object($data) && $data->getType() == $this->getType) {
             return $data->getData();
         }
         return $data;
     }
 
-
-    function __get($key){
+    function __get($key)
+    {
         $result = "";
-        foreach($this->__data as $data){
+        foreach ($this->__data as $data) {
             try {
                 if (is_array($data)) {
                     $result = @$data[$key];
@@ -40,9 +43,10 @@ class DataHandler extends Lib
                 if (is_object($data)) {
                     $result = @$data->$key;
                 }
-            }catch(\Exception $ex){}
+            } catch (\Exception $ex) {
+            }
 
-            if($result) {
+            if ($result) {
 
                 if (is_object($result) || is_array($result)) {
                     return \core\core()->template->dataHandler($result);
@@ -54,31 +58,31 @@ class DataHandler extends Lib
         return "";
     }
 
-
-    function set($key,$val=""){
-        if(is_array($key)){
-            foreach($key as $k=>$v){
-                $this->__set($k,$v);
+    function set($key, $val = "")
+    {
+        if (is_array($key)) {
+            foreach ($key as $k => $v) {
+                $this->__set($k, $v);
             }
-        }else {
-         $this->__set($key,$val);
+        } else {
+            $this->__set($key, $val);
         }
         return $this;
     }
-    function __set($key,$val){
-        if(is_array($key)){
-            foreach($key as $k=>$v){
-                $this->__set($k,$v);
+
+    function __set($key, $val)
+    {
+        if (is_array($key)) {
+            foreach ($key as $k => $v) {
+                $this->__set($k, $v);
             }
-        }else {
+        } else {
             if (!isset($this->__data["tpl"])) {
                 $this->__data["tpl"] = array();
             }
             $this->__data["tpl"][$key] = $val;
         }
     }
-
-
 }
 
 ?>
