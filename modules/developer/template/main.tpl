@@ -11,6 +11,10 @@
     <a href="{{url("","install","update")}}">{{language("menu.update")}}</a>
 </div>
 <hr />
+{{foreach(getMessages(),message)}}
+{{message["type"]}}:{{message["message"]}} <br />
+{{/foreach}}
+<hr />
 
 {{content}}
 </body>

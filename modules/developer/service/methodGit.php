@@ -17,7 +17,7 @@ class MethodGit extends BaseModel
             $this->git->pull($folder,"master","upstream");
         }
         $this->git->addRemote($folder,"origin", $module["source"]);
-        $this->git->pull($folder, "master","origin");
+        return $this->git->pull($folder, "master","origin");
     }
 
 
@@ -33,7 +33,7 @@ class MethodGit extends BaseModel
         if(@$module["source"]){
             $this->git->removeRemote($folder,"origin");
             $this->git->addRemote($folder,"origin", $module["source"]);
-            $this->git->pull($folder, "master","origin");
+            return $this->git->pull($folder, "master","origin");
         }
 
     }

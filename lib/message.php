@@ -9,6 +9,9 @@ class Message extends Lib
     function send($message, $type = "warning")
     {
         $messages = $this->getMessages();
+        if(is_object($type)){
+            $type=$type->name;
+        }
         if (!$messages) {
             $messages = array();
         }

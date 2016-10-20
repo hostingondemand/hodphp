@@ -17,5 +17,9 @@ class ProviderNamespace extends Lib{
     {
        return   Loader::getSingleton($name, "provider/".$this->namespace);
     }
+
+    public function __call($name, $arguments){
+        return   Loader::createInstance($name, "provider/".$this->namespace);
+    }
 }
 ?>

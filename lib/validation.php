@@ -12,7 +12,7 @@ class Validation extends \core\Lib{
 
 
     function validator($name){
-       return Loader::createInstance($name,"validator");
+       return $this->provider->validator->$name();
     }
 
 

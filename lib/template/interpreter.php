@@ -129,7 +129,7 @@ class Interpreter extends Lib
         }else {
 
             //load the function class
-            $function = Loader::getSingleton($expression["function"], "lib\\template\\functions", "func");
+            $function = Loader::getSingleton($expression["function"], "provider\\templateFunction", "func");
 
             //call the function
             return $function->call($parameters, $data, $expression["content"], $expression["parameters"]);
