@@ -437,7 +437,7 @@ class ExpressionParser extends Lib
                 }
             }
         }else{
-            return Loader::getSingleton($exp[0], "lib\\template\\functions", "func");
+            return Loader::getSingleton($exp[0], "provider\\templateFunction", "func");
         }
 
     }
