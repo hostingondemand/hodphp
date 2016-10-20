@@ -89,7 +89,7 @@
                 $result=   $this->instance->__debugInfo();
             }
             elseif(method_exists($this->instance,"toArray")){
-                $result=$this->instance->toArray();
+                $result=$this->instance->toArray($active);
             }else{
                 $result=json_decode(json_encode($this->instance),true);
             }

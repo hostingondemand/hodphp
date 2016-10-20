@@ -67,7 +67,8 @@ class DbToMany extends BaseFieldHandler
                     $where="`" . $this->_field . "` ='" . $this->_model->id . "'";
                 }
 
-                $this->obj = $this->db->query("select * from `" . $this->_toTable . "` where ".$where)->fetchAllModel($this->_toModel, $this->_toModelNamespace);
+                $query = $this->db->query("select * from `" . $this->_toTable . "` where ".$where);
+                $this->obj=$query->fetchAllModel($this->_toModel, $this->_toModelNamespace);
 
             }
             $this->loaded = true;
