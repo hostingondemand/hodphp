@@ -26,7 +26,7 @@ class DataHandler extends Lib
     {
         $data = $this->__data[$key];
         //in case its nested by some internal construction
-        if (is_object($data) && $data->getType() == $this->getType) {
+        if (is_object($data) && $data->getType() == $this->getType()) {
             return $data->getData();
         }
         return $data;

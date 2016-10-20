@@ -8,7 +8,8 @@ class FuncFordatasource extends \lib\template\AbstractFunction
     function call($parameters, $data, $content = "", $unparsed = Array(),$module=false)
     {
 
-        $datasource=$parameters[0];
+        $datasource=$parameters[0]->getData();
+
         $dataSelected=isset($parameters[1])?$parameters[1]:"";
         $dataSelected=$this->toSelectedMap($dataSelected,$datasource["value"]);
 
@@ -22,9 +23,9 @@ class FuncFordatasource extends \lib\template\AbstractFunction
                 if(is_object($val)){
                     $val=$val->toArray();
                 }
-                $data["_value"]=$val[$datasource["value"]];
-                $data["_text"]=$val[$datasource["text"]];
-                $data["_selected"]=isset($dataSelected[$val[$datasource["value"]]]) && $dataSelected[$val[$datasource["value"]]];
+                $data->_value=$val[$datasource["value"]];
+                $data->_text=$val[$datasource["text"]];
+                $data->_selected=isset($dataSelected[$val[$datasource["value"]]]) && $dataSelected[$val[$datasource["value"]]];
                 $result .= $this->interpreter->interpret($content, $this->template->dataHandler($data));
             }
 
