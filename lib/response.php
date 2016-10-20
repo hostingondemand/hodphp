@@ -26,13 +26,10 @@
             if($this->partialMode){
                 return $this->renderPartial($data,$path);
             }
-            if(is_object($data)){
-                $data=$data->toArray();
-            }
-            if(!is_array($data)){
-                $path=$data;
-                $data=Array();
-            }
+                if(!is_array($data) && !is_object($data)){
+                    $path=$data;
+                    $data=Array();
+                }
 
             if(!$path){
                 $path=\core\Loader::$controller."/".(\core\Loader::$action);
@@ -48,15 +45,12 @@
         }
 
          function renderPartial($data=Array(),$path=""){
-             if(is_object($data)){
-                 $data=$data->toArray();
+             if(!is_array($data) && !is_object($data)){
+                 $path=$data;
+                 $data=Array();
              }
 
-            if(!is_array($data)){
-                $path=$data;
-            }
-
-            if(!$path){
+             if(!$path){
                 $path=\core\Loader::$controller."/".\core\Loader::$action;
             }
 

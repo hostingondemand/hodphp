@@ -34,4 +34,14 @@ namespace core;
         }
     }
 
+    //some classes use magic get.. to avoid complicated code the core is always available through core()
+    //the reason lib is used and not base, is to avoid unnecessary event raising..
+    function core(){
+        static $base;
+        if(!@$base){
+            $base=Loader::createInstance("lib","core");
+        }
+        return $base;
+    }
+
 ?>

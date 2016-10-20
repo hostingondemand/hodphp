@@ -25,7 +25,7 @@ class FuncFordatasource extends \lib\template\AbstractFunction
                 $data["_value"]=$val[$datasource["value"]];
                 $data["_text"]=$val[$datasource["text"]];
                 $data["_selected"]=isset($dataSelected[$val[$datasource["value"]]]) && $dataSelected[$val[$datasource["value"]]];
-                $result .= $this->interpreter->interpret($content, $data);
+                $result .= $this->interpreter->interpret($content, $this->template->dataHandler($data));
             }
 
         }
