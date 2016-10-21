@@ -6,6 +6,7 @@ class Document
 
     var $scripts=array();
     var $stylesheets=array();
+    var $vars=array();
 
 
     function addScript($script,$priority=0){
@@ -19,6 +20,7 @@ class Document
     function getScripts(){
         $result=array();
         krsort($this->scripts);
+        reset($this->scripts);
         foreach($this->scripts as $scripts){
             $result=array_merge($result,$scripts);
         }
@@ -34,8 +36,18 @@ class Document
         return $result;
     }
 
+    function addVar($key,$value){
+        $this->vars[$key]=$value;
+    }
 
+    function  getVars()
+    {
+        $result=array_map(function($var){
+            return json_encode($var,JSON_PRETTY_PRINT);
+        },$this->vars);
 
+        return $result;
+    }
 }
 
 ?>
