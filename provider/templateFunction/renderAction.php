@@ -17,7 +17,7 @@ class FuncRenderAction extends \lib\template\AbstractFunction
                     $p0 = $parameters[0]->getData();
                 }
 
-                if(is_array($p0)){
+                if(isset($p0)&&is_array($p0)){
                     $parameters=$p0;
                 }
 

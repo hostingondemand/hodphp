@@ -26,12 +26,14 @@ class Annotation extends \core\Lib
     function getAnnotationsForMethod($class, $method,$prefix="")
     {
 
-        $r = new \ReflectionMethod($class, $method);
-        $doc = $r->getDocComment();
-        preg_match_all('#@'.$prefix.'(.*?)\n#s', $doc, $annotations);
-        if (isset($annotations[1])) {
-            return array_merge($this->getAnnotationsForClass($class), $annotations[1]);
-        }
+        try {
+            $r = new \ReflectionMethod($class, $method);
+            $doc = $r->getDocComment();
+            preg_match_all('#@' . $prefix . '(.*?)\n#s', $doc, $annotations);
+            if (isset($annotations[1])) {
+                return array_merge($this->getAnnotationsForClass($class), $annotations[1]);
+            }
+        }catch(\Exception $ex){}
         return array();
     }
 
@@ -41,13 +43,14 @@ class Annotation extends \core\Lib
 
     function getAnnotationsForField($class, $field,$prefix="")
     {
-
+        try {
         $r = new \ReflectionProperty($class, $field);
         $doc = $r->getDocComment();
-        preg_match_all('#@'.$prefix.'(.*?)\n#s', $doc, $annotations);
+        preg_match_all('#@' . $prefix . '(.*?)\n#s', $doc, $annotations);
         if (isset($annotations[1])) {
             return array_merge($this->getAnnotationsForClass($class), $annotations[1]);
         }
+        }catch(\Exception $ex){}
         return array();
     }
 
