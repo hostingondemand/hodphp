@@ -8,19 +8,23 @@ class FuncForeach extends \lib\template\AbstractFunction
     function call($parameters, $data, $content = "", $unparsed = Array(),$module=false)
     {
         $result = "";
+        $arr=false;
+        if(isset($parameters[0]) && is_object($parameters[0])) {
+            $arr = $parameters[0]->getData();
+        }
 
         //first check if the given variable is an array in the first place
-        if (is_array($parameters[0])) {
+        if (is_array($arr)) {
 
             //loop through the items
-            foreach ($parameters[0] as $key => $val) {
+            foreach ($arr as $key => $val) {
 
                 //set the variable names
                 if (isset($unparsed[1])) {
-                    $data[$unparsed[1]["parameters"][0]] = $val;
+                    $data->{$unparsed[1]["parameters"][0]} = $val;
                 }
                 if (isset($unparsed[2])) {
-                    $data[$unparsed[2]["parameters"][0]] = $key;
+                    $data->{$unparsed[2]["parameters"][0]} = $key;
                 }
 
                 //and interpret the content of the loop

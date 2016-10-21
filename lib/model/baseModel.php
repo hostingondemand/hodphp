@@ -15,7 +15,7 @@ abstract class BaseModel extends Base
     {
         $vars = get_object_vars($this);
         foreach (get_object_vars($this) as $name => $value) {
-            if (substr($name,0,1)!="_") {
+            if (substr($name, 0, 1) != "_") {
                 unset($this->$name);
                 $this->_data[$name] = $value;
             }
@@ -24,14 +24,15 @@ abstract class BaseModel extends Base
         $this->_validationResult = $this->validation->validator("model")->validate($this);
     }
 
-    function setupFieldHandlers(){
-        $this->_fieldHandlers=$this->__fieldHandlers();
-        if(is_array($this->_fieldHandlers)) {
+    function setupFieldHandlers()
+    {
+        $this->_fieldHandlers = $this->__fieldHandlers();
+        if (is_array($this->_fieldHandlers)) {
             foreach ($this->_fieldHandlers as $handler) {
                 $handler->init($this);
             }
-        }else{
-            $this->_fieldHandlers=array();
+        } else {
+            $this->_fieldHandlers = array();
         }
     }
 
@@ -41,12 +42,12 @@ abstract class BaseModel extends Base
 
         $backtrace = debug_backtrace();
         $class = get_class($this);
-        if ($backtrace[1]["class"] != $class && $backtrace[1]["function"] != "get" . ucfirst($name) && method_exists($this, "get" . ucfirst($name))) {
+        if (!($backtrace[1]["class"] == $class && $backtrace[1]["function"] == "get" . ucfirst($name)) && method_exists($this, "get" . ucfirst($name))) {
             $funcName = "get" . ucfirst($name);
             return $this->$funcName();
 
-        }elseif(isset($this->_fieldHandlers[$name])){
-            return $this->_fieldHandlers[$name]->get(isset($this->_data[$name])?$this->_data[$name]:false);
+        } elseif (isset($this->_fieldHandlers[$name])) {
+            return $this->_fieldHandlers[$name]->get(isset($this->_data[$name]) ? $this->_data[$name] : false);
         } elseif (isset($this->_data[$name])) {
             return $this->_data[$name];
         } else {
@@ -63,7 +64,7 @@ abstract class BaseModel extends Base
         if ($backtrace[1]["class"] != $class && method_exists($this, "set" . ucfirst($name))) {
             $funcName = "set" . ucfirst($name);
             $this->$funcName($value);
-        }elseif(isset($this->_fieldHandlers[$name])){
+        } elseif (isset($this->_fieldHandlers[$name])) {
             $this->_fieldHandlers[$name]->set($value);
         } else {
             $this->_data[$name] = $value;
@@ -80,7 +81,7 @@ abstract class BaseModel extends Base
 
     function fromArray($data)
     {
-        if(is_array($data)) {
+        if (is_array($data)) {
             foreach ($data as $key => $val) {
                 if ($val !== null) {
                     $this->__set($key, $val);
@@ -93,7 +94,7 @@ abstract class BaseModel extends Base
     function fromRequest()
     {
         $result = $this->fromArray($this->request->getData(true));
-        if(is_array($this->request->getData(true))) {
+        if (is_array($this->request->getData(true))) {
             $validator = $this->__validator();
             $validationResult = $validator->validate($this);
             $result->_validationResult = $validationResult->toArray();
@@ -108,9 +109,9 @@ abstract class BaseModel extends Base
     {
         $result = array();
         foreach ($this->_data as $key => $val) {
-            if(is_array($this->_data[$key])){
-                foreach($this->_data[$key] as $akey=>$aval){
-                    if(substr($akey,0,1)!="_") {
+            if (is_array($this->_data[$key])) {
+                foreach ($this->_data[$key] as $akey => $aval) {
+                    if (substr($akey, 0, 1) != "_") {
                         if (is_object($this->_data[$key][$akey]) && method_exists($this->_data[$key][$akey], "toArray")) {
                             $result[$key][$akey] = $this->_data[$key][$akey]->toArray();
                         } else {
@@ -118,13 +119,12 @@ abstract class BaseModel extends Base
                         }
                     }
                 }
-            }
-            elseif (is_object($this->_data[$key]) && method_exists($this->_data[$key], "toArray")) {
-                if(substr($key,0,1)!="_") {
+            } elseif (is_object($this->_data[$key]) && method_exists($this->_data[$key], "toArray")) {
+                if (substr($key, 0, 1) != "_") {
                     $result[$key] = $this->_data[$key]->toArray();
                 }
             } else {
-                if(substr($key,0,1)!="_") {
+                if (substr($key, 0, 1) != "_") {
                     $result[$key] = $this->_data[$key];
                 }
             }
@@ -141,7 +141,7 @@ abstract class BaseModel extends Base
 
     function _saved()
     {
-        foreach($this->_fieldHandlers as $handler){
+        foreach ($this->_fieldHandlers as $handler) {
             $handler->save();
         }
         $this->_invalidated = false;
@@ -150,7 +150,7 @@ abstract class BaseModel extends Base
 
     function _deleted()
     {
-        foreach($this->_fieldHandlers as $handler){
+        foreach ($this->_fieldHandlers as $handler) {
             $handler->delete();
         }
         $this->_invalidated = false;
@@ -161,7 +161,8 @@ abstract class BaseModel extends Base
         return $this->_validationResult = $this->validation->validator("model");
     }
 
-    function __fieldHandlers(){
+    function __fieldHandlers()
+    {
         return array();
     }
 
@@ -169,8 +170,6 @@ abstract class BaseModel extends Base
     {
         return $this->_validationResult["success"];
     }
-
-
 
 
 }

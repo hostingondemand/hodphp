@@ -7,7 +7,7 @@ class FuncGetMessages extends \lib\template\AbstractFunction
 {
     function call($parameters, $data, $content = "", $unparsed = Array(),$module=false)
     {
-        return $this->message->popMessages();
+        return $this->template->dataHandler($this->message->popMessages());
     }
 }
 

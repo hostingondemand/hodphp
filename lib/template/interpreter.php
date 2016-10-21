@@ -140,9 +140,7 @@ class Interpreter extends Lib
     //get a value
     function getValue($key, $data)
     {
-        if (isset($data[$key])) {
-            return $data[$key];
-        }
+        return $data->$key;
     }
 
     //handle an array
@@ -151,10 +149,10 @@ class Interpreter extends Lib
         //just loop through every dimension of the array.. ad take the right key from this dimension.
         foreach ($keys as $key) {
             if ($key == 0) {
-                $result = $data[$keys[0]];
+                $result = $data->{$keys[0]};
             } else {
                 $keyname = $this->interpretElement($key, $data);
-                $result = $result[$keyname];
+                $result = @$result->$keyname;
             }
         }
 

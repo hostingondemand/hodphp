@@ -10,7 +10,7 @@ class FuncInputFor extends \lib\template\AbstractFunction
         $input = array(
             "name" => $parameters[0]);
 
-        if(isset($data["validationResult"]["errors"][$parameters[0]])){
+        if(isset($data->validationResult->errors->{$parameters[0]})){
             $input["invalid"]= true;
         }else{
             $input["invalid"]=false;
@@ -21,8 +21,8 @@ class FuncInputFor extends \lib\template\AbstractFunction
             $input["type"]="string";
         }
 
-        if(isset($data[$parameters[0]])){
-            $input["value"]=$data[$parameters[0]];
+        if(isset($data->{$parameters[0]})){
+            $input["value"]=$data->{$parameters[0]};
         }else{
             $input["value"]="";
         }
