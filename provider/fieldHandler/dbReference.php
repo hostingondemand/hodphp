@@ -10,7 +10,10 @@ class DbReference extends BaseFieldHandler
     private $obj;
     private $loaded;
     private $_toModel;
+    private $_toModelNamespace;
     private $_fromTable;
+    private $_cascadeDelete;
+    private $_cascadeSave;
 
     function field($field){
         $this->_field=$field;
@@ -38,14 +41,32 @@ class DbReference extends BaseFieldHandler
         return $this;
     }
 
+    function cascadeAll(){
+        $this->_cascadeDelete=true;
+        $this->_cascadeSave=true;
+        return $this;
+    }
+
 
     function save(){
         if($this->_updateReference){
+
             $this->db->query(
                 "update `".$this->_fromTable."` set `".$this->_field."`='".$this->obj->id."' where id='".$this->_model->id."'"
             );
         }
+
+        if($this->_cascadeSave){
+            $this->db->saveModel($this->get(false),$this->_toTable);
+            $this->db->query(
+                "update `".$this->_fromTable."` set `".$this->_field."`='".$this->obj->id."' where id='".$this->_model->id."'"
+            );
+        }
+
     }
+
+
+
     function get($inModel){
         if(!$this->loaded ){
             if($this->_field){
@@ -61,7 +82,20 @@ class DbReference extends BaseFieldHandler
     }
 
     function set($obj){
-        $this->obj=$obj;
+        if(is_array($obj)) {
+            $this->obj=$this->get(false);
+            if(!$this->obj) {
+                if ($this->_toModelNamespace) {
+                    $this->obj = $this->model->{$this->_toModelNamespace}->{$this->_toModel};
+                } else {
+                    $this->obj = $this->model->{$this->_toModel};
+                }
+            }
+            $this->obj->fromArray($obj);
+        }
+        if(is_object($obj)) {
+            $this->obj = $obj;
+        }
         $this->loaded=true;
     }
 

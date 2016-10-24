@@ -21,7 +21,7 @@ class FuncInputFor extends \lib\template\AbstractFunction
             $input["type"]="string";
         }
 
-        if(isset($data->{$parameters[0]})){
+        if(@$data->{$parameters[0]}){
             $input["value"]=$data->{$parameters[0]};
         }else{
             $input["value"]="";

@@ -114,7 +114,6 @@ class DbToMany extends BaseFieldHandler
 
         $idField=$this->_field;
         foreach ($data as $val) {
-
             if ($this->_cascadeSave) {
                 if(!$val->$idField){
                     $val->$idField=$this->_model->id;
