@@ -15,7 +15,8 @@ class model extends BaseValidator{
         foreach($this->conditions as $condition){
             $validator= $condition->validator;
             if(isset($data[$condition->field])){
-                $fieldData=$data[$condition->field];
+                $fieldData=
+                    (object)array("model"=>$data,"data"=>$data[$condition->field],"options"=>$condition->options);
             }else{
                 $fieldData="";
             }
@@ -30,8 +31,8 @@ class model extends BaseValidator{
         return $this->result($success,$errors);
      }
 
-     function add($field,$validator){
-        $this->conditions[]=(object)array("validator"=>$this->validation->validator($validator),"field"=>$field);
+     function add($field,$validator,$options=array()){
+        $this->conditions[]=(object)array("validator"=>$this->validation->validator($validator),"field"=>$field,"options"=>$options);
          return $this;
      }
 }

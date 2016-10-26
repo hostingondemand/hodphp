@@ -171,6 +171,9 @@ abstract class BaseModel extends Base
         return $this->_validationResult["success"];
     }
 
+    function getValidationResult(){
+        return $this->_validationResult;
+    }
 
 }
 
