@@ -49,18 +49,19 @@ class DbReference extends BaseFieldHandler
 
 
     function save(){
-        if($this->_updateReference){
+        if($this->loaded) {
+            if ($this->_updateReference) {
+                $this->db->query(
+                    "update `" . $this->_fromTable . "` set `" . $this->_field . "`='" . $this->obj->id . "' where id='" . $this->_model->id . "'"
+                );
+            }
 
-            $this->db->query(
-                "update `".$this->_fromTable."` set `".$this->_field."`='".$this->obj->id."' where id='".$this->_model->id."'"
-            );
-        }
-
-        if($this->_cascadeSave){
-            $this->db->saveModel($this->get(false),$this->_toTable);
-            $this->db->query(
-                "update `".$this->_fromTable."` set `".$this->_field."`='".$this->obj->id."' where id='".$this->_model->id."'"
-            );
+            if ($this->_cascadeSave) {
+                $this->db->saveModel($this->get(false), $this->_toTable);
+                $this->db->query(
+                    "update `" . $this->_fromTable . "` set `" . $this->_field . "`='" . $this->obj->id . "' where id='" . $this->_model->id . "'"
+                );
+            }
         }
 
     }
