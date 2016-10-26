@@ -8,7 +8,7 @@ class Path extends \core\Lib{
     }
 
     function getHttp(){
-       return $this->config->get("path.http","server");
+       return $this->config->get("http.path","server");
     }
 
 }
