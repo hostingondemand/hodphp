@@ -6,8 +6,10 @@ use core\Base;
 abstract class BaseFieldHandler extends Base
 {
     var $_model;
-    function init($model){
+    var $_inModelName;
+    function init($model,$fieldName){
         $this->_model=$model;
+        $this->_inModelName=$fieldName;
     }
     function get($inModel){}
 

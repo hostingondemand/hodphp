@@ -52,5 +52,11 @@ abstract class BaseEnum extends \core\Lib
         }
         return "";
     }
+
+    function byValue($value){
+        $className=get_class($this);
+        $instance= new $className($value);
+        return $instance;
+    }
 }
 

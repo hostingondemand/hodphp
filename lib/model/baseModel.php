@@ -28,8 +28,8 @@ abstract class BaseModel extends Base
     {
         $this->_fieldHandlers = $this->__fieldHandlers();
         if (is_array($this->_fieldHandlers)) {
-            foreach ($this->_fieldHandlers as $handler) {
-                $handler->init($this);
+            foreach ($this->_fieldHandlers as $fieldName=>$handler) {
+                $handler->init($this,$fieldName);
             }
         } else {
             $this->_fieldHandlers = array();
@@ -173,6 +173,10 @@ abstract class BaseModel extends Base
 
     function getValidationResult(){
         return $this->_validationResult;
+    }
+
+    function setInData($key,$value){
+        $this->_data[$key]=$value;
     }
 
 }
