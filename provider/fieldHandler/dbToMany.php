@@ -92,11 +92,9 @@ class DbToMany extends BaseFieldHandler
 
     function save()
     {
-        $originalData = $this->obj = $this->db->query("select * from `" . $this->_toTable . "` where `" . $this->_field . "` ='" . $this->_model->id . "'")->fetchAll();
+        $originalData = $this->db->query("select * from `" . $this->_toTable . "` where `" . $this->_field . "` ='" . $this->_model->id . "'")->fetchAll();
         $originalData = $this->toIdMap($originalData);
-        $data = $this->get(true);
-
-
+        $data = $this->get(false);
 
         if($this->_saveReset){
 

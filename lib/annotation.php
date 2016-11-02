@@ -48,10 +48,10 @@ class Annotation extends \core\Lib
         $doc = $r->getDocComment();
         preg_match_all('#@' . $prefix . '(.*?)\n#s', $doc, $annotations);
         if (isset($annotations[1])) {
-            return array_merge($this->getAnnotationsForClass($class), $annotations[1]);
+            return array_merge($this->getAnnotationsForClass($class,$prefix), $annotations[1]);
         }
         }catch(\Exception $ex){}
-        return array();
+        return $this->getAnnotationsForClass($class,$prefix);
     }
 
     function fieldHasAnnotations($class, $field,$prefix=""){
