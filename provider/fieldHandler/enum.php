@@ -30,7 +30,7 @@ class Enum extends BaseFieldHandler
         }else{
             $this->_data = $this->enum->{$this->_name}->{$value};
         }
-        $this->_model->setInData($this->_inModelName,$this->_data->value);
+        $this->_model->_setInData($this->_inModelName,$this->_data->value);
     }
 
 }

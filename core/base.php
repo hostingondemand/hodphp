@@ -39,7 +39,7 @@ class Base
     }
 
 
-    public function getType(){
+    public function _getType(){
         return get_class($this);
     }
 

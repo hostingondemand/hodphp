@@ -175,8 +175,19 @@ abstract class BaseModel extends Base
         return $this->_validationResult;
     }
 
-    function setInData($key,$value){
+    function _setInData($key,$value){
         $this->_data[$key]=$value;
+    }
+
+    function _getFromData($key){
+        if(isset($this->_data[$key])){
+            return $this->_data[$key];
+        }
+        return false;
+    }
+
+    function _getData(){
+        return $this->_data;
     }
 
 }

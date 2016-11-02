@@ -21,7 +21,7 @@ class Serialization extends \core\Lib
             foreach ($data as $key => $val) {
                 if (is_object($data[$key]) && method_exists($data[$key], "toArray")) {
                     $original[$key] = $data[$key];
-                    $type[$key] = $data[$key]->getType();
+                    $type[$key] = $data[$key]->_getType();
                     $data[$key] = $data[$key]->toArray();
                 } else {
                     if (is_array($val)) {
@@ -33,8 +33,8 @@ class Serialization extends \core\Lib
                 }
 
             }
-        } else if (is_object($data) && method_exists($data, "toArray") && method_exists($data, "getType")) {
-            $type = $data->getType();
+        } else if (is_object($data) && method_exists($data, "toArray") && method_exists($data, "_getType")) {
+            $type = $data->_getType();
             $data = $data->toArray();
         } else {
             $type = "value";
