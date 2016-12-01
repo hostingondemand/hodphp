@@ -83,6 +83,7 @@ class Annotation extends \core\Lib
             $result["parameters"]=$parameters;
 
 
+
         }else{
             $result["parameters"]=array();
         }
@@ -103,6 +104,13 @@ class Annotation extends \core\Lib
             if ($instance) {
                 if (count($exp) > 1) {
                     $parameters = explode(",", $exp[1]);
+                    foreach($parameters as $key=>$val) {
+                        $exp = explode("=>", $val);
+                        if (count($exp) > 1) {
+                            unset($parameters[$key]);
+                            $parameters[$exp[0]] = $exp[1];
+                        }
+                    }
                 } else {
                     $parameters = array();
                 }
