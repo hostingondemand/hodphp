@@ -13,7 +13,6 @@ class Patch extends BaseService
     {
         if (!$this->setupDone) {
             Loader::loadClass("basePatch","lib/patch");
-            Loader::loadClass("basePatchlogProvider","lib/patch");
             $this->provider->patchlog->default->setup();
             $this->setupDone = true;
         }

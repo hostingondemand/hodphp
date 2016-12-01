@@ -1,5 +1,5 @@
 <?php
-namespace lib\patch;
+namespace lib\provider\baseprovider;
 use core\Base;
 
 abstract class BasePatchlogProvider extends Base

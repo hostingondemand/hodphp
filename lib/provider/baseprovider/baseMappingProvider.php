@@ -1,5 +1,5 @@
 <?php
-namespace lib\db;
+namespace lib\provider\baseprovider;
 
 use core\Lib;
 

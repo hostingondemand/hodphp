@@ -1,6 +1,6 @@
 <?php
 namespace provider\mapping;
-use lib\db\BaseMappingProvider;
+use lib\provider\baseprovider\BaseMappingProvider;
 
 class Config extends BaseMappingProvider{
 

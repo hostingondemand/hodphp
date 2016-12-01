@@ -37,7 +37,6 @@ class Db extends \core\Lib
     function __construct()
     {
         $this->connectConfigName("default");
-        Loader::loadClass("baseMappingProvider","lib/db");
     }
 
     function execute($queryString, $connection = "default", $params)

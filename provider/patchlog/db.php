@@ -1,6 +1,7 @@
 <?php
 namespace provider\patchlog;
-   use lib\patch\BasePatchlogProvider;
+
+   use lib\provider\baseprovider\BasePatchlogProvider;
 
    class Db extends BasePatchlogProvider{
        function setup()

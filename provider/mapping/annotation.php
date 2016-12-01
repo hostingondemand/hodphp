@@ -2,7 +2,7 @@
 namespace provider\mapping;
 
 use core\Loader;
-use lib\db\BaseMappingProvider;
+use lib\provider\baseprovider\BaseMappingProvider;
 
 class Annotation extends BaseMappingProvider
 {
