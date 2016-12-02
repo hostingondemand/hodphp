@@ -2,11 +2,6 @@
 namespace lib;
 
 class Session extends \core\Lib{
-    function __construct()
-    {
-        session_start();
-    }
-
     function __get($name)
     {
         if (isset($_SESSION[$name]) ){
