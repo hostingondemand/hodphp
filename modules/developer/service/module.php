@@ -22,12 +22,14 @@ class Module extends BaseService
     {
         $result = array();
         $required = $this->config->get("requirements.modules", "components");
-        foreach ($required as $key => $val) {
-            if (!is_array($val)) {
-                $val = $this->getModuleByName($val, true);
-            }
-            if (!$val["installed"]) {
-                $result[$val["name"]] = $val;
+        if(is_array($required)) {
+            foreach ($required as $key => $val) {
+                if (!is_array($val)) {
+                    $val = $this->getModuleByName($val, true);
+                }
+                if (!$val["installed"]) {
+                    $result[$val["name"]] = $val;
+                }
             }
         }
         return $result;
@@ -54,13 +56,14 @@ class Module extends BaseService
 
     function getModuleByName($name, $repositoryOnly = false)
     {
-
         if (!$repositoryOnly) {
             $modules = $this->config->get("requirements.modules", "components");
-            foreach ($modules as $key => $val) {
-                if (isset($val["name"]) && $val["name"] == $name) {
-                    $module = $val;
-                    break;
+            if(is_array($modules)) {
+                foreach ($modules as $key => $val) {
+                    if (isset($val["name"]) && $val["name"] == $name) {
+                        $module = $val;
+                        break;
+                    }
                 }
             }
         }

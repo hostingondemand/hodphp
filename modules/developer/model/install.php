@@ -14,7 +14,7 @@ class Install extends BaseModel
 
     function initialize()
     {
-        $this->db_host = "localhost";
+        $this->dbHost = "localhost";
         return $this;
     }
 

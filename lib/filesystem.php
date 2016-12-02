@@ -83,7 +83,9 @@ class Filesystem extends \core\Lib
     //create a directory
     function mkDir($folder)
     {
-        return mkdir($this->calculatePath($folder), 0744, true);
+        if(!$this->exists($this->calculatePath($folder))) {
+            return mkdir($this->calculatePath($folder), 0744, true);
+        }
     }
 
     //create an array of all directories
