@@ -1,5 +1,5 @@
 <form action="{{url("","","install")}}" method="post">
-<h2>{{language("title.home")}}</h2>
+    <h2>{{language("title.home")}}</h2>
     <p><label>{{language("field.git")}}</label> {{inputFor("git","string")}}</p>
     <p><label>{{language("field.dbDb")}}</label> {{inputFor("dbDb","string")}}</p>
     <p><label>{{language("field.dbHost")}}</label> {{inputFor("dbHost","string")}}</p>

@@ -50,7 +50,11 @@ abstract class BaseModel extends Base
             return $this->_fieldHandlers[$name]->get(isset($this->_data[$name]) ? $this->_data[$name] : false);
         } elseif (isset($this->_data[$name])) {
             return $this->_data[$name];
-        } else {
+        }
+        else if(property_exists($class,$name)){
+            return null;
+        }
+        else {
             return parent::__get($name);
         }
 
