@@ -40,7 +40,7 @@ class Controller extends Base
         $viewAnnotation = $this->annotation->getAnnotationsForMethod($this->_getType(),$method, "masterView");
         foreach($annotations as $annotation){
             $annotation = $this->annotation->translate($annotation);
-            $this->response->masterView
+            $this->response->masterView=$annotation->parameters[0];
         }
 
     }
