@@ -21,7 +21,7 @@
         }
 
 
-        function renderView($data=Array(),$path=""){
+        function renderView($data=Array(),$path="",$master=""){
 
             if($this->partialMode){
                 return $this->renderPartial($data,$path);
@@ -36,12 +36,12 @@
             }
 
             $content=$this->template->parseFile($path,$data);
-            $this->write($this->template->parseFile("main",Array("content"=>$content)));
+            $this->write($this->template->parseFile((@$master?:"main"),Array("content"=>$content)));
         }
 
 
-        function renderContent($content){
-            $this->write($this->template->parseFile("main",Array("content"=>$content)));
+        function renderContent($content,$master=""){
+            $this->write($this->template->parseFile((@$master?:"main"),Array("content"=>$content)));
         }
 
          function renderPartial($data=Array(),$path=""){
