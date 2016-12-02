@@ -5,9 +5,9 @@ class Controller extends Base
 {
     /**noAspects*/
     function __initialize(){
-        $this->language->load(Loader::$controller);
         $this->language->load("global");
         $this->language->load("_global");
+        $this->language->load(Loader::$controller);
 
        $this->event->raise("controllerPreLoad",array("controller"=>$this));
         if(method_exists($this,"__onLoad")){
@@ -29,6 +29,18 @@ class Controller extends Base
     }
 
     function __preActionCall($method){
+
+        $inModuleAnnotation= $this->annotation->getAnnotationsForMethod($this->_getType(), $method,"inModule");
+        if(!empty($inModuleAnnotation)){
+            $annotation=$this->annotation->translate($inModuleAnnotation[0]);
+            Loader::goModule($annotation->parameters[0]);
+            $this->language->load(Loader::$controller);
+            Loader::goBackModule();
+        }else{
+            $this->language->load(Loader::$controller);
+        }
+
+
         $annotations = $this->annotation->getAnnotationsForMethod($this->_getType(),$method, "http");
         foreach($annotations as $annotation){
             $annotation = $this->annotation->translate($annotation);
