@@ -36,6 +36,13 @@ class Controller extends Base
                 throw new \Exception("This method requires ". $annotation->function);
             }
         }
+
+        $viewAnnotation = $this->annotation->getAnnotationsForMethod($this->_getType(),$method, "masterView");
+        foreach($annotations as $annotation){
+            $annotation = $this->annotation->translate($annotation);
+            $this->response->masterView
+        }
+
     }
 
 
