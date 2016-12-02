@@ -55,6 +55,9 @@ class Project extends BaseService
         $this->event->raise("projectPostUpdate",array());
     }
 
+    function removeCache(){
+        $this->cache->destroy();
+    }
 
 }
 

@@ -17,6 +17,44 @@ class DbToMany extends BaseFieldHandler
     private $_saveReset;
     private $_initArray;
 
+    function fromAnnotation($parameters,$type,$field)
+    {
+        $mapping=$this->provider->mapping->default;
+        if(isset($parameters["model"])){
+            $this->toTable($mapping->getTableForClass($parameters["model"]))
+                ->toModel($parameters["model"]);
+        }else if(isset($parameters["toTable"])){
+            $this->toModel($mapping->getModelForTable($parameters["toTable"]))
+                ->toTable($parameters["toTable"]);
+        }
+
+
+        if(isset($parameters["key"])){
+            $this->field($parameters["key"]);
+        }else{
+            $this->field($mapping->getTableForClass($type))."_id";
+        }
+
+        if(isset($parameters["saveReset"]) && $parameters["saveReset"]=="true"){
+            $this->saveReset();
+        }
+
+        if(isset($parameters["cascade"])){
+            if($parameters["cascade"]=="all"){
+                $this->cascadeAll();
+            }
+            if($parameters["cascade"]=="delete"){
+                $this->cascadeDelete();
+            }
+            if($parameters["cascade"]=="save"){
+                $this->cascadeSave();
+            }
+        }
+
+
+
+    }
+
     function field($field)
     {
         $this->_field = $field;
@@ -29,10 +67,21 @@ class DbToMany extends BaseFieldHandler
         return $this;
     }
 
-    function toModel($toTable, $namespace = false)
+    function toModel($model, $namespace = false)
     {
-        $this->_toModel = $toTable;
-        $this->_toModelNamespace = $namespace;
+        if(!$namespace){
+            $model=str_replace("/","\\",$model);
+            $exp=explode("\\",$model);
+            if(isset($exp[1])){
+                $this->_toModel=$exp[1];
+                $this->_toModelNamespace=$exp[0];
+            }else{
+                $this->_toModel=$exp[0];
+            }
+        }else {
+            $this->_toModel = $model;
+            $this->_toModelNamespace = $namespace;
+        }
         return $this;
     }
 
@@ -150,6 +199,16 @@ class DbToMany extends BaseFieldHandler
     {
         $this->_cascadeDelete = true;
         $this->_cascadeSave = true;
+        return $this;
+    }
+
+    function cascadeDelete(){
+        $this->_cascadeDelete = true;
+        return $this;
+    }
+
+    function cascadeSave(){
+        $this->_cascadeSave=true;
         return $this;
     }
 

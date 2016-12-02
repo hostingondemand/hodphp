@@ -11,28 +11,28 @@ class Loader
     static $classMaps = array();
     static $namespaceMaps = array();
 
-    static $setup=false;
+    static $setup = false;
 
     //load an action for a controller.
     static function loadAction($params)
     {
-        if(!self::$setup){
-            $setupInstance=new Setup();
+        if (!self::$setup) {
+            $setupInstance = new Setup();
             $setupInstance->setup();
-            self::$setup=true;
+            self::$setup = true;
         }
 
         $paramsFrom = 0;
         $oldController = self::$controller;
         $oldAction = self::$action;
-        $oldActionModule=self::$actionModule;
-        if (isset($params[$paramsFrom]) && (file_exists("modules/" . $params[$paramsFrom])||file_exists("project/modules/" . $params[$paramsFrom]))) {
-            self::goModule($params[$paramsFrom]) ;
-            self::$actionModule=$params[$paramsFrom];
+        $oldActionModule = self::$actionModule;
+        if (isset($params[$paramsFrom]) && (file_exists("modules/" . $params[$paramsFrom]) || file_exists("project/modules/" . $params[$paramsFrom]))) {
+            self::goModule($params[$paramsFrom]);
+            self::$actionModule = $params[$paramsFrom];
             $paramsFrom++;
-        }else{
-            self::goModule("") ;
-            self::$actionModule="";
+        } else {
+            self::goModule("");
+            self::$actionModule = "";
         }
 
         if (!isset($params[$paramsFrom])) {
@@ -74,17 +74,17 @@ class Loader
 
         if ($controller->__authorize()) {
             $controller->__initialize();
+            $controller->__preActionCall($method);
             call_user_func_array(Array($controller, $method), $params);
         } else {
             $controller->__onAuthorizationFail();
         }
 
 
-
-            self::goBackModule();
-        $info=array("module"=>self::$actionModule,
-            "controller"=>self::$controller,
-            "action"=>self::$action);
+        self::goBackModule();
+        $info = array("module" => self::$actionModule,
+            "controller" => self::$controller,
+            "action" => self::$action);
 
         self::$controller = $oldController;
         self::$action = $oldAction;
@@ -99,18 +99,18 @@ class Loader
     {
 
         if ($map = self::getClassmapFor($class, $namespace)) {
-            $path = __DIR__ . "/../modules/" . $map. "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            $path = __DIR__ . "/../modules/" . $map . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
             if (file_exists($path)) {
                 include_once($path);
-                return array("prefix"=>"\\modules\\" . $map . "\\","module"=>$map);
+                return array("prefix" => "\\modules\\" . $map . "\\", "module" => $map);
             }
         }
 
         if ($map = self::getNamespaceFor($namespace)) {
-            $path = __DIR__ . "/../modules/" . $map. "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            $path = __DIR__ . "/../modules/" . $map . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
             if (file_exists($path)) {
                 include_once($path);
-                return array("prefix"=>"\\modules\\" . $map . "\\","module"=>$map);
+                return array("prefix" => "\\modules\\" . $map . "\\", "module" => $map);
             }
         }
 
@@ -146,29 +146,38 @@ class Loader
     static function createInstance($class, $namespace = "", $classPrefix = "")
     {
 
-        $namespace = str_replace("/", "\\", $namespace);
-
-
-        if ($loadResult = self::loadClass($class, $namespace)) {
-            if(is_array($loadResult)){
-                $prefix=$loadResult["prefix"];
-                $module=$loadResult["module"];
-            }else{
-                $prefix=$loadResult;
-                $module=false;
-            }
-
-            $className=$class;
-            if(is_numeric(substr($className,0,1))){
-                $exp=explode(".",$className);
-                $className=$exp[1];
-            }
-            $fullclass = $prefix . $namespace . "\\" . ucfirst($classPrefix) . ucfirst($className);
-            return new Proxy($fullclass,$module);
+        $info=self::getInfo($class,$namespace,$classPrefix);
+        if($info){
+            return new Proxy($info->type, $info->module);
         }
 
         return false;
 
+    }
+
+    static function getInfo($class, $namespace = "", $classPrefix = "")
+    {
+        $namespace = str_replace("/", "\\", $namespace);
+
+
+        if ($loadResult = self::loadClass($class, $namespace)) {
+            if (is_array($loadResult)) {
+                $prefix = $loadResult["prefix"];
+                $module = $loadResult["module"];
+            } else {
+                $prefix = $loadResult;
+                $module = false;
+            }
+
+            $className = $class;
+            if (is_numeric(substr($className, 0, 1))) {
+                $exp = explode(".", $className);
+                $className = $exp[1];
+            }
+            $fullclass = $prefix . $namespace . "\\" . ucfirst($classPrefix) . ucfirst($className);
+            return (object)array("type" => $fullclass, "module" => $module);
+        }
+        return false;
     }
 
 
@@ -208,19 +217,23 @@ class Loader
         return false;
     }
 
-    static $moduleStack=array();
-    public static function goModule($name){
+    static $moduleStack = array();
 
-        self::$moduleStack[]=Loader::$module;
-        self::$module=$name;
+    public static function goModule($name)
+    {
+
+        self::$moduleStack[] = Loader::$module;
+        self::$module = $name;
     }
 
-    public static function goBackModule(){
-        self::$module= array_pop( self::$moduleStack);
+    public static function goBackModule()
+    {
+        self::$module = array_pop(self::$moduleStack);
     }
 
-    public static  function getCallerModule(){
-        return self::$moduleStack[count(self::$moduleStack)-1];
+    public static function getCallerModule()
+    {
+        return self::$moduleStack[count(self::$moduleStack) - 1];
     }
 
 }

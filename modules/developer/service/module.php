@@ -126,6 +126,7 @@ class Module extends BaseService
     {
         $result=false;
         if (!isset($this->handled[$name]) || !$this->handled[$name]) {
+
             $this->event->raise("modulePreInstall", array("name" => $name));
 
             $module = $this->getModuleByName($name);
@@ -134,7 +135,8 @@ class Module extends BaseService
                $result= $this->service->$installService->install($module["name"]);
             }
             $this->handleRequirements($name);
-
+            $this->service->patch->setup();
+            $this->service->patch->doPatch($name);
             $this->event->raise("modulePostInstall", array("name" => $name));
 
             $this->handled[$name] = true;
@@ -157,6 +159,8 @@ class Module extends BaseService
 
             $this->handleRequirements($name);
 
+            $this->service->patch->setup();
+            $this->service->patch->doPatch($name);
             $this->event->raise("modulePostUpdate", array("name" => $name));
 
             $this->handled[$name] = true;

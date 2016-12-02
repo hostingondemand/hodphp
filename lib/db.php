@@ -156,8 +156,11 @@ class Db extends \core\Lib
         return $this->connections[$con]->real_escape_string($string);
     }
 
-    function saveModel($model, $table,$ignoreParent=false,$con="default")
+    function saveModel($model, $table=false,$ignoreParent=false,$con="default")
     {
+        if(!$table){
+            $table=$this->provider->mapping->default->getTableForClass($model->_getType());
+        }
         if($this->parent && !$ignoreParent){
             $model->parent_id=$this->parent["id"];
             $model->parent_module=$this->parent["module"];
@@ -180,7 +183,10 @@ class Db extends \core\Lib
         return array("mode"=>$mode,"id"=>$id);
     }
 
-    function deleteModel($model,$table){
+    function deleteModel($model,$table=false){
+        if(!$table){
+            $table=$this->provider->mapping->default->getTableForClass($model->_getType());
+        }
        $this->execute("delete from `".$table."` where id='".$model->id."'");
        $model->_deleted();
     }
@@ -233,6 +239,12 @@ class Db extends \core\Lib
     function select($table,$alias=false){
         $select=Loader::createInstance("select","lib/db");
         $select->table($table,$alias);
+        return $select;
+    }
+
+    function selectModel($class,$namespace){
+        $select=Loader::createInstance("select","lib/db");
+        $select->byModel($class,$namespace);
         return $select;
     }
 

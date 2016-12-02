@@ -3,6 +3,8 @@ namespace lib;
 
 //a simple wrapper around the filesystem to be able to use files in the right directory
 use core\Loader;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 class Filesystem extends \core\Lib
 {
@@ -87,8 +89,9 @@ class Filesystem extends \core\Lib
     //create an array of all directories
     function getDirs($dir)
     {
-        if(!$this->exists($dir))
-        {return array();}
+        if (!$this->exists($dir)) {
+            return array();
+        }
 
         $dirs = array();
         if ($handle = opendir($this->calculatePath($dir))) {
@@ -106,8 +109,9 @@ class Filesystem extends \core\Lib
     //create an array of all files
     function getFiles($dir, $type = false)
     {
-        if(!$this->exists($dir))
-        {return array();}
+        if (!$this->exists($dir)) {
+            return array();
+        }
 
         $files = array();
         if ($handle = opendir($this->calculatePath($dir))) {
@@ -116,7 +120,7 @@ class Filesystem extends \core\Lib
                     $files[] = $entry;
                 }
             }
-            sort($files,SORT_NATURAL);
+            sort($files, SORT_NATURAL);
             closedir($handle);
         }
 
@@ -143,18 +147,63 @@ class Filesystem extends \core\Lib
 
     }
 
-    function writeArray($file,$data){
-        $serialized=  "<?php return ".var_export($data, true).";";
-        $this->clearWrite($file,$serialized);
+    function writeArray($file, $data)
+    {
+        $serialized = "<?php return " . var_export($data, true) . ";";
+        $this->clearWrite($file, $serialized);
     }
 
-    function getModified($file){
+    function getModified($file)
+    {
         $path = $this->findRightPath($file);
-        if($path) {
+        if ($path) {
             return filemtime($path);
         }
         return -1;
+    }
 
+    function rm($file)
+    {
+        $file = $this->calculatePath($file);
+        if ($this->exists($file)) {
+            if (is_dir($file)) {
+                $dir = $file;
+                $it = new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS);
+                $files = new RecursiveIteratorIterator($it,
+                    RecursiveIteratorIterator::CHILD_FIRST);
+                foreach ($files as $currentFile) {
+                    if ($currentFile->isDir()) {
+                        rmdir($currentFile->getRealPath());
+                    } else {
+                        unlink($currentFile->getRealPath());
+                    }
+                }
+                rmdir($dir);
+            } else {
+                unlink($file);
+            }
+        }
+    }
+
+    function dirSize($directory) {
+        $file = $this->calculatePath($directory);
+        if($file) {
+            $size = 0;
+            foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
+                $size += $file->getSize();
+            }
+            return $size;
+        }
+        return 0;
+    }
+
+
+    function prefixFilesWithFolder($files, $folder)
+    {
+        foreach ($files as $key => $file) {
+            $files[$key] = $folder . $file;
+        }
+        return $files;
     }
 }
 

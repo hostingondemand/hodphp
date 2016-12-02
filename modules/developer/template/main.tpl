@@ -9,6 +9,7 @@
     <a href="{{url("","module")}}">{{language("menu.modules")}}</a>
 
     <a href="{{url("","install","update")}}">{{language("menu.update")}}</a>
+    <a href="{{url("","install","clearCache")}}">{{language("menu.clearCache")}}</a>
 </div>
 <hr />
 {{foreach(getMessages(),message)}}

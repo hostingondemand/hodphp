@@ -13,6 +13,7 @@ namespace lib\db;
         var $_offset=0;
         var $_ignoreParent=false;
         var $executed=null;
+        var $model=null;
 
 
         function __construct(){
@@ -24,7 +25,17 @@ namespace lib\db;
             $this->_ignoreParent=true;
             return $this;
         }
+
+        function byModel($model,$namespace){
+            $modelPath=$namespace."\\".$model;
+            $this->model=$modelPath;
+            $table=$this->provider->mapping->default->getTableForClass($modelPath);
+            $this->table =array($table=>$table);
+        }
+
         function table($table,$alias=false){
+            $this->model=$this->provider->mapping->default->getModelForTable($table);
+
             if(!is_array($table)) {
                 if (!$alias) {
                     $alias = $table;
@@ -236,21 +247,40 @@ namespace lib\db;
             return $this->executed->fetch();
         }
 
-        function fetchModel($class, $namespace = false)
+        function fetchModel($class=false, $namespace = false)
         {
+            if($class==false){
+                if(!$this->model){
+                    $this->provider->mapping->default->getModelForTable($this->_table);
+                }
+                $exp=explode("\\",$this->model);
+                $class=$exp[1];
+                $namespace=$exp[0];
+            }
             if($this->executed===null){
                 $this->execute();
             }
             return $this->executed->fetchModel($class,$namespace);
         }
 
-        function fetchAllModel($class, $namespace=false)
+        function fetchAllModel($class=false, $namespace=false)
         {
+            if($class==false){
+                if(!$this->model){
+                    $this->provider->mapping->default->getModelForTable($this->_table);
+                }
+                $exp=explode("\\",$this->model);
+                $class=$exp[1];
+                $namespace=$exp[0];
+            }
+
             if($this->executed===null){
                 $this->execute();
             }
             return $this->executed->fetchAllModel($class,$namespace);
         }
+
+
 
         function numRows()
         {

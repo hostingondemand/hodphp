@@ -7,6 +7,12 @@ use core\Loader;
 class Annotation extends \core\Lib
 {
 
+    function __construct()
+    {
+        Loader::loadClass("baseAspect","lib/annotation");
+    }
+
+
     function getAnnotationsForClass($class,$prefix="")
     {
         $r = new \ReflectionClass($class);
@@ -31,7 +37,7 @@ class Annotation extends \core\Lib
             $doc = $r->getDocComment();
             preg_match_all('#@' . $prefix . '(.*?)\n#s', $doc, $annotations);
             if (isset($annotations[1])) {
-                return array_merge($this->getAnnotationsForClass($class), $annotations[1]);
+                return array_merge($this->getAnnotationsForClass($class,$prefix), $annotations[1]);
             }
         }catch(\Exception $ex){}
         return array();
@@ -65,11 +71,52 @@ class Annotation extends \core\Lib
             if(substr($exp[1],-1)==")") {
                 $exp[1]=substr($exp[1],0,-1);
             }
-            $result["parameters"]=explode(",",$exp[1]);
+            $parameters=explode(",",$exp[1]);
+
+            foreach($parameters as $key=>$val) {
+                $exp = explode("=>", $val);
+                if (count($exp) > 1) {
+                    unset($parameters[$key]);
+                    $parameters[$exp[0]] = $exp[1];
+                }
+            }
+            $result["parameters"]=$parameters;
+
+
+
         }else{
             $result["parameters"]=array();
         }
         return (object)$result;
+    }
+
+
+
+    function runAspect($method, $aspects, $data)
+    {
+        foreach ($aspects as $aspect) {
+            if (substr($aspect, -1)) {
+                $aspect = substr($aspect, 0, -1);
+            }
+
+            $exp = explode("(", $aspect);
+            $instance = Loader::getSingleton($exp[0], "aspect");
+            if ($instance) {
+                if (count($exp) > 1) {
+                    $parameters = explode(",", $exp[1]);
+                    foreach($parameters as $key=>$val) {
+                        $exp = explode("=>", $val);
+                        if (count($exp) > 1) {
+                            unset($parameters[$key]);
+                            $parameters[$exp[0]] = $exp[1];
+                        }
+                    }
+                } else {
+                    $parameters = array();
+                }
+                $instance->$method($parameters, $data);
+            }
+        }
     }
 }
 

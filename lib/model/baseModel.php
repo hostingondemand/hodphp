@@ -28,8 +28,8 @@ abstract class BaseModel extends Base
     {
         $this->_fieldHandlers = $this->__fieldHandlers();
         if (is_array($this->_fieldHandlers)) {
-            foreach ($this->_fieldHandlers as $fieldName=>$handler) {
-                $handler->init($this,$fieldName);
+            foreach ($this->_fieldHandlers as $fieldName => $handler) {
+                $handler->init($this, $fieldName);
             }
         } else {
             $this->_fieldHandlers = array();
@@ -158,12 +158,39 @@ abstract class BaseModel extends Base
 
     function __validator()
     {
-        return $this->_validationResult = $this->validation->validator("model");
+        $validator = $this->validation->validator("model");
+        $type = $this->_getType();
+        $vars = get_class_vars($type);
+
+        foreach ($vars as $var=>$val) {
+            $annotations = $this->annotation->getAnnotationsForField($type, $var, "validate");
+            foreach($annotations as $annotation) {
+                $annotation=$this->annotation->translate($annotation);
+                $validator->add($var, $annotation->function,$annotation->parameters);
+            }
+        }
+
+        return $validator;
     }
 
     function __fieldHandlers()
     {
-        return array();
+        $result=array();
+        $type = $this->_getType();
+        $vars = get_class_vars($type);
+        foreach ($vars as $var=>$val) {
+            $annotations = $this->annotation->getAnnotationsForField($type, $var, "handle");
+            foreach ($annotations as $annotation) {
+                $annotation = $this->annotation->translate($annotation);
+                $handler=$this->model->fieldHandler($annotation->function);
+                if($handler){
+                    $handler->fromAnnotation($annotation->parameters,$this->_getType(),$var);
+                    $result[$var]=$handler;
+                }
+            }
+        }
+
+        return $result;
     }
 
     function isValid()
@@ -171,22 +198,26 @@ abstract class BaseModel extends Base
         return $this->_validationResult["success"];
     }
 
-    function getValidationResult(){
+    function getValidationResult()
+    {
         return $this->_validationResult;
     }
 
-    function _setInData($key,$value){
-        $this->_data[$key]=$value;
+    function _setInData($key, $value)
+    {
+        $this->_data[$key] = $value;
     }
 
-    function _getFromData($key){
-        if(isset($this->_data[$key])){
+    function _getFromData($key)
+    {
+        if (isset($this->_data[$key])) {
             return $this->_data[$key];
         }
         return false;
     }
 
-    function _getData(){
+    function _getData()
+    {
         return $this->_data;
     }
 

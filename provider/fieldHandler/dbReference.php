@@ -15,6 +15,42 @@ class DbReference extends BaseFieldHandler
     private $_cascadeDelete;
     private $_cascadeSave;
 
+    function fromAnnotation($parameters,$type,$field)
+    {
+        $mapping = $this->provider->mapping->default;
+        if (isset($parameters["model"])) {
+            $this->toTable($mapping->getTableForClass($parameters["model"]))
+                ->toModel($parameters["model"]);
+        } else if (isset($parameters["toTable"])) {
+            $this->toModel($mapping->getModelForTable($parameters["toTable"]))
+                ->toTable($parameters["toTable"]);
+        }
+
+        if(isset($parameters["key"])){
+            $this->field($parameters["key"]);
+        }else if(isset($parameters["model"])){
+            $this->field($mapping->getTableForClass($parameters["model"])."_id");
+        }
+
+        if(isset($parameters["cascade"])){
+            if($parameters["cascade"]=="all"){
+                $this->cascadeAll();
+            }
+            if($parameters["cascade"]=="delete"){
+                $this->cascadeDelete();
+            }
+            if($parameters["cascade"]=="save"){
+                $this->cascadeSave();
+            }
+            if($parameters["cascade"]=="reference"){
+                $this->updateReference();
+            }
+        }
+
+
+
+    }
+
     function field($field){
         $this->_field=$field;
         return $this;
@@ -35,9 +71,21 @@ class DbReference extends BaseFieldHandler
         return $this;
     }
 
-    function  toModel($toTable,$namespace=false){
-        $this->_toModel=$toTable;
-        $this->_toModelNamespace=$namespace;
+    function toModel($model, $namespace = false)
+    {
+        if(!$namespace){
+            $model=str_replace("/","\\",$model);
+            $exp=explode("\\",$model);
+            if(isset($exp[1])){
+                $this->_toModel=$exp[1];
+                $this->_toModelNamespace=$exp[0];
+            }else{
+                $this->_toModel=$exp[0];
+            }
+        }else {
+            $this->_toModel = $model;
+            $this->_toModelNamespace = $namespace;
+        }
         return $this;
     }
 
@@ -47,6 +95,15 @@ class DbReference extends BaseFieldHandler
         return $this;
     }
 
+    function cascadeDelete(){
+        $this->_cascadeDelete=true;
+        return $this;
+    }
+
+    function cascadeSave(){
+        $this->_cascadeSave=true;
+        return $this;
+    }
 
     function save(){
         if($this->loaded) {

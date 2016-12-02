@@ -9,6 +9,10 @@ class Enum extends BaseFieldHandler
     private $_name;
     private $_data;
 
+    function fromAnnotation($parameters,$type,$field)
+    {
+        $this->_name=$parameters[0];
+    }
     function name($name){
         $this->_name=$name;
         return $this;

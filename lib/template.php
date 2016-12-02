@@ -70,8 +70,11 @@ class template extends Lib
     {
         Loader::loadClass("baseModule", "lib\\template");
         $instance = Loader::createInstance("module", "templateModule\\" . $name);
-        $instance->_name = $name;
-        return $instance;
+        if($instance) {
+            $instance->_name = $name;
+            return $instance;
+        }
+        return false;
     }
 
     function registerGlobal($key, $val)
@@ -81,10 +84,12 @@ class template extends Lib
 
     function registerGlobalModule($module)
     {
-        $renames = $this->config->get("module.rename", "template");
-        $this->globalModules[$module->_name] = $module;
-        if (isset($renames[$module->_name])) {
-            $this->globalModules[$renames[$module->_name]] = $module;
+        if($module) {
+            $renames = $this->config->get("module.rename", "template");
+            $this->globalModules[$module->_name] = $module;
+            if (isset($renames[$module->_name])) {
+                $this->globalModules[$renames[$module->_name]] = $module;
+            }
         }
 
     }

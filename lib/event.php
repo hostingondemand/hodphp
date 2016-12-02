@@ -36,6 +36,10 @@ class Event extends \core\Lib
                 $this->eventListeners[$name][] =array("module"=>"","listener"=>$listener);
             }
 
+            if ($listener = Loader::getSingleton($name, "listener")) {
+                $this->eventListeners[$name][] =array("module"=>"","listener"=>$listener);
+            }
+
             $dirs = $this->filesystem->getDirs("modules");
             foreach ($dirs as $module) {
                 $this->goModule($module);

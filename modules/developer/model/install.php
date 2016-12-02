@@ -23,6 +23,7 @@ class Install extends BaseModel
         $this->service->project->create(@$this->git);
         $this->service->project->setup($this);
         $this->service->project->updateFramework();
+        $this->service->project->removeCache();
     }
 
 

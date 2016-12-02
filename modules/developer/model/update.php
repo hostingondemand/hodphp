@@ -10,5 +10,6 @@ class Update extends BaseModel
     {
         $this->service->project->updateFramework();
         $this->service->project->updateProject();
+        $this->service->project->removeCache();
     }
 }

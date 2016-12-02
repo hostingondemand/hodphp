@@ -11,6 +11,8 @@ abstract class BaseFieldHandler extends Base
         $this->_model=$model;
         $this->_inModelName=$fieldName;
     }
+
+    function fromAnnotation($parameters, $type, $field){}
     function get($inModel){}
 
     function set($value){}

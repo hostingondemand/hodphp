@@ -5,6 +5,8 @@
     class Response extends \core\Lib{
 
         var $partialMode=false;
+        var $masterView="main";
+
 
        function write($string,$options=Array()){
             echo $string;
@@ -36,12 +38,12 @@
             }
 
             $content=$this->template->parseFile($path,$data);
-            $this->write($this->template->parseFile("main",Array("content"=>$content)));
+            $this->write($this->template->parseFile($this->masterView,Array("content"=>$content)));
         }
 
 
         function renderContent($content){
-            $this->write($this->template->parseFile("main",Array("content"=>$content)));
+            $this->write($this->template->parseFile($this->masterView,Array("content"=>$content)));
         }
 
          function renderPartial($data=Array(),$path=""){
@@ -95,6 +97,22 @@
 
         function setPartialMode($value){
             $this->partialMode=$value;
+        }
+
+        function cache($sec) {
+            if ($sec > 0) {
+                header('Cache-Control: must-revalidate, max-age=' . (int)$sec);
+                header('Pragma: cache');
+                header('Expires: ' . str_replace('+0000', 'GMT', gmdate('r', time() + $sec)));
+            } else {
+                header('Cache-Control: no-cache, no-store, must-revalidate'); // HTTP 1.1.
+                header('Pragma: no-cache'); // HTTP 1.0.
+                header('Expires: 0'); // Proxies.
+            }
+        }
+
+        function setMasterView($template){
+            $this->masterView=$template;
         }
 
     }

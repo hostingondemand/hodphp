@@ -22,6 +22,13 @@ class Install extends Controller{
         $this->response->redirect("developer/module/all");
     }
 
+
+    function clearCache(){
+        $model=$this->model->clearCache;
+        $model->clear();
+        $this->response->redirect("developer/module");
+    }
+
 }
 
 ?>

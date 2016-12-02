@@ -3,10 +3,32 @@
     use core\Lib;
 
     class Cache extends Lib{
+
+        var $projectSize=0;
+
         function __construct(){
             if(!$this->filesystem->exists("data/cache")){
                 $this->filesystem->mkDir("data/cache");
             }
+        }
+
+        function runCachedProject($key,$data,$function){
+            if($this->projectSize==0){
+                $this->projectSize=$this->filesystem->dirSize("project");
+            }
+            $filename="data/cache/".$key."_".md5(print_r($data,true)).".php";
+            $data=array();
+            if($this->filesystem->exists($filename)){
+                  $data=  $this->filesystem->getArray($filename);
+                  if($data["projectSize"]==$this->projectSize){
+                      return $data["content"];
+                  }
+            }
+            $result = $function($data);
+            $data["projectSize"]=$this->projectSize;
+            $data["content"]=$result;
+            $this->filesystem->writeArray($filename,$data);
+            return $result;
         }
 
         function runCached($key,$data,$minDate,$function){
@@ -19,6 +41,12 @@
                return $result;
             }
 
+        }
+
+
+        function destroy(){
+            $this->filesystem->rm("data/cache");
+            $this->filesystem->mkdir("data/cache");
         }
     }
 ?>

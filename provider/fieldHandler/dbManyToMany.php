@@ -19,6 +19,49 @@ class DbManyToMany extends BaseFieldHandler
     private $_saveReset;
     private $_initArray;
 
+    function fromAnnotation($parameters,$type,$field)
+    {
+        $mapping=$this->provider->mapping->default;
+        if(isset($parameters["model"])){
+            $this->toTable($mapping->getTableForClass($parameters["model"]))
+                ->toModel($parameters["model"]);
+        }else if(isset($parameters["toTable"])){
+            $this->toModel($mapping->getModelForTable($parameters["toTable"]))
+                ->toTable($parameters["toTable"]);
+        }
+
+        if(isset($parameters["toKey"])){
+            $this->toField($parameters["toKey"]);
+        }else if(isset($parameters["model"])){
+            $this->toField($mapping->getTableForClass($parameters["model"])."_id");
+        }
+        if(isset($parameters["fromKey"])){
+            $this->fromField($parameters["fromKey"]);
+        }else{
+            $this->fromField($mapping->getTableForClass($type)."_id");
+        }
+
+        if(isset($parameters["glueTable"])){
+            $this->glueTable($parameters["glueTable"]);
+        }
+
+        if(isset($parameters["updateList"])){
+            if($parameters["updateList"]=="all"){
+                $this->updateList();
+                $this->saveReset();
+            }
+            if($parameters["updateList"]=="insert"){
+                $this->updateList();
+            }
+        }
+
+        if(isset($parameters["cascade"])){
+            if($parameters["cascade"]=="all"||$parameters["cascade"]=="save"){
+                $this->cascadeSave();
+            }
+        }
+    }
+
     function fromField($field)
     {
         $this->_fromField = $field;
@@ -43,10 +86,22 @@ class DbManyToMany extends BaseFieldHandler
         return $this;
     }
 
-    function toModel($toTable, $namespace = false)
+    function toModel($model, $namespace = false)
     {
-        $this->_toModel = $toTable;
-        $this->_toModelNamespace = $namespace;
+        if(!$namespace){
+            $model=str_replace("/","\\",$model);
+            $exp=explode("\\",$model);
+
+            if(isset($exp[1])){
+                $this->_toModel=$exp[1];
+                $this->_toModelNamespace=$exp[0];
+            }else{
+                $this->_toModel=$exp[0];
+            }
+        }else {
+            $this->_toModel = $model;
+            $this->_toModelNamespace = $namespace;
+        }
         return $this;
     }
 
@@ -171,6 +226,11 @@ class DbManyToMany extends BaseFieldHandler
     {
         $this->_cascadeSave = true;
         $this->_updateList = true;
+        return $this;
+    }
+
+    function cascadeSave(){
+        $this->_cascadeSave = true;
         return $this;
     }
 
