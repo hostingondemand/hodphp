@@ -181,6 +181,15 @@ class Loader
     }
 
 
+    static function hasMethod($class,$namespace,$method){
+        $info=self::getInfo($class,$namespace);
+        if($info){
+           return method_exists($info->type,$method);
+        }
+        return false;
+    }
+
+
     //if an instance of the class is already registered: use this instance otherwise return and register a new instance and register.
     static function getSingleton($class, $namespace = "", $prefix = "")
     {
@@ -236,6 +245,20 @@ class Loader
         return self::$moduleStack[count(self::$moduleStack) - 1];
     }
 
+    static $classStack=array();
+    static $currentClass=null;
+    public static function registerCall($class){
+        self::$classStack[] = self::$currentClass;
+        self::$currentClass=$class;
+    }
+    public static function unregisterCall()
+    {
+        self::$currentClass = array_pop(self::$classStack);
+    }
+
+    public static function getCurrentClass(){
+        return self::$currentClass;
+    }
 }
 
 ?>

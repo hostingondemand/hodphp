@@ -49,6 +49,11 @@ class Controller extends Base
             }
         }
 
+        $annotations = $this->annotation->getAnnotationsForMethod($this->_getType(),$method, "noAction");
+        foreach($annotations as $annotation){
+            throw new \Exception("This is an internal method.");
+        }
+
         $viewAnnotation = $this->annotation->getAnnotationsForMethod($this->_getType(),$method, "masterView");
         foreach($viewAnnotation as $annotation){
             $annotation = $this->annotation->translate($annotation);

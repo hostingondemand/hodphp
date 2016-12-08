@@ -49,7 +49,9 @@
         {
             $this->__setModule();
             $this->__raise("methodPreCall",array("class"=>$this->fullclass,"method"=>$name,"arguments"=>$arguments));
+            Loader::registerCall($this);
             $result=  call_user_func_array(Array($this->instance, $name), $arguments);
+            Loader::unregisterCall($this);
             $this->__raise("methodPostCall",array("class"=>$this->fullclass,"method"=>$name,"arguments"=>$arguments,"value"=>$result));
             $this->__unsetModule();
             return $result;

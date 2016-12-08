@@ -43,5 +43,11 @@ namespace core;
         }
         return $base;
     }
+    //this offers an instance of the proxy of the current class
+    function self(){
+            return loader::getCurrentClass();
+    }
+
+
 
 ?>
