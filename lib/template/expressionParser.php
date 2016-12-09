@@ -25,52 +25,51 @@ class ExpressionParser extends Lib
         Loader::loadClass("abstractFunction", "lib\\template");
 
         //remove brackets from the expression
-        $this->removeBrackets($expression);
+        $this->cleanupExpression($expression);
 
-        //look for the first function call
-        $function = $this->popFunction($expression);
 
-        //if a functioncall is found
-        if ($function) {
-
-            //return a representation of a function call
-            $this->function = $function;
-            $this->parameters = $this->splitparameters($expression);
-            $this->type = "function";
-
-            //do some checks about if the content should be parsed etc.
-
-            $funcObj=$this->getFunctionInstance($this->function,$modules=array());
-
-            if ($funcObj) {
-                $this->requireContent = $funcObj->requireContent;
-                $this->parseContent = $funcObj->parseContent;
-            }
-
-            //if its not a function. then check if it is a comparison
-        } else if ($this->containsOutsideQuote(Array("<", ">", "=", ">=", "<=", "==", "!=", "||", "&&"), $expression)) {
-
-            $this->function = $function;
+        if($this->currentLevelContains(Array("<", ">", "=", ">=", "<=", "==", "!=", "||", "&&"), $expression)) {
             $this->parameters = $this->splitComparison($expression);
             $this->type = "comparison_root";
+        }else {
 
+            //look for the first function call
+            $function = $this->popFunction($expression);
 
-            //if its not a comparison check if its an array
-        } elseif ($this->containsOutsideQuote(Array("["), $expression)) {
-            $this->type = "array";
-            $this->parameters = $this->parseArrayparameters($expression);
-        } else {
+            //if a functioncall is found
+            if ($function) {
 
-            //if its not an array check if its just a value
-            if (substr($expression, 0, 1) == '"' || substr($expression, 0, 1) == "'" || is_numeric($expression)) {
-                $this->type = "value";
+                //return a representation of a function call
+                $this->function = $function;
+                $this->parameters = $this->splitparameters($expression);
+                $this->type = "function";
+
+                //do some checks about if the content should be parsed etc.
+
+                $funcObj = $this->getFunctionInstance($this->function, $modules = array());
+
+                if ($funcObj) {
+                    $this->requireContent = $funcObj->requireContent;
+                    $this->parseContent = $funcObj->parseContent;
+                }
+
+                //if its not a function. then check if it is a comparison
+            } elseif ($this->currentLevelContains(Array("["), $expression)) {
+                $this->type = "array";
+                $this->parameters = $this->parseArrayparameters($expression);
             } else {
 
-                //if its none of those concider it a variable
-                $this->type = "variable";
-            }
+                //if its not an array check if its just a value
+                if (substr($expression, 0, 1) == '"' || substr($expression, 0, 1) == "'" || is_numeric($expression)) {
+                    $this->type = "value";
+                } else {
 
-            $this->parameters[] = $expression;
+                    //if its none of those concider it a variable
+                    $this->type = "variable";
+                }
+
+                $this->parameters[] = $expression;
+            }
         }
     }
 
@@ -220,7 +219,7 @@ class ExpressionParser extends Lib
 
 
     //a function to check if the string contains  this method takes an array as parameter..
-    function containsOutsideQuote($comparers, $expression)
+    function currentLevelContains($comparers, $expression)
     {
 
 
@@ -229,6 +228,7 @@ class ExpressionParser extends Lib
 
         $strlen = strlen($expression);
         $foundQuotes = 0;
+        $openedBrackets=0;
 
         $currentOr = 0;
         $currentAnd = 0;
@@ -247,8 +247,14 @@ class ExpressionParser extends Lib
                 $foundQuotes++;
             }
 
+            elseif($firstChar=="("){
+                $openedBrackets++;
+            }elseif($firstChar==")"){
+                $openedBrackets--;
+            }
+
             //only if we are not skipping
-            if (!fmod($foundQuotes, 2)) {
+            if (!fmod($foundQuotes, 2) && ! $openedBrackets) {
                 //return true if one of the characters are found.
                 foreach ($comparers as $val) {
                     if ($val == $firstChar || $val == $doubleChar) {
@@ -262,8 +268,9 @@ class ExpressionParser extends Lib
 
 
     //just remove brackets from an expression.
-    function removeBrackets(&$expression)
+    function cleanupExpression(&$expression)
     {
+        $expression=trim($expression," \t");
         $lastDouble = substr($expression, -2);
         $firstDouble = substr($expression, 0, 2);
 
