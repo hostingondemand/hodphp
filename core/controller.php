@@ -29,7 +29,7 @@ class Controller extends Base
     }
 
     function __preActionCall($method){
-
+        $this->event->raise("controllerPreAction",array("controller"=>$this));
         $inModuleAnnotation= $this->annotation->getAnnotationsForMethod($this->_getType(), $method,"inModule");
         if(!empty($inModuleAnnotation)){
             $annotation=$this->annotation->translate($inModuleAnnotation[0]);
