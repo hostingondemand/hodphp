@@ -6,7 +6,12 @@
 
         var $partialMode=false;
         var $masterView="main";
-
+        var $contentTypes = [
+            "json" => "application/json",
+            "form" => "application/x-www-form-urlencoded",
+            "xml" => "application/xml",
+            "csv" => "text/csv"
+        ];
 
        function write($string,$options=Array()){
             echo $string;
@@ -115,12 +120,9 @@
             $this->masterView=$template;
         }
 
-        function arrayToCsv($data = array()) {
-            return $this->serialization->serialize("csv", $data);
-        }
-
-        function csvToArray($data = '') {
-            return $this->serialization->unserialize("csv", $data);
+        function renderData($data, $type) {
+            $this->contentType($this->contentTypes[$type]);
+            $this->write($this->serialization->serialize($type, $data));
         }
     }
 ?>

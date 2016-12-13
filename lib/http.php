@@ -19,7 +19,7 @@ class Http extends \core\Lib
         $this->headersFormat=array_flip($this->formatHeaders);
     }
 
-    function save($type, $url, $data, $format ,$headers=array()) {
+    function requestWithInputData($type, $url, $data, $format ,$headers=array()) {
         $dataString = $this->serialization->serialize($format, $data);
         $headers = array_merge($headers, array(
             'Content-Type: ' . $this->formatHeaders[$format]
@@ -46,11 +46,11 @@ class Http extends \core\Lib
 
     //do a post request
     function post($url, $data, $format ,$headers=array()){
-        return $this->save('post', $url, $data, $format, $headers);
+        return $this->requestWithInputData('post', $url, $data, $format, $headers);
     }
 
     function put($url, $data, $format, $headers = array()){
-        return $this->save('put', $url, $data, $format, $headers);
+        return $this->requestWithInputData('put', $url, $data, $format, $headers);
     }
 
     function get($url,$headers=array()){
