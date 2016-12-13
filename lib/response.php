@@ -115,5 +115,12 @@
             $this->masterView=$template;
         }
 
+        function arrayToCsv($data = array()) {
+            return $this->serialization->serialize("csv", $data);
+        }
+
+        function csvToArray($data = '') {
+            return $this->serialization->unserialize("csv", $data);
+        }
     }
 ?>

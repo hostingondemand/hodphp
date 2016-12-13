@@ -46,14 +46,14 @@ class Serialization extends \core\Lib
         );
         $eventData=$this->preSerialize($eventData);
         $eventData = $this->event->raise("preSerialize", $eventData);
-        $eventData["data"] = $this->LoadSerializer($format)->serialize($eventData["data"]);
+        $eventData["data"] = $this->LoadSerializer($format)->serialize($eventData["data"], $type);
         $eventData = $this->event->raise("postSerialize", $eventData);
         return $eventData["data"];
     }
 
-    function unserialize($format, $data, $assoc = false)
+    function unserialize($format, $data, $assoc = false, $type = null)
     {
-        return $this->LoadSerializer($format)->unserialize($data, $assoc);
+        return $this->LoadSerializer($format)->unserialize($data, $assoc, $type);
     }
 
 
