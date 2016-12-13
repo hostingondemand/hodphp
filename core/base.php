@@ -78,7 +78,7 @@ class Base
 
             }
 
-            if($this->annotation->fieldHasAnnotations($data["class"], $data["method"],"inModule")){
+            if($this->annotation->methodHasAnnotations($data["class"], $data["method"],"inModule")){
                 Loader::goBackModule();
             }
 

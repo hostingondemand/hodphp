@@ -242,7 +242,7 @@ class Db extends \core\Lib
         return $select;
     }
 
-    function selectModel($class,$namespace){
+    function selectModel($class,$namespace=""){
         $select=Loader::createInstance("select","lib/db");
         $select->byModel($class,$namespace);
         return $select;
