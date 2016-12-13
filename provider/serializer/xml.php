@@ -8,7 +8,7 @@ class XML extends Serializer
 {
     function serialize($data, $type=null){
         $xmlData = new \SimpleXMLElement($this->pickWrapper($type));
-        $this->array_to_xml($data, $xmlData);
+        $this->arrayToXml($data, $xmlData);
         return $xmlData->asXML();
     }
 
@@ -37,14 +37,14 @@ class XML extends Serializer
         return $wrapper . '<Data></Data>';
     }
 
-    function array_to_xml($data, &$xml_data) {
+    function arrayToXml($data, &$xml_data) {
         foreach($data as $key => $value) {
             if(is_numeric($key)) {
                 $key = 'KeyMissing' . $key;
             }
             if (is_array($value)) {
                 $child = $xml_data->addChild($key);
-                $this->array_to_xml($value, $child);
+                $this->arrayToXml($value, $child);
             } else {
                 $xml_data->addChild($key, htmlspecialchars($value));
             }

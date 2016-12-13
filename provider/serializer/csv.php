@@ -6,16 +6,16 @@ use lib\serialization\Serializer;
 class CSV extends Serializer
 {
     function serialize($data, $type=null){
-        $this->array_to_csv($data, $out);
+        $this->arrayToCsv($data, $out);
         return $out;
     }
 
     function unserialize($data, $assoc=false, $type=null){
-        $this->csv_to_array($data, $out);
+        $this->csvToArray($data, $out);
         return $out;
     }
 
-    function csv_to_array($file = '', &$target = [], $delimiter = ',', $enclosure = '"') {
+    function csvToArray($file = '', &$target = [], $delimiter = ',', $enclosure = '"') {
         $rows = [];
         if (file_exists($file) && is_readable($file)) {
             $handle = fopen($file, 'r');
@@ -35,7 +35,7 @@ class CSV extends Serializer
         $target = $rows;
     }
 
-    function array_to_csv($data = [], &$target = '', $delimiter = ',') {
+    function arrayToCsv($data = [], &$target = '', $delimiter = ',') {
         if(is_array($data)) {
             $target = join(',', array_keys($data[0])) . "\n";
 
