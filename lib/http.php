@@ -19,50 +19,7 @@ class Http extends \core\Lib
         $this->headersFormat=array_flip($this->formatHeaders);
     }
 
-    //do a post request
-    function post($url, $data, $format ,$headers=array()){
-
-        //initialize curl
-        $ch = curl_init();
-
-        //allow all https requests
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-
-        //ask for headers
-        curl_setopt($ch, CURLOPT_HEADER, 1);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-
-        //set url
-        curl_setopt($ch, CURLOPT_URL,$url);
-
-        //handle post data
-        curl_setopt($ch, CURLOPT_POST, 1);
-        $dataString=$this->serialization->serialize($format,$data);
-        curl_setopt($ch, CURLOPT_POSTFIELDS,$dataString);
-
-
-        $headers=array_merge($headers,array(
-            'Content-Type: '.$this->formatHeaders[$format]
-        ));
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-        //execute the curl command
-        $server_output = curl_exec ($ch);
-
-        //split header and body
-        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        $header = substr($server_output, 0, $header_size);
-        $body = substr($server_output, $header_size);
-
-        //close the request
-        curl_close ($ch);
-
-        //parse the result
-        return $this->parse($header,$body);
-
-    }
-
-    function put($url, $data, $format, $headers = array()){
+    function save($type, $url, $data, $format ,$headers=array()) {
         $dataString = $this->serialization->serialize($format, $data);
         $headers = array_merge($headers, array(
             'Content-Type: ' . $this->formatHeaders[$format]
@@ -74,7 +31,7 @@ class Http extends \core\Lib
         curl_setopt($ch, CURLOPT_HEADER, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_PUT, 1);
+        curl_setopt($ch, ($type === 'put') ? CURLOPT_PUT : CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -85,6 +42,15 @@ class Http extends \core\Lib
 
         curl_close ($ch);
         return $this->parse($header, $body);
+    }
+
+    //do a post request
+    function post($url, $data, $format ,$headers=array()){
+        return $this->save('post', $url, $data, $format, $headers);
+    }
+
+    function put($url, $data, $format, $headers = array()){
+        return $this->save('put', $url, $data, $format, $headers);
     }
 
     function get($url,$headers=array()){
