@@ -46,10 +46,6 @@ class Http extends \core\Lib
         ));
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
-
-
-
-
         //execute the curl command
         $server_output = curl_exec ($ch);
 
