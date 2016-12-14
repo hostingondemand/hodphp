@@ -52,6 +52,8 @@ class Project extends BaseService
 
     function updateProject(){
         $this->git->pull("project","master","origin");
+        $this->service->patch->setup();
+        $this->service->patch->doPatchProject();
         $this->event->raise("projectPostUpdate",array());
     }
 
