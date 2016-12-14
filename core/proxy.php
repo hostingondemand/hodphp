@@ -87,7 +87,7 @@
 
         public function toArray(){
             $this->__setModule();
-            if(method_exists($this->instance,"_debugInfo")){
+            if(method_exists($this->instance,"__debugInfo")){
                 $result=   $this->instance->__debugInfo();
             }
             elseif(method_exists($this->instance,"toArray")){

@@ -10,7 +10,15 @@ class FuncFordatasource extends \lib\template\AbstractFunction
 
         $datasource=$parameters[0]->getData();
 
-        $dataSelected=isset($parameters[1])?$parameters[1]:"";
+        if(isset($parameters[1])){
+            if(is_object($parameters[1])){
+                $dataSelected=$parameters[1]->getData();
+            }else{
+                $dataSelected=$parameters[1];
+            }
+        }else{
+            $dataSelected="";
+        }
         $dataSelected=$this->toSelectedMap($dataSelected,$datasource["value"]);
 
 

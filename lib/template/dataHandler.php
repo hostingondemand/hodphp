@@ -70,6 +70,26 @@ class DataHandler extends Lib
         return $this;
     }
 
+    function __debugInfo()
+    {
+      return  $this->getDebugInfo($this->__data);
+    }
+
+    function getDebugInfo($data){
+        if (is_object($data)) {
+            if(method_exists($data,"__debugInfo")){
+                return $data->__debugInfo();
+            }elseif(method_exists($data,"toArray")){
+                return $data->toArray();
+            }
+        }if(is_array($data)){
+            foreach($data as $key=>$val){
+                $data[$key]=$this->getDebugInfo($val);
+            }
+        }
+        return $data;
+    }
+
     function __set($key, $val)
     {
         if (is_array($key)) {
