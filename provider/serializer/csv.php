@@ -5,7 +5,7 @@ use lib\serialization\Serializer;
 
 class CSV extends Serializer
 {
-    function serialize($data, $type=null){
+    function serialize($data, $type=null,$original=null){
         $this->arrayToCsv($data, $out);
         return $out;
     }

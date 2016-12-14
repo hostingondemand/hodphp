@@ -46,7 +46,7 @@ class Serialization extends \core\Lib
         );
         $eventData=$this->preSerialize($eventData);
         $eventData = $this->event->raise("preSerialize", $eventData);
-        $eventData["data"] = $this->LoadSerializer($format)->serialize($eventData["data"], $type);
+        $eventData["data"] = $this->LoadSerializer($format)->serialize($eventData["data"], $type,$original);
         $eventData = $this->event->raise("postSerialize", $eventData);
         return $eventData["data"];
     }

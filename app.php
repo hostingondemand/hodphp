@@ -48,5 +48,4 @@ class App
         return (substr($searchIn, -$length) === $searchFor);
     }
 }
-
 ?>

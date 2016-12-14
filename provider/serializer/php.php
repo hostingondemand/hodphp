@@ -6,7 +6,7 @@ use lib\serialization\Serializer;
 
 class Php extends Serializer
 {
-    function serialize($data, $type = null){
+    function serialize($data, $type = null,$original=null){
         return serialize($data);
     }
     function unserialize($data, $assoc = false, $type = null){

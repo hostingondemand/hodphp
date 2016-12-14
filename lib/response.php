@@ -14,6 +14,7 @@
         ];
 
        function write($string,$options=Array()){
+            ob_clean();
             echo $string;
         }
 
