@@ -97,7 +97,7 @@ abstract class BaseModel extends Base
 
     function fromRequest()
     {
-        $result = $this->fromArray($this->request->getData(true));
+        $result = $this->fromArray($this->request->getData(true, $this->_getType()));
         if (is_array($this->request->getData(true))) {
             $validator = $this->__validator();
             $validationResult = $validator->validate($this);

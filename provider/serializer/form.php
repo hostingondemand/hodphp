@@ -2,13 +2,15 @@
 
 namespace provider\serializer;
 //simple json serializer
-class Form extends \core\Lib
+use lib\serialization\Serializer;
+
+class Form extends Serializer
 {
 
-    function serialize($data){
+    function serialize($data, $type = null){
         return http_build_query($data);
     }
-    function unserialize($data,$assoc=false){
+    function unserialize($data, $assoc = false, $type = null){
         $result=array();
         parse_str($data,$result);
         if($assoc){

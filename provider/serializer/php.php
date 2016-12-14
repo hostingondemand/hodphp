@@ -2,12 +2,14 @@
 
 namespace provider\serializer;
 //simple php serializer
-class Php extends \core\Lib
+use lib\serialization\Serializer;
+
+class Php extends Serializer
 {
-    function serialize($data){
+    function serialize($data, $type = null){
         return serialize($data);
     }
-    function unserialize($data,$assoc=false){
+    function unserialize($data, $assoc = false, $type = null){
         return unserialize($data);
     }
 

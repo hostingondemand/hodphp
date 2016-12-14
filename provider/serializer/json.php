@@ -2,14 +2,15 @@
 
 namespace provider\serializer;
 //simple json serializer
-class Json extends \core\Lib
-{
+use lib\serialization\Serializer;
 
-    function serialize($data){
+class Json extends Serializer
+{
+    function serialize($data, $type = null){
         return json_encode($data,JSON_PRETTY_PRINT);
     }
-    function unserialize($data,$assoc=false){
-        $result= json_decode($data,$assoc);
+    function unserialize($data, $assoc = false, $type = null){
+        $result = json_decode($data,$assoc);
         return $result;
     }
 
