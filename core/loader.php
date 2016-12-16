@@ -260,5 +260,4 @@ class Loader
         return self::$currentClass;
     }
 }
-
 ?>

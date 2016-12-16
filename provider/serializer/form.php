@@ -7,7 +7,7 @@ use lib\serialization\Serializer;
 class Form extends Serializer
 {
 
-    function serialize($data, $type = null){
+    function serialize($data, $type = null,$original=null){
         return http_build_query($data);
     }
     function unserialize($data, $assoc = false, $type = null){

@@ -47,7 +47,4 @@ namespace core;
     function self(){
             return loader::getCurrentClass();
     }
-
-
-
 ?>

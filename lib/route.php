@@ -9,8 +9,15 @@
             if(func_num_args()>1){
                 $first=func_get_args();
             }
+            if(!is_array($first)){
+                array_shift($first);
+            }
 
-            $first=array_merge($this->autoRoute,$first);
+            if($first[0]=='/') {
+                unset($first[0]);
+            }else{
+                $first = array_merge($this->autoRoute, $first);
+            }
 
             if(is_array($first)){
 
