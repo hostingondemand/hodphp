@@ -88,18 +88,31 @@ class Filesystem extends \core\Lib
         }
     }
 
-    //create an array of all directories
-    function getDirs($dir)
-    {
-        if (!$this->exists($dir)) {
-            return array();
+    var $ignores=false;
+    function getIgnores($useIgnores=true){
+        if(!$useIgnores){
+            return false;
         }
+        if(!$this->ignores) {
+            $this->ignores = $this->config->get("filesystem.ignore", "server");
+        }
+        return $this->ignores;
+
+    }
+
+    //create an array of all directories
+    function getDirs($dir,$useIgnores=true)
+    {
+      $ignores=$this->getIgnores();
+
 
         $dirs = array();
         if ($handle = opendir($this->calculatePath($dir))) {
             while (false !== ($entry = readdir($handle))) {
                 if ($entry != "." && $entry != ".." && is_dir($dir . "/" . $entry)) {
-                    $dirs[] = $entry;
+                    if(!is_array($ignores)||!in_array($entry,$ignores)) {
+                        $dirs[] = $entry;
+                    }
                 }
             }
             closedir($handle);
@@ -109,17 +122,17 @@ class Filesystem extends \core\Lib
     }
 
     //create an array of all files
-    function getFiles($dir, $type = false)
+    function getFiles($dir, $type = false,$useIgnores=false)
     {
-        if (!$this->exists($dir)) {
-            return array();
-        }
+        $ignores=$this->getIgnores();
 
         $files = array();
         if ($handle = opendir($this->calculatePath($dir))) {
             while (false !== ($entry = readdir($handle))) {
                 if ($entry != "." && $entry != ".." && !is_dir($dir . "/" . $entry) && (!$type || substr($entry, -strlen($type)) == $type)) {
-                    $files[] = $entry;
+                    if(!is_array($ignores)||!in_array($entry,$ignores)) {
+                        $files[] = $entry;
+                    }
                 }
             }
             sort($files, SORT_NATURAL);
