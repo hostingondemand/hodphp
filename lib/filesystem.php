@@ -95,6 +95,9 @@ class Filesystem extends \core\Lib
         }
         if(!$this->ignores) {
             $this->ignores = $this->config->get("filesystem.ignore", "server");
+            if(!$this->ignores){
+                $this->ignores=array();
+            }
         }
         return $this->ignores;
 
