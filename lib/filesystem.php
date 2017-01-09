@@ -83,20 +83,22 @@ class Filesystem extends \core\Lib
     //create a directory
     function mkDir($folder)
     {
-        if(!$this->exists($this->calculatePath($folder))) {
+        if (!$this->exists($this->calculatePath($folder))) {
             return mkdir($this->calculatePath($folder), 0744, true);
         }
     }
 
-    var $ignores=false;
-    function getIgnores($useIgnores=true){
-        if(!$useIgnores){
+    var $ignores = false;
+
+    function getIgnores($useIgnores = true)
+    {
+        if (!$useIgnores) {
             return false;
         }
-        if(!$this->ignores) {
+        if ($this->ignores===false) {
             $this->ignores = $this->config->get("filesystem.ignore", "server");
-            if(!$this->ignores){
-                $this->ignores=array();
+            if (!$this->ignores) {
+                $this->ignores = array();
             }
         }
         return $this->ignores;
@@ -104,42 +106,45 @@ class Filesystem extends \core\Lib
     }
 
     //create an array of all directories
-    function getDirs($dir,$useIgnores=true)
+    function getDirs($dir, $useIgnores = true)
     {
-      $ignores=$this->getIgnores();
+        $ignores = $this->getIgnores();
 
-
+        $path = $this->calculatePath($dir);
         $dirs = array();
-        if ($handle = opendir($this->calculatePath($dir))) {
-            while (false !== ($entry = readdir($handle))) {
-                if ($entry != "." && $entry != ".." && is_dir($dir . "/" . $entry)) {
-                    if(!is_array($ignores)||!in_array($entry,$ignores)) {
-                        $dirs[] = $entry;
+        if ($this->exists($path)) {
+            if ($handle = opendir($path)) {
+                while (false !== ($entry = readdir($handle))) {
+                    if ($entry != "." && $entry != ".." && is_dir($dir . "/" . $entry)) {
+                        if (!is_array($ignores) || !in_array($entry, $ignores)) {
+                            $dirs[] = $entry;
+                        }
                     }
                 }
+                closedir($handle);
             }
-            closedir($handle);
         }
-
         return $dirs;
     }
 
     //create an array of all files
-    function getFiles($dir, $type = false,$useIgnores=false)
+    function getFiles($dir, $type = false, $useIgnores = false)
     {
-        $ignores=$this->getIgnores();
-
+        $ignores = $this->getIgnores();
+        $path = $this->calculatePath($dir);
         $files = array();
-        if ($handle = opendir($this->calculatePath($dir))) {
-            while (false !== ($entry = readdir($handle))) {
-                if ($entry != "." && $entry != ".." && !is_dir($dir . "/" . $entry) && (!$type || substr($entry, -strlen($type)) == $type)) {
-                    if(!is_array($ignores)||!in_array($entry,$ignores)) {
-                        $files[] = $entry;
+        if ($this->exists($path)) {
+            if ($handle = opendir($path)) {
+                while (false !== ($entry = readdir($handle))) {
+                    if ($entry != "." && $entry != ".." && !is_dir($dir . "/" . $entry) && (!$type || substr($entry, -strlen($type)) == $type)) {
+                        if (!is_array($ignores) || !in_array($entry, $ignores)) {
+                            $files[] = $entry;
+                        }
                     }
                 }
+                sort($files, SORT_NATURAL);
+                closedir($handle);
             }
-            sort($files, SORT_NATURAL);
-            closedir($handle);
         }
 
         return $files;
@@ -203,9 +208,10 @@ class Filesystem extends \core\Lib
         }
     }
 
-    function dirSize($directory) {
+    function dirSize($directory)
+    {
         $file = $this->calculatePath($directory);
-        if($file) {
+        if ($file) {
             $size = 0;
             foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
                 $size += $file->getSize();
