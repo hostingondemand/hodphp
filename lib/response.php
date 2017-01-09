@@ -92,6 +92,10 @@
             die();
         }
 
+        function redirectBack(){
+            $this->header("location",$this->request->getReferer());
+        }
+
         function fakeResponse($data,$function){
             ob_start();
             $function($data);
