@@ -9,6 +9,8 @@ use RecursiveIteratorIterator;
 class Filesystem extends \core\Lib
 {
 
+    var $customExtensions=array("css"=>"text/css");
+
     //generate a full path
     function calculatePath($file)
     {
@@ -66,7 +68,11 @@ class Filesystem extends \core\Lib
 
     function getContentType($file)
     {
-        if ($fullPath = $this->findRightPath($file)) {
+        $exp=explode(".",$file);
+        if(isset($this->customExtensions[$exp[count($exp)-1]])){
+            return $this->customExtensions[$exp[count($exp)-1]];
+        }
+        elseif ($fullPath = $this->findRightPath($file)) {
             return mime_content_type($fullPath);
         }
         return false;
@@ -105,26 +111,33 @@ class Filesystem extends \core\Lib
 
     }
 
+
     //create an array of all directories
     function getDirs($dir, $useIgnores = true)
     {
+        static $dirResults;
+        if(!$dirResults){
+            $dirResults=array();
+        }
         $ignores = $this->getIgnores();
-
         $path = $this->calculatePath($dir);
         $dirs = array();
-        if ($this->exists($path)) {
-            if ($handle = opendir($path)) {
-                while (false !== ($entry = readdir($handle))) {
-                    if ($entry != "." && $entry != ".." && is_dir($dir . "/" . $entry)) {
-                        if (!is_array($ignores) || !in_array($entry, $ignores)) {
-                            $dirs[] = $entry;
+        if(!isset($dirResults[$path])) {
+            if ($this->exists($path)) {
+                if ($handle = opendir($path)) {
+                    while (false !== ($entry = readdir($handle))) {
+                        if ($entry != "." && $entry != ".." && is_dir($dir . "/" . $entry)) {
+                            if (!is_array($ignores) || !in_array($entry, $ignores)) {
+                                $dirs[] = $entry;
+                            }
                         }
                     }
+                    closedir($handle);
                 }
-                closedir($handle);
             }
+            $dirResults[$path]=$dirs;
         }
-        return $dirs;
+        return $dirResults[$path];
     }
 
     //create an array of all files
