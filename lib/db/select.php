@@ -133,6 +133,7 @@ namespace lib\db;
         }
 
         function getQuerystring(){
+            $prefix=$this->db->getPrefix();
             if($this->db->parent && !$this->_ignoreParent){
                 $this->where("parent_id='".$this->db->parent["id"]."' && parent_module='".$this->db->parent["module"]."'");
             }
@@ -159,7 +160,7 @@ namespace lib\db;
 
             $table=array_keys($this->table)[0];
             $alias=array_values($this->table)[0];
-            $queryString.=" from ".$table;
+            $queryString.=" from ".$prefix.$table;
             if($table!=$alias){
                 $queryString.=" as `".$alias."`";
             }
@@ -170,7 +171,7 @@ namespace lib\db;
                 $queryString.=" left join ";
                 $table=array_keys($join["table"])[0];
                 $alias=array_values($join["table"])[0];
-                $queryString.="`".$table."`";
+                $queryString.="`".$prefix.$table."`";
                 if($alias!=$table){
                     $queryString.=" as ".$alias;
                 }

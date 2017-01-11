@@ -9,21 +9,29 @@ class Db extends \core\Lib
     private $connections;
     private $errors = array();
     private $fields = array();
-    var $parent=false;
-
+    var $parent = false;
+    var $testMode = false;
 
     function connectConfigName($name)
     {
-        if ($this->config->get( "db.".$name . ".host","server") && $this->config->get("db.".$name . ".username","server") && $this->config->get("db.".$name . ".db","server") && !isset($this->connections[$name])) {
+        if ($this->config->get("db." . $name . ".host", "server") && $this->config->get("db." . $name . ".username", "server") && $this->config->get("db." . $name . ".db", "server") && !isset($this->connections[$name])) {
             return $this->connect(
-                $this->config->get("db.".$name . ".host","server"),
-                $this->config->get("db.".$name . ".username","server"),
-                $this->config->get("db.".$name . ".password","server"),
-                $this->config->get("db.".$name . ".db","server"),
+                $this->config->get("db." . $name . ".host", "server"),
+                $this->config->get("db." . $name . ".username", "server"),
+                $this->config->get("db." . $name . ".password", "server"),
+                $this->config->get("db." . $name . ".db", "server"),
                 $name
             );
         }
         return false;
+    }
+
+    function getPrefix()
+    {
+        if ($this->testMode) {
+            return "test_";
+        }
+        return "";
     }
 
     function connect($host, $username, $password, $db, $connection)
@@ -53,10 +61,10 @@ class Db extends \core\Lib
 
             $result = $query->execute();
             if (!$result) {
-                $this->debug->error("SQL Execute:".$query->error,array(
-                    "error"=>$query->error,
-                    "connection"=>$connection,
-                    "query"=>$queryString
+                $this->debug->error("SQL Execute:" . $query->error, array(
+                    "error" => $query->error,
+                    "connection" => $connection,
+                    "query" => $queryString
                 ));
             }
 
@@ -85,17 +93,17 @@ class Db extends \core\Lib
             $this->connectConfigName($connection); //to avoid manual connecting  a lot
         }
 
-        $query=$this->connections[$connection]->query($queryString);
-        if(!$query){
-          $error=  $this->connections[$connection]->error;
-          $this->debug->error("SQL Query:".$error,array(
-              "error"=>$error,
-              "connection"=>$connection,
-              "query"=>$queryString
-          ));
+        $query = $this->connections[$connection]->query($queryString);
+        if (!$query) {
+            $error = $this->connections[$connection]->error;
+            $this->debug->error("SQL Query:" . $error, array(
+                "error" => $error,
+                "connection" => $connection,
+                "query" => $queryString
+            ));
         }
-        $result=Loader::createInstance("queryResult","lib\db");
-        $result->result=$query;
+        $result = Loader::createInstance("queryResult", "lib\db");
+        $result->result = $query;
 
         return $result;
     }
@@ -168,46 +176,48 @@ class Db extends \core\Lib
         return $this->connections[$con]->real_escape_string($string);
     }
 
-    function saveModel($model, $table=false,$ignoreParent=false,$con="default")
+    function saveModel($model, $table = false, $ignoreParent = false, $con = "default")
     {
-        if(!$table){
-            $table=$this->provider->mapping->default->getTableForClass($model->_getType());
+        $prefix = $this->db->getPrefix();
+        if (!$table) {
+            $table = $this->provider->mapping->default->getTableForClass($model->_getType());
         }
-        if($this->parent && !$ignoreParent){
-            $model->parent_id=$this->parent["id"];
-            $model->parent_module=$this->parent["module"];
+        if ($this->parent && !$ignoreParent) {
+            $model->parent_id = $this->parent["id"];
+            $model->parent_module = $this->parent["module"];
         }
 
         if (!isset($this->fields[$table])) {
-            $this->fields[$table] = $this->db->query("SHOW columns FROM `" . $table . "`",$con)->fetchAll();
+            $this->fields[$table] = $this->db->query("SHOW columns FROM `" . $prefix.$table . "`", $con)->fetchAll();
         }
 
         if ($model->id) {
-            $this->updateModel($model, $table,$con);
-            $mode="update";
-            $id=$this->db->lastId();
+            $this->updateModel($model, $table, $con);
+            $mode = "update";
+            $id = $this->db->lastId();
         } else {
-            $this->insertModel($model, $table,$con);
-            $mode="insert";
-            $id=$model->id;
+            $this->insertModel($model, $table, $con);
+            $mode = "insert";
+            $id = $model->id;
         }
 
-        return array("mode"=>$mode,"id"=>$id);
+        return array("mode" => $mode, "id" => $id);
     }
 
-    function deleteModel($model,$table=false){
-        if(!$table){
-            $table=$this->provider->mapping->default->getTableForClass($model->_getType());
-        }
-       $this->execute("delete from `".$table."` where id='".$model->id."'");
-       $model->_deleted();
-    }
-
-    function updateModel($model, $table,$con)
+    function deleteModel($model, $table = false)
     {
-        $data = $model->toArray();
-        if ($model->_isInvalidated()) {
-            $query = "update `" . $table . "` set ";
+        if (!$table) {
+            $table = $this->provider->mapping->default->getTableForClass($model->_getType());
+        }
+        $this->execute("delete from `" . $table . "` where id='" . $model->id . "'");
+        $model->_deleted();
+    }
+
+    function updateModel($model, $table, $con)
+    {
+        $prefix = $this->db->getPrefix();
+        if (method_exists($model,"_isInvalidated")&&$model->_isInvalidated()) {
+            $query = "update `" . $prefix.$table . "` set ";
             $data = $model->toArray();
             $i = 0;
             foreach ($this->fields[$table] as $field) {
@@ -221,49 +231,62 @@ class Db extends \core\Lib
                 }
             }
             $query .= " where id='" . $data["id"] . "'";
-            $this->query($query,$con);
+            $this->query($query, $con);
             $model->_saved();
         }
     }
 
 
-    function insertModel($model, $table,$con)
+    function insertModel($model, $table, $con)
     {
-            $query = "insert into `" . $table . "` set ";
-            $data = $model->toArray();
-            $i = 0;
-            foreach ($this->fields[$table] as $field) {
-                $fieldName = $field["Field"];
-                if (isset($data[$fieldName]) && $fieldName != "id") {
-                    if ($i) {
-                        $query .= " , ";
-                    }
-                    $query .= "`" . $fieldName . "`='" . $data[$fieldName] . "' ";
-                    $i++;
+        $prefix = $this->db->getPrefix();
+        $query = "insert into `" . $prefix.$table . "` set ";
+        $data = $model->toArray();
+        $i = 0;
+        foreach ($this->fields[$table] as $field) {
+            $fieldName = $field["Field"];
+            if (isset($data[$fieldName]) && $fieldName != "id") {
+                if ($i) {
+                    $query .= " , ";
                 }
+                $query .= "`" . $fieldName . "`='" . $data[$fieldName] . "' ";
+                $i++;
             }
-        $q=$this->query($query,$con);
-        $model->id=$this->lastId($con);
+        }
+        $q = $this->query($query, $con);
+        $model->id = $this->lastId($con);
         $model->_saved();
 
     }
 
-    function select($table,$alias=false){
-        $select=Loader::createInstance("select","lib/db");
-        $select->table($table,$alias);
+    function select($table, $alias = false)
+    {
+        $select = Loader::createInstance("select", "lib/db");
+        $select->table($table, $alias);
         return $select;
     }
 
-    function selectModel($class,$namespace=""){
-        $select=Loader::createInstance("select","lib/db");
-        $select->byModel($class,$namespace);
+    function selectModel($class, $namespace = "")
+    {
+        $select = Loader::createInstance("select", "lib/db");
+        $select->byModel($class, $namespace);
         return $select;
     }
 
-    function workWithParent($id,$module=false){
-        $this->parent=array("id"=>$id,"module"=>$module?$module:Loader::$actionModule);
+    function workWithParent($id, $module = false)
+    {
+        $this->parent = array("id" => $id, "module" => $module ? $module : Loader::$actionModule);
     }
 
+    function startTestMode()
+    {
+        $this->testMode = true;
+    }
+
+    function stopTestMode()
+    {
+        $this->testMode = false;
+    }
 }
 
 ?>

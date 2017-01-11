@@ -6,7 +6,10 @@
     "field.dbHost"=>"Database host",
     "field.dbUser"=>"Database User",
     "field.dbPassword"=>"Database Password",
-    "field.dbDb"=>"Database name"
+    "field.dbDb"=>"Database name",
+
+    "options.modules"=>"Modules",
+    "options.update"=>"Update all"
 );
 
 ?>

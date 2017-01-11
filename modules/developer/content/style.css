@@ -1,0 +1,186 @@
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 12pt;
+    background-color: #eeeeef;
+    margin: 0px;
+}
+
+h1 {
+    font-size: 14pt;
+    font-weight:bold;
+    margin: 10px;
+
+}
+h2 {
+    font-size: 12pt;
+    font-weight:bold;
+    margin: 5px;
+
+}
+.header {
+    margin: auto;
+    width: 1000px;
+    box-sizing: border-box;
+}
+
+.menu {
+    display: block;
+    background-color: #001;
+}
+
+.menu ul {
+    display: block;
+    width: 1000px;
+    margin: auto;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+.menu li {
+    padding: 10px;
+    display: inline-block;
+    border-right: 1px solid #aab;
+}
+
+.menu a {
+    color: #dde;
+    text-decoration: none;
+}
+
+.menu a:hover {
+    color: #fff;
+}
+
+.content {
+    margin: 0 auto auto auto;
+    width: 1000px;
+    background-color: white;
+    box-sizing: border-box;
+    padding: 10px;
+    border-left: 1px solid #ccd;
+    border-right: 1px solid #ccd;
+    border-bottom: 1px solid #ccd;
+    min-height: 700px;
+}
+
+.footer {
+    margin: 5px auto auto auto;
+    width: 1000px;
+    box-sizing: border-box;
+    padding: 10px;
+    font-color: #aab;
+    font-size: 10pt;
+}
+
+.options a {
+    display: inline-block;
+    border: 1px solid #ccd;
+    background-color: #445;
+    padding: 6px;
+    margin-right: 2px;
+    color: #dde;
+    text-decoration:none;
+}
+.options a:hover{
+    color:white;
+}
+
+form label{
+    width:200px;
+    display:block;
+    float:left;
+}
+input{
+    padding:4px;
+    font-size:12pt;
+}
+input[type="submit"],.button{
+    display: inline-block;
+    border: 1px solid #ccd;
+    background-color: #445;
+    padding: 6px;
+    margin-right: 2px;
+    color: #dde;
+    text-decoration:none;
+}
+input[type="submit"]:hover,.button:hover{
+    color:white;
+}
+table td{
+    padding:3px 10px;
+    border-style:none;
+    margin: 0;
+    border-bottom:1px solid #ccd;
+
+}
+thead td{
+    background-color: #445;
+    color:#dde;
+    font-weight:bold;
+    border-style:none;
+    margin: 0;
+    padding:6px 10px;
+}
+table {
+    width:100%;
+    border-spacing: 0px;
+
+}
+
+.messages{
+    position: absolute;
+    right:10px;
+    width:500px;
+}
+
+.messages .message{
+    border-radius: 10px;
+    background: #73AD21;
+    padding: 30px;
+    background-color: #ccd;
+    padding:10px;
+    margin-top:5px;
+    border:1px solid #445;
+
+    animation:fade-message 0.5s 1;
+    -webkit-animation:fade-message 0.5s 1;
+    animation-fill-mode: forwards;
+
+    animation-delay:5s;
+    -webkit-animation-delay:5s;
+    -webkit-animation-fill-mode: forwards;
+}
+
+.messages .message.info{
+    background-color:#adf;
+}
+
+.messages .message.warning{
+    background-color:#ffa;
+}
+
+.messages .message.success{
+    background-color:#cfc;
+}
+
+.messages .message.danger{
+    background-color:#fcc;
+}
+
+
+@keyframes fade-message{
+    from {opacity :1;}
+    to {opacity :0;}
+}
+
+@-webkit-keyframes fade-message{
+    from {opacity :1;}
+    to {opacity :0;}
+}
+
+.test-success{
+    background-color:#cfc;
+}
+.test-fail{
+    background-color:#fcc;
+}

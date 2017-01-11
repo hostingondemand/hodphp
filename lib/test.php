@@ -9,6 +9,9 @@ class test extends Lib
     var $asserts = array();
     var $currentTest = "";
 
+    function __construct(){
+        Loader::loadClass("baseTest","lib/test");
+    }
     function assert()
     {
         $assert = Loader::createInstance("assert","lib/test");
