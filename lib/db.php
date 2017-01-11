@@ -53,7 +53,11 @@ class Db extends \core\Lib
 
             $result = $query->execute();
             if (!$result) {
-                $this->errors = $query->error;
+                $this->debug->error("SQL Execute:".$query->error,array(
+                    "error"=>$query->error,
+                    "connection"=>$connection,
+                    "query"=>$queryString
+                ));
             }
 
             return $result;
@@ -75,13 +79,21 @@ class Db extends \core\Lib
         return $arr;
     }
 
-    function query($query, $connection = "default")
+    function query($queryString, $connection = "default")
     {
         if (!isset($this->connections[$connection])) {
             $this->connectConfigName($connection); //to avoid manual connecting  a lot
         }
 
-        $query=$this->connections[$connection]->query($query);
+        $query=$this->connections[$connection]->query($queryString);
+        if(!$query){
+          $error=  $this->connections[$connection]->error;
+          $this->debug->error("SQL Query:".$error,array(
+              "error"=>$error,
+              "connection"=>$connection,
+              "query"=>$queryString
+          ));
+        }
         $result=Loader::createInstance("queryResult","lib\db");
         $result->result=$query;
 

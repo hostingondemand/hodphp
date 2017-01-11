@@ -126,6 +126,28 @@ class Base
         }
     }
 
+    public function _debugIn($type,$name,$arguments=array()){
+        //didn't use $this->session to avoid problems in the future
+        if(@$_SESSION["_debugMode"]) {
+            $core=core();
+            $debug=Loader::getSingleton("debug","lib");
+            //in case things are not properly loaded yet.
+            if($debug) {
+                $debug->addToTrace($type, $this->_getType(), $name, $arguments);
+            }
+        }
+    }
+
+    public function _debugOut(){
+        //didn't use $this->session to avoid problems in the future
+        if(@$_SESSION["_debugMode"]) {
+            $debug=Loader::getSingleton("debug","lib");
+            //in case things are not properly loaded yet.
+            if($debug) {
+                $debug->removeFromTrace();
+            }
+        }
+    }
 
 
 }
