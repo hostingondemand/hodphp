@@ -16,7 +16,9 @@ class Table extends Lib
 
     function create()
     {
-        $query = "create table `" . $this->name . "` (
+        $prefix = $this->db->getPrefix();
+        $this->patch->addCreated($prefix.$this->name);
+        $query = "create table `" . $prefix.$this->name . "` (
                `id` INT NOT NULL AUTO_INCREMENT,
                `parent_id` int,
                `parent_module` varchar(50)
@@ -29,11 +31,14 @@ class Table extends Lib
             }
         }
         $query .= ",PRIMARY KEY (id))";
+        if($this->db->testMode){
+            $query.=" ENGINE = MEMORY;";
+        }
         $this->db->query($query);
 
         if (isset($this->actions["addIndex"])) {
             foreach ($this->actions["addIndex"] as $action) {
-                $this->db->query("CREATE INDEX `" . $action["name"] . "` ON `" . $this->name . "` (`" . $action["name"] . "`);");
+                $this->db->query("CREATE INDEX `" . $action["name"] . "` ON `" . $prefix.$this->name . "` (`" . $action["name"] . "`);");
             }
         }
 
@@ -43,8 +48,8 @@ class Table extends Lib
 
     function update()
     {
-
-        $query = "alter table `" . $this->name . "` ";
+        $prefix = $this->db->getPrefix();
+        $query = "alter table `" . $prefix.$this->name . "` ";
         if (isset($this->actions["addField"])) {
             $i = 0;
             foreach ($this->actions["addField"] as $action) {
@@ -60,14 +65,15 @@ class Table extends Lib
 
         if (isset($this->actions["addIndex"])) {
             foreach ($this->actions["addIndex"] as $action) {
-                $this->db->query("CREATE INDEX `" . $action["name"] . "` ON `" . $this->name . "` (`" . $action["name"] . "`);");
+                $this->db->query("CREATE INDEX `" . $action["name"] . "` ON `" . $prefix.$this->name . "` (`" . $action["name"] . "`);");
             }
         }
     }
 
     function exists()
     {
-        $query = $this->db->query("SHOW TABLES LIKE '" . $this->name . "';");
+        $prefix = $this->db->getPrefix();
+        $query = $this->db->query("SHOW TABLES LIKE '" . $prefix.$this->name . "';");
         return $this->db->numRows($query);
     }
 
