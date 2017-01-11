@@ -44,10 +44,16 @@ abstract class BaseModel extends Base
         $class = get_class($this);
         if (!($backtrace[1]["class"] == $class && $backtrace[1]["function"] == "get" . ucfirst($name)) && method_exists($this, "get" . ucfirst($name))) {
             $funcName = "get" . ucfirst($name);
-            return $this->$funcName();
+            $this->_debugIn("Dynamic get",$name);
+            $result= $this->$funcName();
+            $this->_debugOut();
+            return $result;
 
         } elseif (isset($this->_fieldHandlers[$name])) {
-            return $this->_fieldHandlers[$name]->get(isset($this->_data[$name]) ? $this->_data[$name] : false);
+            $this->_debugIn("Fieldhandler get",$name);
+            $result= $this->_fieldHandlers[$name]->get(isset($this->_data[$name]) ? $this->_data[$name] : false);
+            $this->_debugOut();
+            return $result;
         } elseif (isset($this->_data[$name])) {
             return $this->_data[$name];
         }
@@ -67,9 +73,13 @@ abstract class BaseModel extends Base
         $class = get_class($this);
         if ($backtrace[1]["class"] != $class && method_exists($this, "set" . ucfirst($name))) {
             $funcName = "set" . ucfirst($name);
+            $this->_debugIn("Dynamic set",$name);
             $this->$funcName($value);
+            $this->_debugOut();
         } elseif (isset($this->_fieldHandlers[$name])) {
+            $this->_debugIn("Fieldhandler set",$name);
             $this->_fieldHandlers[$name]->set($value);
+            $this->_debugOut();
         } else {
             $this->_data[$name] = $value;
         }

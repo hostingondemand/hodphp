@@ -10,6 +10,13 @@
 
     <a href="{{url("","install","update")}}">{{language("menu.update")}}</a>
     <a href="{{url("","install","clearCache")}}">{{language("menu.clearCache")}}</a>
+    <a href="{{url("","debugMode","toggle")}}">
+        {{if(isInDebug())}}
+            {{language("menu.debugOff")}}
+        {{else}}
+            {{language("menu.debugOn")}}
+        {{/if}}
+    </a>
 </div>
 <hr />
 {{foreach(getMessages(),message)}}

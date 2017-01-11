@@ -25,11 +25,11 @@
 
         function __get($name)
         {
-
-
             $this->__setModule();
             $this->__raise("fieldPreGet",array("class"=>$this->fullclass,"field"=>$name));
+            $this->_debugIn("Get Variable",$name);
             $result=   $this->instance->$name;
+            $this->_debugOut();
             $this->__raise("fieldPostGet",array("class"=>$this->fullclass,"field"=>$name,"value"=>$result));
             $this->__unsetModule();
             return $result;
@@ -40,7 +40,9 @@
 
             $this->__setModule();
             $this->__raise("fieldPreSet",array("class"=>$this->fullclass,"field"=>$name));
+            $this->_debugIn("Set variable",$name);
             $this->instance->$name=$value;
+            $this->_debugOut();
             $this->__raise("fieldPreGet",array("class"=>$this->fullclass,"field"=>$name));
             $this->__unsetModule();
         }
@@ -50,7 +52,9 @@
             $this->__setModule();
             $this->__raise("methodPreCall",array("class"=>$this->fullclass,"method"=>$name,"arguments"=>$arguments));
             Loader::registerCall($this);
+            $this->_debugIn("Call Method",$name,$arguments);
             $result=  call_user_func_array(Array($this->instance, $name), $arguments);
+            $this->_debugOut();
             Loader::unregisterCall($this);
             $this->__raise("methodPostCall",array("class"=>$this->fullclass,"method"=>$name,"arguments"=>$arguments,"value"=>$result));
             $this->__unsetModule();
@@ -110,6 +114,21 @@
                 return get_class($this->instance);
             }
         }
+
+        private function _debugIn($type, $name, $arguments=array())
+        {
+            if(method_exists($this->instance,"_debugIn")) {
+                $this->instance->_debugIn($type,$name,$arguments);
+            }
+        }
+
+        private function _debugOut()
+        {
+            if(method_exists($this->instance,"_debugOut")) {
+                $this->instance->_debugOut();
+            }
+        }
+
 
     }
 ?>

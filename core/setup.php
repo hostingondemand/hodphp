@@ -13,5 +13,9 @@
                 Loader::$classMaps=$maps;
             }
 
+            $debug=$this->debug;
+            set_error_handler ( array($debug,"handlePHPError") );
+            register_shutdown_function(array($debug,"handleShutdown"));
+            ini_set('display_errors', 0);
         }
     }
