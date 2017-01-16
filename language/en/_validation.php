@@ -2,6 +2,8 @@
 array(
     "empty"=>"is empty",
     "notEqual"=>"is not equal",
-    "noValidEmail"=>"Is not a valid email address"
+    "noValidEmail"=>"is not a valid email address",
+    "numeric"=>"is not a number",
+    "noValidUrl"=>"is not a valid url"
 );
 ?>

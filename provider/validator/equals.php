@@ -14,6 +14,6 @@ class Equals extends BaseValidator{
          }
      }
 
-    function isRequired(){return true;}
+    function isRequired(){return false;}
 }
 ?>
