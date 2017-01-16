@@ -26,7 +26,7 @@ class Debug extends Lib
     {
         $reporting = \error_reporting();
         if ($reporting) {
-            $this->error("PHP:" . $errstr, array("file" => $errfile, "line" => $errline, "errno" => $errno));
+            $this->error("PHP:" . $errstr, array("file" => @$errfile, "line" => @$errline, "errno" => @$errno));
         }
     }
 
