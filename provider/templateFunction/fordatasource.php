@@ -8,38 +8,41 @@ class FuncFordatasource extends \lib\template\AbstractFunction
     function call($parameters, $data, $content = "", $unparsed = Array(),$module=false)
     {
 
-        $datasource=$parameters[0]->getData();
+        if(is_object($parameters[0])) {
+            $datasource = $parameters[0]->getData();
 
-        if(isset($parameters[1])){
-            if(is_object($parameters[1])){
-                $dataSelected=$parameters[1]->getData();
-            }else{
-                $dataSelected=$parameters[1];
-            }
-        }else{
-            $dataSelected="";
-        }
-        $dataSelected=$this->toSelectedMap($dataSelected,$datasource["value"]);
-
-
-        $result="";
-        //first check if the given variable is an array in the first place
-        if (is_array($datasource["data"])) {
-
-            //loop through the items
-            foreach ($datasource["data"] as $val) {
-                if(is_object($val)){
-                    $val=$val->toArray();
+            if (isset($parameters[1])) {
+                if (is_object($parameters[1])) {
+                    $dataSelected = $parameters[1]->getData();
+                } else {
+                    $dataSelected = $parameters[1];
                 }
-                $data->_value=$val[$datasource["value"]];
-                $data->_text=$val[$datasource["text"]];
-                $data->_selected=isset($dataSelected[$val[$datasource["value"]]]) && $dataSelected[$val[$datasource["value"]]];
-                $result .= $this->interpreter->interpret($content, $this->template->dataHandler($data));
+            } else {
+                $dataSelected = "";
+            }
+            $dataSelected = $this->toSelectedMap($dataSelected, $datasource["value"]);
+
+
+            $result = "";
+            //first check if the given variable is an array in the first place
+            if (is_array($datasource["data"])) {
+
+                //loop through the items
+                foreach ($datasource["data"] as $val) {
+                    if (is_object($val)) {
+                        $val = $val->toArray();
+                    }
+                    $data->_value = $val[$datasource["value"]];
+                    $data->_text = $val[$datasource["text"]];
+                    $data->_selected = isset($dataSelected[$val[$datasource["value"]]]) && $dataSelected[$val[$datasource["value"]]];
+                    $result .= $this->interpreter->interpret($content, $this->template->dataHandler($data));
+                }
+
             }
 
+            return $result;
         }
-
-        return $result;
+        return "";
 
     }
 
