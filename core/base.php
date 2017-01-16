@@ -149,6 +149,10 @@ class Base
         }
     }
 
+    public function hasMethod($name){
+        return method_exists($this,$name);
+    }
+
 
 }
 

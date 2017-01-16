@@ -44,23 +44,21 @@ abstract class BaseModel extends Base
         $class = get_class($this);
         if (!($backtrace[1]["class"] == $class && $backtrace[1]["function"] == "get" . ucfirst($name)) && method_exists($this, "get" . ucfirst($name))) {
             $funcName = "get" . ucfirst($name);
-            $this->_debugIn("Dynamic get",$name);
-            $result= $this->$funcName();
+            $this->_debugIn("Dynamic get", $name);
+            $result = $this->$funcName();
             $this->_debugOut();
             return $result;
 
         } elseif (isset($this->_fieldHandlers[$name])) {
-            $this->_debugIn("Fieldhandler get",$name);
-            $result= $this->_fieldHandlers[$name]->get(isset($this->_data[$name]) ? $this->_data[$name] : false);
+            $this->_debugIn("Fieldhandler get", $name);
+            $result = $this->_fieldHandlers[$name]->get(isset($this->_data[$name]) ? $this->_data[$name] : false);
             $this->_debugOut();
             return $result;
         } elseif (isset($this->_data[$name])) {
             return $this->_data[$name];
-        }
-        else if(property_exists($class,$name)){
+        } else if (property_exists($class, $name)) {
             return null;
-        }
-        else {
+        } else {
             return parent::__get($name);
         }
 
@@ -73,11 +71,11 @@ abstract class BaseModel extends Base
         $class = get_class($this);
         if ($backtrace[1]["class"] != $class && method_exists($this, "set" . ucfirst($name))) {
             $funcName = "set" . ucfirst($name);
-            $this->_debugIn("Dynamic set",$name);
+            $this->_debugIn("Dynamic set", $name);
             $this->$funcName($value);
             $this->_debugOut();
         } elseif (isset($this->_fieldHandlers[$name])) {
-            $this->_debugIn("Fieldhandler set",$name);
+            $this->_debugIn("Fieldhandler set", $name);
             $this->_fieldHandlers[$name]->set($value);
             $this->_debugOut();
         } else {
@@ -175,31 +173,49 @@ abstract class BaseModel extends Base
         $validator = $this->validation->validator("model");
         $type = $this->_getType();
         $vars = get_class_vars($type);
-
-        foreach ($vars as $var=>$val) {
+        foreach ($vars as $var => $val) {
             $annotations = $this->annotation->getAnnotationsForField($type, $var, "validate");
-            foreach($annotations as $annotation) {
-                $annotation=$this->annotation->translate($annotation);
-                $validator->add($var, $annotation->function,$annotation->parameters);
+            foreach ($annotations as $annotation) {
+                $annotation = $this->annotation->translate($annotation);
+                $validator->add($var, $annotation->function, $annotation->parameters);
             }
         }
-
         return $validator;
+    }
+
+    var $__requiredFieldsCache = false;
+
+    function __requiredFields()
+    {
+        if (!$this->__requiredFieldsCache) {
+            $type = $this->_getType();
+            $vars = get_class_vars($type);
+            $required = array();
+            foreach ($vars as $var => $val) {
+                $annotations = $this->annotation->getAnnotationsForField($type, $var, "validate");
+                foreach ($annotations as $annotation) {
+                    $annotation = $this->annotation->translate($annotation);
+                    $required[$var] = $this->validation->validator($annotation->function)->isRequired();
+                }
+            }
+            $this->__requiredFieldsCache = $required;
+        }
+        return $this->__requiredFieldsCache;
     }
 
     function __fieldHandlers()
     {
-        $result=array();
+        $result = array();
         $type = $this->_getType();
         $vars = get_class_vars($type);
-        foreach ($vars as $var=>$val) {
+        foreach ($vars as $var => $val) {
             $annotations = $this->annotation->getAnnotationsForField($type, $var, "handle");
             foreach ($annotations as $annotation) {
                 $annotation = $this->annotation->translate($annotation);
-                $handler=$this->model->fieldHandler($annotation->function);
-                if($handler){
-                    $handler->fromAnnotation($annotation->parameters,$this->_getType(),$var);
-                    $result[$var]=$handler;
+                $handler = $this->model->fieldHandler($annotation->function);
+                if ($handler) {
+                    $handler->fromAnnotation($annotation->parameters, $this->_getType(), $var);
+                    $result[$var] = $handler;
                 }
             }
         }
@@ -233,6 +249,15 @@ abstract class BaseModel extends Base
     function _getData()
     {
         return $this->_data;
+    }
+
+    function isFieldRequired($field)
+    {
+        $required=$this->__requiredFields();
+        if(@$required[$field]) {
+            return true;
+        }
+        return false;
     }
 
 }

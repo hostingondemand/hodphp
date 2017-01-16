@@ -12,5 +12,7 @@ abstract class BaseValidator extends Base{
         $result->errors=$errors;
         return $result;
     }
+
+    function isRequired(){return false;}
 }
 ?>

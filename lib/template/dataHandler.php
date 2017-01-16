@@ -103,6 +103,14 @@ class DataHandler extends Lib
             $this->__data["tpl"][$key] = $val;
         }
     }
-}
 
+    function isFieldRequired($field){
+        $data=$this->getData();
+        if($data->hasMethod("isFieldRequired")){
+            return $data->isFieldRequired($field);
+        }
+
+        return false;
+    }
+}
 ?>

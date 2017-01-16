@@ -86,7 +86,7 @@
         }
 
         public function hasMethod($name){
-            return method_exists($this->instance,$name);
+            return @$this->instance->hasMethod($name);
         }
 
         public function toArray(){

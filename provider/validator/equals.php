@@ -13,5 +13,7 @@ class Equals extends BaseValidator{
              return $this->result(true,false);
          }
      }
+
+    function isRequired(){return true;}
 }
 ?>
