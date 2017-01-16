@@ -24,7 +24,7 @@ class Debug extends Lib
 
     function handlePHPError($errno, $errstr, $errfile, $errline)
     {
-        $reporting = error_reporting();
+        $reporting = \error_reporting();
         if ($reporting) {
             $this->error("PHP:" . $errstr, array("file" => $errfile, "line" => $errline, "errno" => $errno));
         }
