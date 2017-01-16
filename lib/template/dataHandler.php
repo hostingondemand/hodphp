@@ -106,7 +106,7 @@ class DataHandler extends Lib
 
     function isFieldRequired($field){
         $data=$this->getData();
-        if($data->hasMethod("isFieldRequired")){
+        if(method_exists($data,"hasMethod")&&$data->hasMethod("isFieldRequired")){
             return $data->isFieldRequired($field);
         }
 
