@@ -11,6 +11,23 @@ hoddebug=new function(serverInput){
         }
     return null;
     }
+    this.getProfiles=function(){
+        console.log("===profiles===");
+        var profiles=serverInput.profiles;
+        profiles.sort(function(b,a){
+            return ((a.seconds < b.seconds) ? -1 : ((a.seconds > b.seconds) ? 1 : 0));
+        });
+        for(profileKey in profiles){
+            var profile=profiles[profileKey];
+            console.log("%c "+profile.name+":","color:red;");
+            console.log("occurances",profile.occurances);
+            console.log("seconds",profile.seconds);
+            console.log("----------")
+
+        }
+
+    }
 }(_hoddebugInitVars);
 
 hoddebug.getErrors();
+hoddebug.getProfiles();

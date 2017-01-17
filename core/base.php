@@ -128,7 +128,7 @@ class Base
 
     public function _debugIn($type,$name,$arguments=array()){
         //didn't use $this->session to avoid problems in the future
-        if(@$_SESSION["_debugMode"]) {
+        if(@$_SESSION["_debugStacktrace"]) {
             $core=core();
             $debug=Loader::getSingleton("debug","lib");
             //in case things are not properly loaded yet.
@@ -136,22 +136,42 @@ class Base
                 $debug->addToTrace($type, $this->_getType(), $name, $arguments);
             }
         }
+
+        if(@$_SESSION["_debugProfile"]) {
+            $core=core();
+            $debug=Loader::getSingleton("debug","lib");
+            //in case things are not properly loaded yet.
+            if($debug) {
+                $debug->profileIn($type, $this->_getType(), $name);
+            }
+        }
     }
 
     public function _debugOut(){
         //didn't use $this->session to avoid problems in the future
-        if(@$_SESSION["_debugMode"]) {
+        if(@$_SESSION["_debugStacktrace"]) {
             $debug=Loader::getSingleton("debug","lib");
             //in case things are not properly loaded yet.
             if($debug) {
                 $debug->removeFromTrace();
             }
         }
+
+        if(@$_SESSION["_debugProfile"]) {
+            $debug=Loader::getSingleton("debug","lib");
+            //in case things are not properly loaded yet.
+            if($debug) {
+                $debug->profileOut();
+            }
+        }
     }
+
 
     public function hasMethod($name){
         return method_exists($this,$name);
     }
+
+
 
 
 }

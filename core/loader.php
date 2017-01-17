@@ -95,58 +95,87 @@ class Loader
 
 
     //just a method to load a file where a class can be found
-    static function loadClass($class, $namespace)
+    static function loadClass($class, $namespace,$loadHard=false)
     {
 
-        if ($map = self::getClassmapFor($class, $namespace)) {
-            $path = __DIR__ . "/../modules/" . $map . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+        if($loadHard){
+            $path = __DIR__ . "/../" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                $path=str_replace("/","\\",$path);
+            }
             if (file_exists($path)) {
                 include_once($path);
-                return array("prefix" => "\\modules\\" . $map . "\\", "module" => $map);
+                return "\\";
             }
-        }
+        }else {
+            if ($map = self::getClassmapFor($class, $namespace)) {
+                $path = __DIR__ . "/../modules/" . $map . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+                if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                    $path=str_replace("/","\\",$path);
+                }
+                if (file_exists($path)) {
+                    include_once($path);
+                    return array("prefix" => "\\modules\\" . $map . "\\", "module" => $map);
+                }
+            }
 
-        if ($map = self::getNamespaceFor($namespace)) {
-            $path = __DIR__ . "/../modules/" . $map . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            if ($map = self::getNamespaceFor($namespace)) {
+                $path = __DIR__ . "/../modules/" . $map . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+                if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                    $path=str_replace("/","\\",$path);
+                }
+                if (file_exists($path)) {
+                    include_once($path);
+                    return array("prefix" => "\\modules\\" . $map . "\\", "module" => $map);
+                }
+            }
+
+            $path = __DIR__ . "/../project/modules/" . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                $path=str_replace("/","\\",$path);
+            }
             if (file_exists($path)) {
                 include_once($path);
-                return array("prefix" => "\\modules\\" . $map . "\\", "module" => $map);
+                return "\\project\\modules\\" . self::$module . "\\";
             }
-        }
 
-        $path = __DIR__ . "/../project/modules/" . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
-        if (file_exists($path)) {
-            include_once($path);
-            return "\\project\\modules\\" . self::$module . "\\";
-        }
-
-        $path = __DIR__ . "/../modules/" . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
-        if (file_exists($path)) {
-            include_once($path);
-            return "\\modules\\" . self::$module . "\\";
-        }
+            $path = __DIR__ . "/../modules/" . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                $path=str_replace("/","\\",$path);
+            }
+            if (file_exists($path)) {
+                include_once($path);
+                return "\\modules\\" . self::$module . "\\";
+            }
 
 
-        $path = __DIR__ . "/../project/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
-        if (file_exists($path)) {
-            include_once($path);
-            return "\\project\\";
-        }
+            $path = __DIR__ . "/../project/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                $path=str_replace("/","\\",$path);
+            }
+            if (file_exists($path)) {
+                include_once($path);
+                return "\\project\\";
+            }
 
 
-        $path = __DIR__ . "/../" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
-        if (file_exists($path)) {
-            include_once($path);
-            return "\\";
+            $path = __DIR__ . "/../" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                $path=str_replace("/","\\",$path);
+            }
+            if (file_exists($path)) {
+                include_once($path);
+                return "\\";
+            }
         }
         return false;
     }
 
     //load the class if needed. and create an instance of the class
-    static function createInstance($class, $namespace = "", $classPrefix = "")
+    static function createInstance($class, $namespace = "", $classPrefix = "",$loadHard=false)
     {
 
-        $info=self::getInfo($class,$namespace,$classPrefix);
+        $info=self::getInfo($class,$namespace,$classPrefix,$loadHard);
         if($info){
             return new Proxy($info->type, $info->module);
         }
@@ -155,12 +184,12 @@ class Loader
 
     }
 
-    static function getInfo($class, $namespace = "", $classPrefix = "")
+    static function getInfo($class, $namespace = "", $classPrefix = "",$loadHard=false)
     {
         $namespace = str_replace("/", "\\", $namespace);
 
 
-        if ($loadResult = self::loadClass($class, $namespace)) {
+        if ($loadResult = self::loadClass($class, $namespace,$loadHard)) {
             if (is_array($loadResult)) {
                 $prefix = $loadResult["prefix"];
                 $module = $loadResult["module"];
@@ -191,13 +220,13 @@ class Loader
 
 
     //if an instance of the class is already registered: use this instance otherwise return and register a new instance and register.
-    static function getSingleton($class, $namespace = "", $prefix = "")
+    static function getSingleton($class, $namespace = "", $prefix = "",$loadHard=false)
     {
         $namespace = str_replace("/", "\\", $namespace);
 
         $fullclass = "\\" . $namespace . "\\" . ucfirst($prefix) . ucfirst($class);
         if (!isset(self::$instances[$fullclass])) {
-            self::$instances[$fullclass] = self::createInstance($class, $namespace, $prefix);
+            self::$instances[$fullclass] = self::createInstance($class, $namespace, $prefix,$loadHard);
         }
         return self::$instances[$fullclass];
 

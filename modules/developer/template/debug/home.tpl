@@ -1,15 +1,8 @@
 <div class="options">
     <a href="{{url("","","clearCache")}}">{{language("options.clearCache")}}</a>
-
-    <a href="{{url("","","toggleMode")}}">
-        {{if(isInDebug())}}
-        {{language("options.debugOff")}}
-        {{else}}
-        {{language("options.debugOn")}}
-        {{/if}}
-    </a>
-
-
+    {{if(isInDebug())}}
+    <a href="{{url("","","toggleMode")}}">{{language("options.debugOff")}}  </a>
+    <h2>debug options</h2>
     <a href="{{url("","","toggleClientCache")}}">
         {{if(isClientCacheOn())}}
         {{language("options.ClientCacheOff")}}
@@ -17,4 +10,23 @@
         {{language("options.ClientCacheOn")}}
         {{/if}}
     </a>
+
+    <a href="{{url("","","toggleStackTracing")}}">
+        {{if(stackTraceOn)}}
+        {{language("options.stacktraceOff")}}
+        {{else}}
+        {{language("options.stacktraceOn")}}
+        {{/if}}
+    </a>
+
+    <a href="{{url("","","toggleProfiling")}}">
+        {{if(profileOn)}}
+        {{language("options.profileOff")}}
+        {{else}}
+        {{language("options.profileOn")}}
+        {{/if}}
+    </a>
+    {{else}}
+    <a href="{{url("","","toggleMode")}}">{{language("options.debugOn")}}  </a>
+    {{/if}}
 </div>

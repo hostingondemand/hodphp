@@ -31,26 +31,50 @@ class Event extends \core\Lib
     function getListenersForEvent($name)
     {
         if (!isset($this->eventListeners[$name]) || $this->_noCache) {
-            $this->eventListeners[$name] = array();
-            if ($listener = Loader::getSingleton($name, "project\\listener")) {
-                $this->eventListeners[$name][] =array("module"=>"","listener"=>$listener);
+            if($this->_noCache){
+                $classes=$this->doGetEventListeners($name);
+            }else{
+                $classes=$this->cache->runCachedProject("event",array("name"=>$name),function($data) {
+                    return $this->doGetEventListeners($data["name"]);
+                });
             }
-
-            if ($listener = Loader::getSingleton($name, "listener")) {
-                $this->eventListeners[$name][] =array("module"=>"","listener"=>$listener);
-            }
-
-            $dirs = $this->filesystem->getDirs("modules");
-            foreach ($dirs as $module) {
-                $this->goModule($module);
-                if ($listener = Loader::getSingleton($name, "modules/" . $module . "/listener")) {
-                    $this->eventListeners[$name][]=array("module"=>$module,"listener"=>$listener);
+            $result=array();
+            foreach($classes as $class){
+                if($class["module"]){
+                    $this->goModule($class["module"]);
                 }
-                $this->goBackModule();
+                $result[]=array("module"=>$class["module"],"listener"=>Loader::getSingleton($class["class"],$class["namespace"],"",true));
+                if($class["module"]){
+                    $this->goBackModule();
+                }
             }
+            $this->eventListeners[$name]=$result;
         }
         return $this->eventListeners[$name];
 
+    }
+
+
+    function doGetEventListeners($name){
+        $classes=array();
+        if ($listener = Loader::getSingleton($name, "project\\listener","",true)) {
+            $classes[] =array("module"=>false,"class"=>$name,"namespace"=>"project\\listener");
+        }
+
+        if ($listener = Loader::getSingleton($name, "listener","",true)) {
+            $classes[] =array("module"=>false,"class"=>$name,"namespace"=>"listener");
+        }
+
+        $dirs = $this->filesystem->getDirs("modules");
+        foreach ($dirs as $module) {
+            $this->goModule($module);
+            if ($listener = Loader::getSingleton($name, "modules/" . $module . "/listener","",true)) {
+                $classes[] =array("module"=>$module,"class"=>$name,"namespace"=> "modules/" . $module . "/listener");
+            }
+            $this->goBackModule();
+        }
+
+        return $classes;
     }
 }
 

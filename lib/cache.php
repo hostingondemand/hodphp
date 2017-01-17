@@ -12,11 +12,11 @@
             }
         }
 
-        function runCachedProject($key,$data,$function){
+        function runCachedProject($key,$input,$function){
             if($this->projectSize==0){
                 $this->projectSize=$this->filesystem->dirSize("project");
             }
-            $filename="data/cache/".$key."_".md5(print_r($data,true)).".php";
+            $filename="data/cache/".$key."_".md5(print_r($input,true)).".php";
             $data=array();
             if($this->filesystem->exists($filename)){
                   $data=  $this->filesystem->getArray($filename);
@@ -24,7 +24,7 @@
                       return $data["content"];
                   }
             }
-            $result = $function($data);
+            $result = $function($input);
             $data["projectSize"]=$this->projectSize;
             $data["content"]=$result;
             $this->filesystem->writeArray($filename,$data);

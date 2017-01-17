@@ -17,7 +17,7 @@ class Annotation extends \core\Lib
     {
         $r = new \ReflectionClass($class);
         $doc = $r->getDocComment();
-        preg_match_all('#@'.$prefix.'(.*?)\n#s', $doc, $annotations);
+        preg_match_all('#@'.$prefix.'(.*?)[\r]{0,1}\n#s', $doc, $annotations);
         if (isset($annotations[1])) {
             return $annotations[1];
         }
@@ -35,7 +35,7 @@ class Annotation extends \core\Lib
         try {
             $r = new \ReflectionMethod($class, $method);
             $doc = $r->getDocComment();
-            preg_match_all('#@' . $prefix . '(.*?)\n#s', $doc, $annotations);
+            preg_match_all('#@' . $prefix . '(.*?)[\r]{0,1}\n#s', $doc, $annotations);
             if (isset($annotations[1])) {
                 return array_merge($this->getAnnotationsForClass($class,$prefix), $annotations[1]);
             }
@@ -52,7 +52,7 @@ class Annotation extends \core\Lib
         try {
         $r = new \ReflectionProperty($class, $field);
         $doc = $r->getDocComment();
-        preg_match_all('#@' . $prefix . '(.*?)\n#s', $doc, $annotations);
+        preg_match_all('#@' . $prefix . '(.*?)[\r]{0,1}\n#s', $doc, $annotations);
         if (isset($annotations[1])) {
             return array_merge($this->getAnnotationsForClass($class,$prefix), $annotations[1]);
         }

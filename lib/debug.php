@@ -8,18 +8,29 @@ class Debug extends Lib
 
     var $errors = array();
     var $trace = array();
+    var $profileStack = array();
+    var $profiles = array();
 
     function error($title, $detail)
     {
-        $trace=array_slice($this->trace,-5,5,true);
-        $this->errors[] = array("title" => $title, "detail" => $detail, "stackTrace"=>$trace);
+        $trace = array_slice($this->trace, -5, 5, true);
+        $this->errors[] = array("title" => $title, "detail" => $detail, "stackTrace" => $trace);
     }
 
     function getInitArray()
     {
         return array(
-            "errors" => $this->errors
+            "errors" => $this->errors,
+            "profiles"=>$this->removeKeys($this->profiles)
         );
+    }
+
+    function removeKeys($input){
+        $result=array();
+        foreach($input as $val){
+            $result[]=$val;
+        }
+        return $result;
     }
 
     function handlePHPError($errno, $errstr, $errfile, $errline)
@@ -50,11 +61,46 @@ class Debug extends Lib
         array_pop($this->trace);
     }
 
+    function profileIn($actionType, $class, $name)
+    {
+        $this->profileStack[] = array("name" => "(" . $actionType . ")" . $class . "->" . $name,
+            "start" => $this->microtime_float()
+        );
+    }
+
+
+    function profileOut()
+    {
+        $last = array_pop($this->profileStack);
+        if (!isset($this->profiles[$last["name"]])) {
+            $this->profiles[$last["name"]] = array("name"=>$last["name"],"seconds" => 0, "occurances" => 0);
+        }
+        $time = $this->microtime_float() - $last["start"];
+        $this->profiles[$last["name"]]["occurances"]++;
+        $this->profiles[$last["name"]]["seconds"] += $time;
+
+    }
+
+    function microtime_float()
+    {
+        list($usec, $sec) = explode(" ", microtime());
+        return ((float)$usec + (float)$sec);
+    }
+
+
     function _debugIn($type, $name, $arguments = array())
     {
     }
 
     function _debugOut()
+    {
+    }
+
+    function _profileIn($type, $name, $arguments = array())
+    {
+    }
+
+    function _finishProfile()
     {
     }
 
