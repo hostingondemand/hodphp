@@ -48,7 +48,6 @@ class Base
         if($this->event) {
             $aspects=$this->annotation->getAnnotationsForClass($data["class"]);
             $this->annotation->runAspect("onClassPostConstruct",$aspects,$data);
-            $this->event->raise("classPostConstruct", $data);
         }
     }
 
@@ -64,8 +63,6 @@ class Base
                 $annotation=$this->annotation->translate($inModuleAnnotation[0]);
                 Loader::goModule($annotation->parameters[0]);
             }
-
-            $this->event->raise("methodPreCall", $data);
         }
     }
 
@@ -74,15 +71,11 @@ class Base
             if(substr($data["method"],0,1)!="_") {
                 $aspects = $this->annotation->getAnnotationsForMethod($data["class"], $data["method"]);
                 $this->annotation->runAspect("onMethodPostCall", $aspects, $data);
-
-
             }
 
             if($this->annotation->methodHasAnnotations($data["class"], $data["method"],"inModule")){
                 Loader::goBackModule();
             }
-
-            $this->event->raise("methodPostCall", $data);
         }
     }
 
@@ -92,7 +85,6 @@ class Base
                 $aspects = $this->annotation->getAnnotationsForField($data["class"], $data["field"]);
                 $this->annotation->runAspect("onFieldPreGet", $aspects, $data);
             }
-            $this->event->raise("fieldPreGet", $data);
         }
     }
 
@@ -102,7 +94,6 @@ class Base
                 $aspects = $this->annotation->getAnnotationsForField($data["class"], $data["field"]);
                 $this->annotation->runAspect("onFieldPostGet", $aspects, $data);
             }
-            $this->event->raise("fieldPostGet", $data);
         }
     }
 
@@ -112,7 +103,6 @@ class Base
                 $aspects = $this->annotation->getAnnotationsForField($data["class"], $data["field"]);
                 $this->annotation->runAspect("onFieldPreSet", $aspects, $data);
             }
-            $this->event->raise("fieldPreSet", $data);
         }
     }
 
@@ -122,7 +112,6 @@ class Base
                 $aspects = $this->annotation->getAnnotationsForField($data["class"], $data["field"]);
                 $this->annotation->runAspect("onFieldPostSet", $aspects, $data);
             }
-            $this->event->raise("fieldPostSet", $data);
         }
     }
 
