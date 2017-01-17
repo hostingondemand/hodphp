@@ -15,7 +15,7 @@ class Filesystem extends \core\Lib
     function calculatePath($file)
     {
         //if the string doesnt start with / or ~/ it will be considered a project file
-        if (!(substr($file, 0, 1) == "/" || substr($file, 0, 2) == "~/")) {
+        if (!(substr($file, 0, 1) == "/" || substr($file, 0, 2) == "~/"||substr($file,1,2)==":\\")) {
             $file = $this->path->getApp() . "/" . $file;
         }
 
@@ -23,7 +23,9 @@ class Filesystem extends \core\Lib
         if (substr($file, 0, 2) == "~/") {
             $file = str_replace("~/", $_SERVER["HOME"] . "/", $file);
         }
-
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $file=str_replace("/","\\",$file);
+        }
         return $file;
     }
 
@@ -119,6 +121,7 @@ class Filesystem extends \core\Lib
         if(!$dirResults){
             $dirResults=array();
         }
+
         $ignores = $this->getIgnores();
         $path = $this->calculatePath($dir);
         $dirs = array();
