@@ -32,6 +32,8 @@ namespace core;
         public function __onFieldPostSet($data){
 
         }
+
+        var $__turboMode=false;
     }
 
     //some classes use magic get.. to avoid complicated code the core is always available through core()
@@ -47,4 +49,6 @@ namespace core;
     function self(){
             return loader::getCurrentClass();
     }
+
+
 ?>

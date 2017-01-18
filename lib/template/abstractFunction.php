@@ -1,8 +1,10 @@
 <?php
 namespace lib\template;
 use core\Base;
+use core\Lib;
+
 //an abstraction layer for functions
-abstract class AbstractFunction extends Base
+abstract class AbstractFunction extends Lib
 {
     var $requireContent = false;
     var $parseContent = true;

@@ -2,7 +2,7 @@
     namespace core;
     class Proxy{
         private $module;
-        private $instance;
+        public $instance;
         private $fullclass;
 
         function __construct($fullclass,$module)
@@ -25,39 +25,52 @@
 
         function __get($name)
         {
-            $this->__setModule();
-            $this->__raise("fieldPreGet",array("class"=>$this->fullclass,"field"=>$name));
-            $this->_debugIn("Get Variable",$name);
-            $result=   $this->instance->$name;
-            $this->_debugOut();
-            $this->__raise("fieldPostGet",array("class"=>$this->fullclass,"field"=>$name,"value"=>$result));
-            $this->__unsetModule();
+            if(!$this->instance->__turboMode) {
+                $this->__setModule();
+                $this->__raise("fieldPreGet", array("class" => $this->fullclass, "field" => $name));
+                $this->_debugIn("Get Variable", $name);
+                $result = $this->instance->$name;
+                $this->_debugOut();
+                $this->__raise("fieldPostGet", array("class" => $this->fullclass, "field" => $name, "value" => $result));
+                $this->__unsetModule();
+            }else{
+                $result = $this->instance->$name;
+            }
             return $result;
         }
 
         function __set($name, $value)
         {
-
-            $this->__setModule();
-            $this->__raise("fieldPreSet",array("class"=>$this->fullclass,"field"=>$name));
-            $this->_debugIn("Set variable",$name);
-            $this->instance->$name=$value;
-            $this->_debugOut();
-            $this->__raise("fieldPreGet",array("class"=>$this->fullclass,"field"=>$name));
-            $this->__unsetModule();
+            if(!$this->instance->__turboMode) {
+                $this->__setModule();
+                $this->__raise("fieldPreSet", array("class" => $this->fullclass, "field" => $name));
+                $this->_debugIn("Set variable", $name);
+                $this->instance->$name = $value;
+                $this->_debugOut();
+                $this->__raise("fieldPreGet", array("class" => $this->fullclass, "field" => $name));
+                $this->__unsetModule();
+            }else{
+                $this->_debugIn("Set variable", $name);
+            }
         }
 
         function __call($name, $arguments)
         {
-            $this->__setModule();
-            $this->__raise("methodPreCall",array("class"=>$this->fullclass,"method"=>$name,"arguments"=>$arguments));
-            Loader::registerCall($this);
-            $this->_debugIn("Call Method",$name,$arguments);
-            $result=  call_user_func_array(Array($this->instance, $name), $arguments);
+            $this->_debugIn("Call Method", $name, $arguments);
+            if(!$this->instance->__turboMode) {
+                $this->__setModule();
+                $this->__raise("methodPreCall", array("class" => $this->fullclass, "method" => $name, "arguments" => $arguments));
+                Loader::registerCall($this);
+
+                $result = call_user_func_array(Array($this->instance, $name), $arguments);
+
+                Loader::unregisterCall($this);
+                $this->__raise("methodPostCall", array("class" => $this->fullclass, "method" => $name, "arguments" => $arguments, "value" => $result));
+                $this->__unsetModule();
+            }else{
+                $result = call_user_func_array(Array($this->instance, $name), $arguments);
+            }
             $this->_debugOut();
-            Loader::unregisterCall($this);
-            $this->__raise("methodPostCall",array("class"=>$this->fullclass,"method"=>$name,"arguments"=>$arguments,"value"=>$result));
-            $this->__unsetModule();
             return $result;
 
         }

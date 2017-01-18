@@ -4,7 +4,7 @@
 namespace lib\template;
 use core\Loader;
 
-abstract class BaseModule extends \core\Base
+abstract class BaseModule extends \core\Lib
 {
     var $_name;
 

@@ -1,9 +1,10 @@
 <?php
 namespace  lib\model;
 use core\Base;
+use core\Lib;
 use core\Loader;
 
-class ModelNamespace extends Base{
+class ModelNamespace extends Lib{
 
     var $namespace;
 

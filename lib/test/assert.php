@@ -1,6 +1,6 @@
 <?php
 namespace lib\test;
-class assert
+class assert extends Base
 {
     var $results = array();
 

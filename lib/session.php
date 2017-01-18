@@ -7,7 +7,8 @@ class Session extends \core\Lib{
         if (isset($_SESSION[$name]) ){
             return $_SESSION[$name];
         }
-        return "";
+       $_SESSION[$name]=false;
+        return false;
     }
 
     function __set($name, $value)

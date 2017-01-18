@@ -1,9 +1,10 @@
 <?php
 namespace  lib\model;
 use core\Base;
+use core\Lib;
 
 
-abstract class BaseFieldHandler extends Base
+abstract class BaseFieldHandler extends Lib
 {
     var $_model;
     var $_inModelName;
