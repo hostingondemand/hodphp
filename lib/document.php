@@ -1,7 +1,9 @@
 <?php
 namespace lib;
 
-class Document
+use core\Lib;
+
+class Document extends Lib
 {
 
     var $scripts=array();

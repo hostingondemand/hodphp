@@ -30,35 +30,39 @@
                     }
                 }
 
-                $renames=$this->config->get("module.rename","route");
-
-                if(is_array($renames)&&isset($renames[$parameters[0]])){
+                if(is_array($this->getRenames())&&isset($renames[$parameters[0]])){
                     $parameters[0]=$renames[$parameters[0]];
                 }
 
-                return $this->path->getHttp()."?route=".implode("/",$parameters);
+               return $this->path->getHttp()."?route=".implode("/",$parameters);
             }elseif(!$first){
-              return  $this->path->getHttp();
+               return  $this->path->getHttp();
             }else{
-                return $this->path->getHttp()."?route=".implode("/", func_get_args());
+               return $this->path->getHttp()."?route=".implode("/", func_get_args());
             }
+            return "";
 
         }
 
 
         function getRoute(){
-            if(isset($this->request->get["route"])){
-                $route= explode("/",$this->request->get["route"]);
-                $renames=$this->config->get("module.rename","route");
-                if(is_array($renames)) {
-                    $renames = array_flip($renames);
-                    if (isset($renames[$route[0]])) {
-                        $route[0] = $renames[$route[0]];
+            static $route=false;
+            if(!$route) {
+                if (isset($this->request->get["route"])) {
+                    $route = explode("/", $this->request->get["route"]);
+                    $renames = $this->getRenames();
+                    if (is_array($renames)) {
+                        $renames = array_flip($renames);
+                        if (isset($renames[$route[0]])) {
+                            $route[0] = $renames[$route[0]];
+                        }
                     }
                 }
-                return $route;
+                if(!$route){
+                    $route=array();
+                }
             }
-            return Array();
+            return $route;
         }
 
         function get($key){
@@ -76,6 +80,16 @@
         }
         function removeAutoRoute(){
             $this->setAutoRoute(array());
+        }
+        function getRenames(){
+            static $renames=false;
+            if(!$renames){
+                $renames=$this->config->get("module.rename","route");
+                if(!$renames){
+                    $renames=array();
+                }
+            }
+            return $renames;
         }
     }
 ?>
