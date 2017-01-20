@@ -5,17 +5,18 @@ namespace lib;
 use core\Loader;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use RecursiveTreeIterator;
 
 class Filesystem extends \core\Lib
 {
 
-    var $customExtensions=array("css"=>"text/css");
+    var $customExtensions = array("css" => "text/css");
 
     //generate a full path
     function calculatePath($file)
     {
         //if the string doesnt start with / or ~/ it will be considered a project file
-        if (!(substr($file, 0, 1) == "/" || substr($file, 0, 2) == "~/"||substr($file,1,2)==":\\")) {
+        if (!(substr($file, 0, 1) == "/" || substr($file, 0, 2) == "~/" || substr($file, 1, 2) == ":\\")) {
             $file = $this->path->getApp() . "/" . $file;
         }
 
@@ -24,7 +25,7 @@ class Filesystem extends \core\Lib
             $file = str_replace("~/", $_SERVER["HOME"] . "/", $file);
         }
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $file=str_replace("/","\\",$file);
+            $file = str_replace("/", "\\", $file);
         }
         return $file;
     }
@@ -70,11 +71,10 @@ class Filesystem extends \core\Lib
 
     function getContentType($file)
     {
-        $exp=explode(".",$file);
-        if(isset($this->customExtensions[$exp[count($exp)-1]])){
-            return $this->customExtensions[$exp[count($exp)-1]];
-        }
-        elseif ($fullPath = $this->findRightPath($file)) {
+        $exp = explode(".", $file);
+        if (isset($this->customExtensions[$exp[count($exp) - 1]])) {
+            return $this->customExtensions[$exp[count($exp) - 1]];
+        } elseif ($fullPath = $this->findRightPath($file)) {
             return mime_content_type($fullPath);
         }
         return false;
@@ -103,7 +103,7 @@ class Filesystem extends \core\Lib
         if (!$useIgnores) {
             return false;
         }
-        if ($this->ignores===false) {
+        if ($this->ignores === false) {
             $this->ignores = $this->config->get("filesystem.ignore", "server");
             if (!$this->ignores) {
                 $this->ignores = array();
@@ -118,14 +118,14 @@ class Filesystem extends \core\Lib
     function getDirs($dir, $useIgnores = true)
     {
         static $dirResults;
-        if(!$dirResults){
-            $dirResults=array();
+        if (!$dirResults) {
+            $dirResults = array();
         }
 
         $ignores = $this->getIgnores();
         $path = $this->calculatePath($dir);
         $dirs = array();
-        if(!isset($dirResults[$path])) {
+        if (!isset($dirResults[$path])) {
             if ($this->exists($path)) {
                 if ($handle = opendir($path)) {
                     while (false !== ($entry = readdir($handle))) {
@@ -138,9 +138,30 @@ class Filesystem extends \core\Lib
                     closedir($handle);
                 }
             }
-            $dirResults[$path]=$dirs;
+            $dirResults[$path] = $dirs;
         }
         return $dirResults[$path];
+    }
+
+    function getFilesRecursive($dir, $type = false)
+    {
+        if (!is_array($dir)) {
+            $dir = array($dir);
+        }
+        $ignores = $this->getIgnores();
+        $files = array();
+        foreach($dir as $currentDir) {
+            if($this->exists($currentDir)) {
+                $path = $this->calculatePath($currentDir);
+                $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS));
+                foreach ($it as $path) {
+                    if ((!is_array($ignores) || !in_array($path, $ignores)) && (!$type || substr($path, -strlen($type)) == $type)) {
+                        $files[] = $path->getRealPath();
+                    }
+                }
+            }
+        }
+        return $files;
     }
 
     //create an array of all files

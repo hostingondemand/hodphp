@@ -186,27 +186,34 @@ class Loader
 
     static function getInfo($class, $namespace = "", $classPrefix = "",$loadHard=false)
     {
-        $namespace = str_replace("/", "\\", $namespace);
+        static $infoCache=array();
+        $module=self::$module;
+        $info=false;
+        if(!isset($infoCache[$module][$class][$namespace])) {
+            $namespace = str_replace("/", "\\", $namespace);
 
+            if ($loadResult = self::loadClass($class, $namespace, $loadHard)) {
+                if (is_array($loadResult)) {
+                    $prefix = $loadResult["prefix"];
+                    $module = $loadResult["module"];
+                } else {
+                    $prefix = $loadResult;
+                    $module = false;
+                }
 
-        if ($loadResult = self::loadClass($class, $namespace,$loadHard)) {
-            if (is_array($loadResult)) {
-                $prefix = $loadResult["prefix"];
-                $module = $loadResult["module"];
-            } else {
-                $prefix = $loadResult;
-                $module = false;
+                $className = $class;
+                if (is_numeric(substr($className, 0, 1))) {
+                    $exp = explode(".", $className);
+                    $className = $exp[1];
+                }
+                $fullclass = $prefix . $namespace . "\\" . ucfirst($classPrefix) . ucfirst($className);
+                $info= (object)array("type" => $fullclass, "module" => $module);
             }
-
-            $className = $class;
-            if (is_numeric(substr($className, 0, 1))) {
-                $exp = explode(".", $className);
-                $className = $exp[1];
-            }
-            $fullclass = $prefix . $namespace . "\\" . ucfirst($classPrefix) . ucfirst($className);
-            return (object)array("type" => $fullclass, "module" => $module);
+            $infoCache[$module][$class][$namespace]=$info;
+        }else{
+            $info=$infoCache[$module][$class][$namespace];
         }
-        return false;
+        return $info;
     }
 
 
