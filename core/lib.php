@@ -33,7 +33,7 @@ namespace core;
 
         }
 
-        var $__turboMode=false;
+        var $__turboMode=true;
     }
 
     //some classes use magic get.. to avoid complicated code the core is always available through core()

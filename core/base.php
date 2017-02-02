@@ -118,7 +118,7 @@ class Base
 
     public function _debugIn($type,$name,$arguments=array()){
         //didn't use $this->session to avoid problems in the future
-        if($_SESSION["_debugMode"]) {
+        if(@$_SESSION["_debugMode"]) {
             if ($_SESSION["_debugStacktrace"]) {
                 $core = core();
                 $debug = Loader::getSingleton("debug", "lib");
@@ -141,7 +141,7 @@ class Base
 
     public function _debugOut(){
         //didn't use $this->session to avoid problems in the future
-        if($_SESSION["_debugMode"]) {
+        if(@$_SESSION["_debugMode"]) {
             if ($_SESSION["_debugStacktrace"]) {
                 $debug = Loader::getSingleton("debug", "lib");
                 //in case things are not properly loaded yet.

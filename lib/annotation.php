@@ -163,10 +163,17 @@ class Annotation extends \core\Lib
                     $result = array();
                     $files = $this->filesystem->getFilesRecursive(array("project/controller", "project/service", "project/model", "project/modules", "modules"), "php");
                     foreach ($files as $file) {
-                        if (strpos($file, '/controller/') !== false || strpos($file, '/service/') !== false || strpos($file, '/model/') !== false) {
-                            $type = str_replace($this->path->getApp(), "", $file);
+                        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                            $useFile=str_replace("\\","/",$file);
+                            $removePath=str_replace("\\","/",$this->path->getApp());
+                        }else{
+                            $useFile=$file;
+                            $removePath=$this->path->getApp();
+                        }
+                        if (strpos($useFile, '/controller/') !== false || strpos($useFile, '/service/') !== false || strpos($useFile, '/model/') !== false) {
+                            $type = str_replace($removePath, "", $useFile);
                             $type = str_replace(".php", "", $type);
-                            $type = str_replace("/", "\\", $type);
+                            $type=str_replace("/","\\",$type);
                             include_once($file);
                             if (class_exists($type)) {
                                 $subResult = array();

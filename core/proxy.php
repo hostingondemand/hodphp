@@ -50,6 +50,7 @@
                 $this->__raise("fieldPreGet", array("class" => $this->fullclass, "field" => $name));
                 $this->__unsetModule();
             }else{
+                $this->instance->$name = $value;
                 $this->_debugIn("Set variable", $name);
             }
         }
@@ -57,8 +58,8 @@
         function __call($name, $arguments)
         {
             $this->_debugIn("Call Method", $name, $arguments);
+            $this->__setModule();
             if(!$this->instance->__turboMode) {
-                $this->__setModule();
                 $this->__raise("methodPreCall", array("class" => $this->fullclass, "method" => $name, "arguments" => $arguments));
                 Loader::registerCall($this);
 
@@ -66,10 +67,10 @@
 
                 Loader::unregisterCall($this);
                 $this->__raise("methodPostCall", array("class" => $this->fullclass, "method" => $name, "arguments" => $arguments, "value" => $result));
-                $this->__unsetModule();
             }else{
                 $result = call_user_func_array(Array($this->instance, $name), $arguments);
             }
+            $this->__unsetModule();
             $this->_debugOut();
             return $result;
 
