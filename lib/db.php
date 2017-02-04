@@ -287,6 +287,10 @@ class Db extends \core\Lib
     {
         $this->testMode = false;
     }
+
+    function condition(){
+        return Loader::createInstance("condition","lib/db");
+    }
 }
 
 ?>
