@@ -30,12 +30,12 @@ class Select extends Lib
         return $this;
     }
 
-    function byModel($model, $namespace)
+    function byModel($model, $namespace,$alias=false)
     {
-        $modelPath = $namespace . "\\" . $model;
-        $this->model = $modelPath;
-        $table = $this->provider->mapping->default->getTableForClass($modelPath);
-        $this->table = array($table => $table);
+        $this->model = $namespace . "\\" . $model;
+        $table = $this->db->tableForModel($model,$namespace);
+        $this->table($table,$alias);
+        return $this;
     }
 
     function table($table, $alias = false)
@@ -48,7 +48,7 @@ class Select extends Lib
             }
             $table = array($alias => $table);
         }
-        $this->table = $table;
+        $this->_table = $table;
         return $this;
 
 
@@ -67,6 +67,12 @@ class Select extends Lib
             $this->_fields[$fields] = $fields;
         }
 
+        return $this;
+    }
+
+    function joinModel($model,$namespace, $onLeft, $onRight, $alias){
+        $table=$this->db->tableForModel($model,$namespace);
+        $this->join($table,$onLeft,$onRight,$alias);
         return $this;
     }
 
@@ -172,11 +178,11 @@ class Select extends Lib
         }
 
 
-        $table = array_keys($this->table)[0];
-        $alias = array_values($this->table)[0];
-        $queryString .= " from " . $prefix . $table;
+        $table = array_values($this->_table)[0];
+        $alias = array_keys($this->_table)[0];
+        $queryString .= " from `" . $prefix . $table."`";
         if ($table != $alias) {
-            $queryString .= " as `" . $alias . "`";
+            $queryString .= " as " . $alias . "";
         }
 
 
@@ -249,11 +255,12 @@ class Select extends Lib
 
     function handleFieldName($name)
     {
+        if (strpos($name, '(') !== false) {
+            return $name;
+        }
+
         $exp = explode(".", $name);
         $corrected = array_map(function ($name) {
-            if (strpos($name, '(') !== false) {
-                return $name;
-            }
             return "`" . $name . "`";
         }, $exp);
         $name = implode(".", $corrected);

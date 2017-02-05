@@ -266,10 +266,10 @@ class Db extends \core\Lib
         return $select;
     }
 
-    function selectModel($class, $namespace = "")
+    function selectModel($class, $namespace = "",$alias=false)
     {
         $select = Loader::createInstance("select", "lib/db");
-        $select->byModel($class, $namespace);
+        $select->byModel($class, $namespace,$alias);
         return $select;
     }
 
@@ -290,6 +290,12 @@ class Db extends \core\Lib
 
     function condition(){
         return Loader::createInstance("condition","lib/db");
+    }
+
+    function tableForModel($model,$namespace){
+        $modelPath = $namespace . "\\" . $model;
+        $table = $this->provider->mapping->default->getTableForClass($modelPath);
+        return $table;
     }
 }
 
