@@ -76,7 +76,7 @@ class Serialization extends \core\Lib
                         "type"=>$data["type"][$key],
                         "original"=>$data["original"][$key]
                     );
-                    $_dataNew=$this->handle($_data);
+                    $_dataNew=$this->preSerialize($_data);
                     $newData[$key]=$_dataNew["data"];
                 }else{
                     $dataNew[$key]=$val;
@@ -126,7 +126,7 @@ class Serialization extends \core\Lib
                         "type"=>$_value->_getType(),
                         "original"=>$_value
                     );
-                    $_dataNew=$this->handle($_data);
+                    $_dataNew=$this->preSerialize($_data);
                     $tempData[$_key]=$_dataNew["data"];
                 }
             }
@@ -136,7 +136,7 @@ class Serialization extends \core\Lib
                 "type"=>$tempData->_getType(),
                 "original"=>$tempData
             );
-            $_dataNew=$this->handle($_data);
+            $_dataNew=$this->preSerialize($_data);
             $tempData=$_dataNew["data"];
         }
 
