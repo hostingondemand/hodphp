@@ -13,11 +13,23 @@ class Interpreter extends Lib
     //loop through all elements and interpret those
     function interpret($content, $data)
     {
-
         $result = "";
+
         foreach ($content as $val) {
-            $result .= $this->interpretElement($val, $data);
+            $temp = $this->interpretElement($val, $data);
+
+            if(is_object($temp)){
+                $temp = $temp->getData();
+
+                if(method_exists($temp,"__toString") || method_exists($temp,"hasMethod")&&$temp->hasMethod("__toString")){
+                    $temp = $temp->__toString();
+                }else{
+                    $temp = "(object)";
+                }
+            }
+            $result .= $temp;
         }
+
         return $result;
     }
 
@@ -25,7 +37,6 @@ class Interpreter extends Lib
     //check which type the element is and call the right function to interpret this.
     function interpretElement($element, $data)
     {
-
         if ($element["type"] == "content") {
             return $element["content"];
         } elseif ($element["type"] == "value") {
@@ -51,6 +62,7 @@ class Interpreter extends Lib
         if (substr($value, 0, 1) == "'" || substr($value, 0, 1) == '"') {
             $value = substr($value, 1);
         }
+
         if (substr($value, -1, 1) == "'" || substr($value, -1, 1) == '"') {
             $value = substr($value, 0, -1);
         }
@@ -62,14 +74,12 @@ class Interpreter extends Lib
     //handle a comparison
     function handleMainComparison($expression, $data)
     {
-
         //loop through all parameters to get all or sections
         foreach ($expression["parameters"][0] as $or) {
             $result = true;
 
             // loop through all sub parameters to get all and sections
             foreach ($or as $and) {
-
                 //compare those elements. if comparison fails.. return false
                 if (!$this->interpretElement($and, $data)) {
                     $result = false;
@@ -106,6 +116,7 @@ class Interpreter extends Lib
         } elseif ($operator == "!=") {
             return $left != $right;
         }
+
         return false;
     }
 
@@ -120,14 +131,15 @@ class Interpreter extends Lib
             $parameters[] = $this->interpretElement($parameter, $data);
         }
 
-
         if(count($exp)>1) {
-                $module=$this->template->getActiveModule($exp[0]);
-                if($module) {
-                    return $module->callFunction($exp[1],$parameters, $data, $expression["content"], $expression["parameters"]);
-                }
-        }else {
+            $module = $this->template->getActiveModule($exp[0]);
 
+            if($module) {
+                return $module->callFunction($exp[1],$parameters, $data, $expression["content"], $expression["parameters"]);
+            }
+
+            return false;
+        } else {
             //load the function class
             $function = Loader::getSingleton($expression["function"], "provider\\templateFunction", "func");
 
