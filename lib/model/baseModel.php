@@ -1,12 +1,12 @@
 <?php
 namespace  lib\model;
 use core\Base;
-
+use core\Loader;
 
 abstract class BaseModel extends Base
 {
 
-    private $_data = array();
+    private $_data = [];
     private $_invalidated = false;
     private $_fieldHandlers;
     private $_validationResult;
@@ -32,13 +32,12 @@ abstract class BaseModel extends Base
                 $handler->init($this, $fieldName);
             }
         } else {
-            $this->_fieldHandlers = array();
+            $this->_fieldHandlers = [];
         }
     }
 
     function __get($name)
     {
-
 
         $backtrace = debug_backtrace();
         $class = get_class($this);
@@ -47,12 +46,13 @@ abstract class BaseModel extends Base
             $this->_debugIn("Dynamic get", $name);
             $result = $this->$funcName();
             $this->_debugOut();
-            return $result;
 
+            return $result;
         } elseif (isset($this->_fieldHandlers[$name])) {
             $this->_debugIn("Fieldhandler get", $name);
             $result = $this->_fieldHandlers[$name]->get(isset($this->_data[$name]) ? $this->_data[$name] : false);
             $this->_debugOut();
+
             return $result;
         } elseif (isset($this->_data[$name])) {
             return $this->_data[$name];
@@ -61,7 +61,6 @@ abstract class BaseModel extends Base
         } else {
             return parent::__get($name);
         }
-
     }
 
     function __set($name, $value)
@@ -82,14 +81,12 @@ abstract class BaseModel extends Base
             $this->_data[$name] = $value;
         }
         $this->_invalidated = true;
-
     }
 
     function __debugInfo()
     {
         return $this->_data;
     }
-
 
     function fromArray($data)
     {
@@ -100,6 +97,7 @@ abstract class BaseModel extends Base
                 }
             }
         }
+
         return $this;
     }
 
@@ -112,14 +110,12 @@ abstract class BaseModel extends Base
             $result->_validationResult = $validationResult->toArray();
         }
 
-
         return $result;
     }
 
-
     function toArray()
     {
-        $result = array();
+        $result = [];
         foreach ($this->_data as $key => $val) {
             if (is_array($this->_data[$key])) {
                 foreach ($this->_data[$key] as $akey => $aval) {
@@ -140,7 +136,6 @@ abstract class BaseModel extends Base
                     $result[$key] = $this->_data[$key];
                 }
             }
-
         }
 
         return $result;
@@ -158,7 +153,6 @@ abstract class BaseModel extends Base
         }
         $this->_invalidated = false;
     }
-
 
     function _deleted()
     {
@@ -180,6 +174,7 @@ abstract class BaseModel extends Base
                 $validator->add($var, $annotation->function, $annotation->parameters);
             }
         }
+
         return $validator;
     }
 
@@ -190,7 +185,7 @@ abstract class BaseModel extends Base
         if (!$this->__requiredFieldsCache) {
             $type = $this->_getType();
             $vars = get_class_vars($type);
-            $required = array();
+            $required = [];
             foreach ($vars as $var => $val) {
                 $annotations = $this->annotation->getAnnotationsForField($type, $var, "validate");
                 foreach ($annotations as $annotation) {
@@ -200,12 +195,13 @@ abstract class BaseModel extends Base
             }
             $this->__requiredFieldsCache = $required;
         }
+
         return $this->__requiredFieldsCache;
     }
 
     function __fieldHandlers()
     {
-        $result = array();
+        $result = [];
         $type = $this->_getType();
         $vars = get_class_vars($type);
         foreach ($vars as $var => $val) {
@@ -243,6 +239,7 @@ abstract class BaseModel extends Base
         if (isset($this->_data[$key])) {
             return $this->_data[$key];
         }
+
         return false;
     }
 
@@ -253,13 +250,13 @@ abstract class BaseModel extends Base
 
     function isFieldRequired($field)
     {
-        $required=$this->__requiredFields();
-        if(@$required[$field]) {
+        $required = $this->__requiredFields();
+        if (@$required[$field]) {
             return true;
         }
+
         return false;
     }
-
 }
 
 ?>

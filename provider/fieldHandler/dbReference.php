@@ -107,6 +107,11 @@ class DbReference extends BaseFieldHandler
 
     function save(){
         if($this->loaded) {
+            if(!$this->_fromTable && $this->_model) {
+                $mapping = $this->provider->mapping->default;
+                $this->fromTable($mapping->getTableForClass($this->_model->_getType()));
+            }
+
             if ($this->_updateReference) {
                 $this->db->query(
                     "update `" . $this->_fromTable . "` set `" . $this->_field . "`='" . $this->obj->id . "' where id='" . $this->_model->id . "'"

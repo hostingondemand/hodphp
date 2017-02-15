@@ -1,7 +1,8 @@
 <?php
 namespace lib;
+use \core\Lib;
 
-class Shell extends \core\Lib{
+class Shell extends Lib{
     //execute a console command
     function execute($command, $path = null)
     {

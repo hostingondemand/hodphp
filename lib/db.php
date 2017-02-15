@@ -216,7 +216,7 @@ class Db extends \core\Lib
     function updateModel($model, $table, $con)
     {
         $prefix = $this->db->getPrefix();
-        if (method_exists($model,"_isInvalidated")&&$model->_isInvalidated()) {
+        if ((method_exists($model,"_isInvalidated") && $model->_isInvalidated()) || !method_exists($model,"_isInvalidated")) {
             $query = "update `" . $prefix.$table . "` set ";
             $data = $model->toArray();
             $i = 0;

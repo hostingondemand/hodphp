@@ -17,7 +17,6 @@ class Table extends Lib
     function create()
     {
         $prefix = $this->db->getPrefix();
-        $this->patch->addCreated($prefix.$this->name);
         $query = "create table `" . $prefix.$this->name . "` (
                `id` INT NOT NULL AUTO_INCREMENT,
                `parent_id` int,
@@ -42,6 +41,7 @@ class Table extends Lib
             }
         }
 
+        $this->patch->addCreated($prefix.$this->name);
 
         return $this;
     }
@@ -67,6 +67,15 @@ class Table extends Lib
             foreach ($this->actions["addIndex"] as $action) {
                 $this->db->query("CREATE INDEX `" . $action["name"] . "` ON `" . $prefix.$this->name . "` (`" . $action["name"] . "`);");
             }
+        }
+    }
+
+    function save()
+    {
+        if($this->exists()) {
+            $this->update();
+        } else {
+            $this->create();
         }
     }
 
