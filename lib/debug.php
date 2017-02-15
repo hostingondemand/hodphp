@@ -46,6 +46,7 @@ class Debug extends Lib
         $error = error_get_last();
         if ($error['type'] === E_ERROR || $error['type'] == E_PARSE) {
             $this->error("PHP:" . $error["message"], $error);
+            $this->response->setPartialMode(false);
             Loader::loadAction(array("fatalError", "home"));
         }
         //die();
