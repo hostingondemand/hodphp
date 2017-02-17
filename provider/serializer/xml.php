@@ -36,8 +36,8 @@ class XML extends Serializer
     }
 
     function getInitData($type = null,$data=null,$original=null) {
-        $customWrapper=null;
-        $rootElement=false;
+        $customWrapper = null;
+        $rootElement = false;
         $wrapper = '<?xml version="1.0" encoding="UTF-8"?>';
 
         if(!is_null($type)) {
@@ -45,10 +45,13 @@ class XML extends Serializer
 
             if(!empty($annotData)) {
                 $annotData = $this->annotation->translate($annotData[0]);
-                $customWrapper = '<' . $annotData->parameters[0] . '></' . $annotData->parameters[0] . '>';
+                $customWrapper = '<' . $annotData->parameters[0] .
+                    (!empty($annotData->parameters[1]) ? ' xmlns="' . $annotData->parameters[1] . '"' : '') .
+                    '></' . $annotData->parameters[0] . '>';
             }else{
                 foreach($data as $key=>$val){
                     $annotData = $this->annotation->getAnnotationsForField($original,$key, 'serializeRoot');
+
                     if(!empty($annotData)){
                         $customWrapper= '<'.$key.'></'.$key.'>';
                         $rootElement=$key;
@@ -58,11 +61,14 @@ class XML extends Serializer
             }
         }
 
-        if($customWrapper===null){
-            $customWrapper="<data></data>";
+        if($customWrapper === null){
+            $customWrapper = "<data></data>";
         }
 
-        return array("wrapper"=>$wrapper.$customWrapper,"rootElement"=>$rootElement);
+        return array(
+            "wrapper" => $wrapper.$customWrapper,
+            "rootElement" => $rootElement
+        );
     }
 
     function arrayToXml($data, &$xml_data,$original) {

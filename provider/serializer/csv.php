@@ -28,8 +28,19 @@ class CSV extends Serializer
                 }
             }
             fclose($handle);
+        } elseif (!empty($file)) {
+            $rows = str_getcsv($file, "\n");
+            $headers = false;
+            foreach($rows as &$row) {
+                if(!$headers) {
+                    $headers = str_getcsv($row, $delimiter);
+                }
+                $row = array_combine($headers, str_getcsv($row, $delimiter));
+            }
+
+            array_shift($rows);
         } else {
-            $target = [];
+            $rows = array();
         }
 
         $target = $rows;
