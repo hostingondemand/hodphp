@@ -21,9 +21,12 @@ class Http extends \core\Lib
 
     function requestWithInputData($type, $url, $data, $format ,$headers=array()) {
         $dataString = $this->serialization->serialize($format, $data);
-        $headers = array_merge($headers, array(
-            'Content-Type: ' . $this->formatHeaders[$format]
-        ));
+
+        if(!in_array('Content-Type: ' . $this->formatHeaders[$format], $headers) && !empty($format)) {
+            $headers = array_merge($headers, array(
+                'Content-Type: ' . $this->formatHeaders[$format]
+            ));
+        }
 
         $ch = curl_init();
 
@@ -53,8 +56,15 @@ class Http extends \core\Lib
         return $this->requestWithInputData('put', $url, $data, $format, $headers);
     }
 
-    function get($url,$headers=array()){
-        //initialize curl
+    function get($url, $headers=array(), $data = null){
+        if(!empty($data)) {
+            $suffix = '?';
+            foreach($data as $k => $v) {
+                $suffix .= (($suffix !== '?') ? '&' : '') . $k . '=' . $v;
+            }
+            $url .= $suffix;
+        }
+
         $ch = curl_init();
 
         //allow all https requests
@@ -74,7 +84,7 @@ class Http extends \core\Lib
 
 
         //execute the curl command
-        $server_output = curl_exec ($ch);
+        $server_output = curl_exec($ch);
 
         //split header and body
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
@@ -88,6 +98,25 @@ class Http extends \core\Lib
         return $this->parse($header,$body);
     }
 
+    function delete($url, $headers){
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $server_output = curl_exec($ch);
+        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $header = substr($server_output, 0, $header_size);
+        $body = substr($server_output, $header_size);
+
+        curl_close($ch);
+
+        return $this->parse($header, $body);
+    }
+
     public function parse($header, $body,$assoc=false, $objectType=null)
     {
         //parse the headers to an array
@@ -98,9 +127,9 @@ class Http extends \core\Lib
         //if the content type is set
         if(isset($header[0]["content-type"])){
             //unserialize the headers
-            $type=explode(";",$header[0]["content-type"])[0];
-            $serializer=$this->headersFormat[$type];
-            $body= $this->serialization->unserialize($serializer,$body,$assoc,$objectType);
+            $type = explode(";",$header[0]["content-type"])[0];
+            $serializer = $this->headersFormat[$type];
+            $body = $this->serialization->unserialize($serializer,$body,$assoc,$objectType);
         }
         return $body;
     }
