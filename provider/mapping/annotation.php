@@ -49,7 +49,7 @@ class Annotation extends BaseMappingProvider
                 $annotations = $this->annotation->getAnnotationsForClass($info->type, "dbTable");
                 foreach ($annotations as $annotation) {
                     $translated = $this->annotation->translate($annotation);
-                    $item["model"] = strtolower($namespace."\\".$class);
+                    $item["model"] = lcfirst($namespace)."\\".lcfirst($class);
                     $item["table"] = $translated->parameters[0];
                     $result[] = $item;
                 }
