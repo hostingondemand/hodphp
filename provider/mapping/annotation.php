@@ -50,6 +50,7 @@ class Annotation extends BaseMappingProvider
                 foreach ($annotations as $annotation) {
                     $translated = $this->annotation->translate($annotation);
                     $item["model"] = lcfirst($namespace)."\\".lcfirst($class);
+                    $item["modelToLower"] = strtolower($namespace."\\".$class);
                     $item["table"] = $translated->parameters[0];
                     $result[] = $item;
                 }
@@ -57,7 +58,7 @@ class Annotation extends BaseMappingProvider
             return $result;
         });
         foreach($mappings as $mapping){
-            $this->modelToTable[$mapping["model"]]=$mapping["table"];
+            $this->modelToTable[$mapping["modelToLower"]]=$mapping["table"];
             $this->tableToModel[$mapping["table"]]=$mapping["model"];
         }
     }
