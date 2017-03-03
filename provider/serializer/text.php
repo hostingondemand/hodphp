@@ -6,8 +6,9 @@ use lib\serialization\Serializer;
 
 class Text extends Serializer
 {
-    function serialize($data, $type = null,$original=null){
-        return $data;
+    function serialize($data){
+        $data=$this->prepareObject($data);
+        return $data["data"];
     }
     function unserialize($data, $assoc = false, $type = null){
         return $data;
