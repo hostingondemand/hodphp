@@ -131,7 +131,7 @@ abstract class Serializer extends \core\Lib
                         foreach($newData[$key] as $_key=>$_value){
                             $newDataAnnotated[$key][$_key] = array("_classAnnotations" => $classAnnotations[$_key], "_annotations" => $translatedAnnotations, "_value" => $newData[$key][$_key]);
                            if (isset($valueAnnotated[$key][$_key])) {
-                               $newDataAnnotated[$key][$_key]["_annotated"] = $valueAnnotated[$key];
+                               $newDataAnnotated[$key][$_key]["_annotated"] = $valueAnnotated[$key][$_key];
                            }
                         }
                     }else {
