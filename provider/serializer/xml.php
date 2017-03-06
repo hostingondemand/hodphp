@@ -80,6 +80,12 @@ class XML extends Serializer
     function arrayToXml($data, &$xml_data)
     {
         foreach ($data as $key => $value) {
+            $namespace=null;
+            $namespacePrefix=null;
+            if($value["_annotations"]["namespace"]){
+                $namespace=$value["_annotations"]["namespace"]->parameters[0];
+                $namespacePrefix=$namespace.":";
+            }
             if(substr($key,0,1)!="_") {
                 $inputValue = $value;
                 if (isset($value["_annotated"])) {
@@ -95,17 +101,17 @@ class XML extends Serializer
                     $key = 'KeyMissing' . $key;
                 }
                 if (is_object($inputValue)) {
-                    $child = $xml_data->addChild($key);
+                    $child = $xml_data->addChild($namespacePrefix.$namespace.$key,null,$namespace);
                     $this->arrayToXml($inputValue, $child);
                 } elseif (is_array($inputValue)) {
                     if(!isset($inputValue["_annotations"]["noWrap"])) {
-                        $child = $xml_data->addChild($key);
+                        $child = $xml_data->addChild($namespacePrefix.$key,null,$namespace);
                     }else{
                         $child=$xml_data;
                     }
                     $this->arrayToXml($inputValue, $child);
                 } else {
-                    $xml_data->addChild($key, htmlspecialchars($inputValue));
+                    $xml_data->addChild($namespacePrefix.$namespace.$key, htmlspecialchars($inputValue),$namespace);
                 }
             }
 
