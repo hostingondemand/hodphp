@@ -98,7 +98,11 @@ class XML extends Serializer
                     $child = $xml_data->addChild($key);
                     $this->arrayToXml($inputValue, $child);
                 } elseif (is_array($inputValue)) {
-                    $child = $xml_data->addChild($key);
+                    if(!isset($inputValue["_annotations"]["noWrap"])) {
+                        $child = $xml_data->addChild($key);
+                    }else{
+                        $child=$xml_data;
+                    }
                     $this->arrayToXml($inputValue, $child);
                 } else {
                     $xml_data->addChild($key, htmlspecialchars($inputValue));
