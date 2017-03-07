@@ -248,7 +248,7 @@ class Filesystem extends \core\Lib
     function dirSize($directory)
     {
         $file = $this->calculatePath($directory);
-        if ($file) {
+        if ($file && $this->exists($file)) {
             $size = 0;
             foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
                 $size += $file->getSize();
