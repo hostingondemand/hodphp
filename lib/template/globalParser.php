@@ -47,7 +47,7 @@ class GlobalParser extends Lib
         $var = substr($content, $pos - 1, 1);
         //if the statement is escaped
         if ($pos > 0 && substr($content, $pos - 1, 1) == "\\") {
-            $text = substr($content, 0, $pos + 2);
+            $text = substr($content, 0, $pos -1)."{{";
             $starttext = substr($text, 0, 1);
             if ($starttext == "\n") {
                 $text = substr($text, 1);
