@@ -167,13 +167,13 @@ class Select extends Lib
         //fields
         if (count($this->_fields)) {
             $i = 0;
-            foreach ($this->_fields as $alias => $field) {
+            foreach ($this->_fields as $falias => $field) {
                 if ($i) {
                     $queryString .= " , ";
                 }
                 $queryString .= "" . $this->handleFieldName($field) . "";
-                if ($alias != $field) {
-                    $queryString .= " as " . $alias;
+                if ($falias != $field) {
+                    $queryString .= " as " . $falias;
                 }
                 $i++;
             }
@@ -277,6 +277,7 @@ class Select extends Lib
 
         $exp = explode(".", $name);
         $corrected = array_map(function ($name) {
+            if($name=="*") return $name;
             return "`" . $name . "`";
         }, $exp);
         $name = implode(".", $corrected);
