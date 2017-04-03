@@ -76,7 +76,7 @@ class Select extends Lib
         return $this;
     }
 
-    function join($table, $onLeft, $onRight, $alias = false)
+    function join($table, $onLeft, $onRight=false, $alias = false)
     {
 
         if (!is_array($table)) {
@@ -153,9 +153,13 @@ class Select extends Lib
 
     function getQuerystring()
     {
+
+        $table = array_values($this->_table)[0];
+        $alias = array_keys($this->_table)[0];
+
         $prefix = $this->db->getPrefix();
         if ($this->db->parent && !$this->_ignoreParent) {
-            $this->where("parent_id='" . $this->db->parent["id"] . "' && parent_module='" . $this->db->parent["module"] . "'");
+            $this->where($alias.".parent_id='" . $this->db->parent["id"] . "' && ".$alias.".parent_module='" . $this->db->parent["module"] . "'");
         }
 
         $queryString = "select ";
@@ -178,8 +182,6 @@ class Select extends Lib
         }
 
 
-        $table = array_values($this->_table)[0];
-        $alias = array_keys($this->_table)[0];
         $queryString .= " from `" . $prefix . $table."`";
         if ($table != $alias) {
             $queryString .= " as " . $alias . "";
@@ -194,7 +196,21 @@ class Select extends Lib
             if ($alias != $table) {
                 $queryString .= " as " . $alias;
             }
-            $queryString .= " on " . $join["left"] . " = " . $join["right"];
+            if(is_array($join["left"]) && !$join["right"]){
+                $ij=0;
+                foreach($join["left"] as $key=>$val){
+                    if($ij){
+                        $queryString .= " and " . $key . " = " . $val;
+                    }else{
+                        $queryString .= " on (" . $key . " = " . $val;
+                    }
+                    $ij++;
+                }
+                $queryString.=")";
+
+            }else {
+                $queryString .= " on " . $join["left"] . " = " . $join["right"];
+            }
         }
 
         if (count($this->_where)) {
