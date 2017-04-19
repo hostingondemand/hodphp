@@ -1,5 +1,5 @@
 <?php
-namespace lib\test;
+namespace hodphp\lib\test;
 class assert extends Base
 {
     var $results = array();

@@ -1,7 +1,7 @@
 <?php
-namespace  lib\model;
-use core\Base;
-use core\Loader;
+namespace hodphp\lib\model;
+use hodphp\core\Base;
+use hodphp\core\Loader;
 
 abstract class BaseModel extends Base
 {

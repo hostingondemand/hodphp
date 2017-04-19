@@ -1,7 +1,7 @@
 <?php
-namespace lib;
+namespace hodphp\lib;
 
-class Globals extends \core\Lib{
+class Globals extends \hodphp\core\Lib{
 
     var $data=array();
     function __get($name)

@@ -1,8 +1,8 @@
 <?php
-namespace modules\developer\service;
+namespace hodphp\modules\developer\service;
 
-use core\Controller;
-use lib\model\BaseModel;
+use hodphp\core\Controller;
+use hodphp\lib\model\BaseModel;
 
 class MethodGit extends BaseModel
 {

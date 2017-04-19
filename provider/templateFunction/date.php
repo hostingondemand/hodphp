@@ -1,7 +1,7 @@
 <?php
-namespace provider\templateFunction;
+namespace hodphp\provider\templateFunction;
 
-class FuncDate extends \lib\template\AbstractFunction
+class FuncDate extends \hodphp\lib\template\AbstractFunction
 {
     function call($parameters, $data, $content = "", $unparsed = Array(),$module=false)
     {

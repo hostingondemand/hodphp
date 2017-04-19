@@ -1,8 +1,8 @@
 <?php
-namespace provider\mapping;
+namespace hodphp\provider\mapping;
 
-use core\Loader;
-use lib\provider\baseprovider\BaseMappingProvider;
+use hodphp\core\Loader;
+use hodphp\lib\provider\baseprovider\BaseMappingProvider;
 
 class Annotation extends BaseMappingProvider
 {
@@ -39,13 +39,13 @@ class Annotation extends BaseMappingProvider
                 $exp = explode("/", $classPath);
                 $class = $exp[count($exp) - 1];
                 $pos = strrpos($file, "/" . $class);
-                $fullNamespace = substr_replace($classPath, "", $pos, strlen("/" . $class));
+                $fullnamespace = substr_replace($classPath, "", $pos, strlen("/" . $class));
                 if( $exp[count($exp) - 2]!="model"){
                     $namespace = $exp[count($exp) - 2];
                 }else{
                     $namespace = "";
                 }
-                $info = Loader::getInfo($class, $fullNamespace);
+                $info = Loader::getInfo($class, $fullnamespace,"",true);
                 $annotations = $this->annotation->getAnnotationsForClass($info->type, "dbTable");
                 foreach ($annotations as $annotation) {
                     $translated = $this->annotation->translate($annotation);

@@ -1,6 +1,6 @@
 <?php
-    namespace enum;
-    use lib\enum\BaseEnum;
+    namespace hodphp\enum;
+    use hodphp\lib\enum\BaseEnum;
 
     class MessageType extends BaseEnum{
         var $success;

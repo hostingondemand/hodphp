@@ -1,7 +1,7 @@
 <?php
 
-namespace provider\serializer;
-use lib\serialization\Serializer;
+namespace hodphp\provider\serializer;
+use hodphp\lib\serialization\Serializer;
 
 class CSV extends Serializer
 {

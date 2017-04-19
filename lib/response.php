@@ -1,8 +1,8 @@
 <?php
-namespace lib;
-use core\Loader;
+namespace hodphp\lib;
+use hodphp\core\Loader;
 
-class Response extends \core\Lib
+class Response extends \hodphp\core\Lib
 {
 
     var $partialMode = false;
@@ -44,7 +44,7 @@ class Response extends \core\Lib
         }
 
         if (!$path) {
-            $path = \core\Loader::$controller . "/" . (\core\Loader::$action);
+            $path = \hodphp\core\Loader::$controller . "/" . (\hodphp\core\Loader::$action);
         }
 
         $content = $this->template->parseFile($path, $data);
@@ -65,7 +65,7 @@ class Response extends \core\Lib
         }
 
         if (!$path) {
-            $path = \core\Loader::$controller . "/" . \core\Loader::$action;
+            $path = \hodphp\core\Loader::$controller . "/" . \hodphp\core\Loader::$action;
         }
 
         $this->write($this->template->parseFile($path, $data));

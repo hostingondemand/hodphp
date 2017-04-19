@@ -1,5 +1,5 @@
 <?php
-namespace lib\ftp;
+namespace hodphp\lib\ftp;
 class Connection{
     private $con;
     function connect($url,$username,$password=""){

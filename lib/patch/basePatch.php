@@ -1,8 +1,8 @@
 <?php
-namespace lib\patch;
+namespace hodphp\lib\patch;
 
-use core\Base;
-use core\Lib;
+use hodphp\core\Base;
+use hodphp\core\Lib;
 
 abstract class BasePatch extends  Base
 {

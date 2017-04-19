@@ -1,5 +1,5 @@
 <?php
-    namespace core;
+    namespace hodphp\core;
     class Proxy{
         private $module;
         public $instance;

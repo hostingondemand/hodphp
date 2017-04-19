@@ -1,8 +1,8 @@
 <?php
-namespace lib;
-use core\Loader;
+namespace hodphp\lib;
+use hodphp\core\Loader;
 
-class Git extends \core\Lib{
+class Git extends \hodphp\core\Lib{
 
     function addRemote($folder, $name,$url){
         $result = $this->shell->execute("git remote add ".$name." ".$url,$folder);

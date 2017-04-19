@@ -1,6 +1,6 @@
 <?php
-    namespace model;
-    use lib\model\BaseModel;
+    namespace hodphp\model;
+    use hodphp\lib\model\BaseModel;
 
     class Patch extends BaseModel{
 

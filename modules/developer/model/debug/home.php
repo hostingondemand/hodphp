@@ -1,8 +1,8 @@
 <?php
-namespace modules\developer\model\debug;
+namespace hodphp\modules\developer\model\debug;
 
-use core\Controller;
-use lib\model\BaseModel;
+use hodphp\core\Controller;
+use hodphp\lib\model\BaseModel;
 
 class Home extends BaseModel
 {

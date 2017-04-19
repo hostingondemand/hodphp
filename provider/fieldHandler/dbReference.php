@@ -1,6 +1,6 @@
 <?php
-namespace  provider\fieldHandler;
-use lib\model\BaseFieldHandler;
+namespace hodphp\provider\fieldHandler;
+use hodphp\lib\model\BaseFieldHandler;
 
 
 class DbReference extends BaseFieldHandler
@@ -84,7 +84,7 @@ class DbReference extends BaseFieldHandler
             }
         }else {
             $this->_toModel = $model;
-            $this->_toModelNamespace = $namespace;
+            $this->_toModelnamespace = $namespace;
         }
         return $this;
     }

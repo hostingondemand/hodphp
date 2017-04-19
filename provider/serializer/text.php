@@ -1,8 +1,8 @@
 <?php
 
-namespace provider\serializer;
+namespace hodphp\provider\serializer;
 //dummy serializer in case its just a string. Is used for auto content selection
-use lib\serialization\Serializer;
+use hodphp\lib\serialization\Serializer;
 
 class Text extends Serializer
 {

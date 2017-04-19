@@ -1,9 +1,9 @@
 <?php
-namespace modules\developer\service;
+namespace hodphp\modules\developer\service;
 
-use core\Controller;
-use lib\model\BaseModel;
-use lib\service\BaseService;
+use hodphp\core\Controller;
+use hodphp\lib\model\BaseModel;
+use hodphp\lib\service\BaseService;
 
 class Project extends BaseService
 {

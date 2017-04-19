@@ -1,7 +1,7 @@
 <?php
-namespace  lib\model;
-use core\Base;
-use core\Lib;
+namespace hodphp\lib\model;
+use hodphp\core\Base;
+use hodphp\core\Lib;
 
 
 abstract class BaseFieldHandler extends Lib

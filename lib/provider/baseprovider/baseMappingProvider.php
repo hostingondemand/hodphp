@@ -1,7 +1,7 @@
 <?php
-namespace lib\provider\baseprovider;
+namespace hodphp\lib\provider\baseprovider;
 
-use core\Lib;
+use hodphp\core\Lib;
 
 abstract class BaseMappingProvider extends Lib
 {

@@ -1,7 +1,7 @@
 <?php
-namespace provider\templateFunction;
+namespace hodphp\provider\templateFunction;
 
-class FuncForeach extends \lib\template\AbstractFunction
+class FuncForeach extends \hodphp\lib\template\AbstractFunction
 {
     var $requireContent = true;
 //loops through an array and interpretes the inside for every item in the array

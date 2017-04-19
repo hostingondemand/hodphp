@@ -1,8 +1,8 @@
 <?php
-namespace modules\developer\model;
+namespace hodphp\modules\developer\model;
 
-use core\Controller;
-use lib\model\BaseModel;
+use hodphp\core\Controller;
+use hodphp\lib\model\BaseModel;
 
 class Install extends BaseModel
 {

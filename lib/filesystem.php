@@ -1,13 +1,13 @@
 <?php
-namespace lib;
+namespace hodphp\lib;
 
 //a simple wrapper around the filesystem to be able to use files in the right directory
-use core\Loader;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use RecursiveTreeIterator;
+use hodphp\core\Loader;
+use \RecursiveDirectoryIterator;
+use \RecursiveIteratorIterator;
+use \RecursiveTreeIterator;
 
-class Filesystem extends \core\Lib
+class Filesystem extends \hodphp\core\Lib
 {
 
     var $customExtensions = array("css" => "text/css");
@@ -15,9 +15,29 @@ class Filesystem extends \core\Lib
     //generate a full path
     function calculatePath($file)
     {
+
+
+
         //if the string doesnt start with / or ~/ it will be considered a project file
         if (!(substr($file, 0, 1) == "/" || substr($file, 0, 2) == "~/" || substr($file, 1, 2) == ":\\")) {
-            $file = $this->path->getApp() . "/" . $file;
+            $exp = explode("/", str_replace("\\", "/", $file));
+            if ($exp[0] == "project") {
+                $path = DIR_PROJECT;
+                unset($exp[0]);
+	    } elseif($exp[0]=="modules" && @$exp[1]=="developer") {
+		$path = DIR_FRAMEWORK."/modules/";
+                unset($exp[0]);
+            } elseif ($exp[0] == "modules") {
+                $path = DIR_MODULES;
+                unset($exp[0]);
+            } elseif($exp[0] == "data"){
+                $path = DIR_DATA;
+                unset($exp[0]);
+            }else{
+                $path=DIR_FRAMEWORK;
+            }
+
+            $file=$path.implode("/",$exp);
         }
 
         //if it starts with ~/ it will be considered a developer file..
@@ -39,12 +59,12 @@ class Filesystem extends \core\Lib
                 return $fullPath;
             }
 
-            $fullPath = $this->calculatePath("modules/" . Loader::$module . "/" . $file);
+            $fullPath = $this->calculatePath("modules/". Loader::$module . "/" . $file);
             if (file_exists($fullPath)) {
                 return $fullPath;
             }
 
-            $fullPath = $this->calculatePath("project/" . $file);
+            $fullPath = $this->calculatePath("project/". $file);
             if (file_exists($fullPath)) {
                 return $fullPath;
             }
@@ -118,6 +138,7 @@ class Filesystem extends \core\Lib
     function getDirs($dir, $useIgnores = true)
     {
         static $dirResults;
+
         if (!$dirResults) {
             $dirResults = array();
         }
@@ -129,7 +150,7 @@ class Filesystem extends \core\Lib
             if ($this->exists($path)) {
                 if ($handle = opendir($path)) {
                     while (false !== ($entry = readdir($handle))) {
-                        if ($entry != "." && $entry != ".." && is_dir($dir . "/" . $entry)) {
+                        if ($entry != "." && $entry != ".." && is_dir($path . "/" . $entry)) {
                             if (!is_array($ignores) || !in_array($entry, $ignores)) {
                                 $dirs[] = $entry;
                             }
@@ -142,6 +163,7 @@ class Filesystem extends \core\Lib
         }
         return $dirResults[$path];
     }
+
 
     function getFilesRecursive($dir, $type = false)
     {
@@ -157,6 +179,31 @@ class Filesystem extends \core\Lib
                 foreach ($it as $path) {
                     if ((!is_array($ignores) || !in_array($path, $ignores)) && (!$type || substr($path, -strlen($type)) == $type)) {
                         $files[] = $path->getRealPath();
+                    }
+                }
+            }
+        }
+        return $files;
+    }
+
+    function getFilesRecursiveWithInfo($dir, $type = false)
+    {
+        if (!is_array($dir)) {
+            $dir = array($dir);
+        }
+        $ignores = $this->getIgnores();
+        $files = array();
+        foreach($dir as $currentDir) {
+            if($this->exists($currentDir)) {
+                $path = $this->calculatePath($currentDir);
+                $realPath=$path;
+                $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS));
+                foreach ($it as $path) {
+                    if ((!is_array($ignores) || !in_array($path, $ignores)) && (!$type || substr($path, -strlen($type)) == $type)) {
+                        $addFile["absolutePath"]= $path->getRealPath();
+                        $addFile["relativePath"]=str_replace($realPath,$currentDir,$addFile["absolutePath"]);
+                        $addFile["path"]=str_replace($realPath,"",$path->getRealPath());
+                        $files[]=$addFile;
                     }
                 }
             }
@@ -247,8 +294,8 @@ class Filesystem extends \core\Lib
 
     function dirSize($directory)
     {
-        $file = $this->calculatePath($directory);
-        if ($file && $this->exists($file)) {
+        $directory = $this->calculatePath($directory);
+        if ($directory && $this->exists($directory)) {
             $size = 0;
             foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
                 $size += $file->getSize();

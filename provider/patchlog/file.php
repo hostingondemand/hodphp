@@ -1,7 +1,7 @@
 <?php
-namespace provider\patchlog;
+namespace hodphp\provider\patchlog;
 
-use lib\provider\baseprovider\BasePatchlogProvider;
+use hodphp\lib\provider\baseprovider\BasePatchlogProvider;
 
 class File extends BasePatchlogProvider
 {

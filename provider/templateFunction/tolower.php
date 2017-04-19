@@ -1,7 +1,7 @@
 <?php
-namespace provider\templateFunction;
+namespace hodphp\provider\templateFunction;
 
-class FuncTolower extends \lib\template\AbstractFunction
+class FuncTolower extends \hodphp\lib\template\AbstractFunction
 {
 
     //make a text lowercase

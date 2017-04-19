@@ -1,7 +1,7 @@
 <?php
-namespace lib\db;
+namespace hodphp\lib\db;
 
-use core\Lib;
+use hodphp\core\Lib;
 
 class QueryResult extends Lib
 {

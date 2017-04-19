@@ -1,10 +1,10 @@
 <?php
 
 //an abstract representation of an handler
-namespace lib\template;
-use core\Loader;
+namespace hodphp\lib\template;
+use hodphp\core\Loader;
 
-abstract class BaseModule extends \core\Lib
+abstract class BaseModule extends \hodphp\core\Lib
 {
     var $_name;
 

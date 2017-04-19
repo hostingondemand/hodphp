@@ -1,7 +1,7 @@
 <?php
-namespace provider\fieldHandler;
+namespace hodphp\provider\fieldHandler;
 
-use lib\model\BaseFieldHandler;
+use hodphp\lib\model\BaseFieldHandler;
 
 
 class DbManyToMany extends BaseFieldHandler
@@ -100,7 +100,7 @@ class DbManyToMany extends BaseFieldHandler
             }
         }else {
             $this->_toModel = $model;
-            $this->_toModelNamespace = $namespace;
+            $this->_toModelnamespace= $namespace;
         }
         return $this;
     }

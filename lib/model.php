@@ -1,7 +1,7 @@
 <?php
-namespace  lib;
-use core\Lib;
-use core\Loader;
+namespace hodphp\lib;
+use hodphp\core\Lib;
+use hodphp\core\Loader;
 
 //simple wrapper to call services
 class Model extends Lib{

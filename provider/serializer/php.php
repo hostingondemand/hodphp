@@ -1,8 +1,8 @@
 <?php
 
-namespace provider\serializer;
+namespace hodphp\provider\serializer;
 //simple php serializer
-use lib\serialization\Serializer;
+use hodphp\lib\serialization\Serializer;
 
 class Php extends Serializer
 {

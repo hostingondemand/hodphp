@@ -1,7 +1,7 @@
 <?php
-namespace provider\templateFunction;
+namespace hodphp\provider\templateFunction;
 
-class FuncIf extends \lib\template\AbstractFunction
+class FuncIf extends \hodphp\lib\template\AbstractFunction
 {
     var $requireContent = true;
 

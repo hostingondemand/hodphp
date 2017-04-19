@@ -1,6 +1,6 @@
 <?php
-    namespace  lib\annotation;
-    use core\Base;
+    namespace hodphp\lib\annotation;
+    use hodphp\core\Base;
 
     class BaseAspect extends  Base{
 

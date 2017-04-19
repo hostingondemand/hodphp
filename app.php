@@ -2,16 +2,44 @@
 
 class App
 {
+
+    private $_route;
+    private $_prepare;
+    private $_config;
+
+    function __construct()
+    {
+        $this->_prepare=function(){};
+    }
+
+    function setRoute($route){
+        $this->_route=$route;
+    }
+
+    function prepare($script){
+        $this->_prepare=$script;
+    }
+
     function run()
     {
-
         $this->IncludeCore();
-        $this->runAction();
+        $prepare=$this->_prepare;
+        $prepare($this);
+        $this->setConfig();
+        \hodphp\core\Loader::loadAction($this->_route);
+    }
 
+    function setConfig($config=array()){
+        if(!defined("DIR_FRAMEWORK")) {
+            define("DIR_FRAMEWORK", @$config["filesystem.framework"] ?: __DIR__ . "/");
+            define("DIR_MODULES", @$config["filesystem.modules"] ?: __DIR__ . "/modules/");
+            define("DIR_PROJECT", @$config["filesystem.project"] ?: __DIR__ . "/project/");
+            define("DIR_DATA", @$config["filesystem.data"] ?: __DIR__ . "/data/");
+        }
     }
 
 
-    function IncludeCore()
+    private function includeCore()
     {
         include(__DIR__."/core/base.php");
         include(__DIR__."/core/setup.php");
@@ -19,33 +47,6 @@ class App
         include(__DIR__."/core/controller.php");
         include(__DIR__."/core/lib.php");
         include(__DIR__."/core/loader.php");
-    }
-
-    function runAction()
-    {
-        global $argv;
-        $routeObj=core\Loader::getSingleton("route","lib");
-        core\Loader::loadAction($this->removeOptions($routeObj->getRoute()));
-    }
-
-    function removeOptions($args){
-        foreach($args as $key=>$val){
-            if(substr($val,0,1) =="-"){
-                unset($args[$key]);
-            }
-        }
-        $args=array_values($args);
-        return $args;
-    }
-
-    private function endsWith($searchIn, $searchFor)
-    {
-        $length = strlen($searchFor);
-        if ($length == 0) {
-            return true;
-        }
-
-        return (substr($searchIn, -$length) === $searchFor);
     }
 }
 ?>

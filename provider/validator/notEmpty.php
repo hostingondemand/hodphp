@@ -1,8 +1,8 @@
 <?php
-namespace  provider\validator;
+namespace hodphp\provider\validator;
 
-use core\Loader;
-use lib\validation\BaseValidator;
+use hodphp\core\Loader;
+use hodphp\lib\validation\BaseValidator;
 
 class NotEmpty extends BaseValidator{
 

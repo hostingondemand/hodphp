@@ -1,8 +1,8 @@
 <?php
-namespace lib;
+namespace hodphp\lib;
 
-use \core\Loader;
-use \core\Lib;
+use hodphp\core\Loader;
+use hodphp\core\Lib;
 
 
 //the template handler

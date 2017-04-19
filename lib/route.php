@@ -1,6 +1,6 @@
 <?php
-namespace lib;
-use \core\Lib;
+namespace hodphp\lib;
+use hodphp\core\Lib;
 
 class Route extends Lib
 {

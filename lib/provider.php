@@ -1,8 +1,8 @@
 <?php
-namespace lib;
-use core\Loader;
+namespace hodphp\lib;
+use hodphp\core\Loader;
 
-class Provider extends \core\Lib{
+class Provider extends \hodphp\core\Lib{
 
     var $namespaces= array();
     function __get($name)

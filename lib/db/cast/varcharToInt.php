@@ -1,5 +1,5 @@
 <?php
-namespace lib\db\cast;
+namespace hodphp\lib\db\cast;
 //This class just tells how an injector should look
 class VarcharToInt extends  BaseCaster
 {

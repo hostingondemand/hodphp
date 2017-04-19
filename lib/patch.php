@@ -1,7 +1,7 @@
 <?php
-namespace lib;
-    use core\Lib;
-    use core\Loader;
+namespace hodphp\lib;
+    use hodphp\core\Lib;
+    use hodphp\core\Loader;
 
     class Patch extends Lib{
         var $created;

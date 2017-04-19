@@ -1,6 +1,6 @@
 <?php
-namespace lib;
-class Request extends \core\Lib{
+namespace hodphp\lib;
+class Request extends \hodphp\core\Lib{
 
     var $request;
     var $session;

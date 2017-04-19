@@ -1,6 +1,6 @@
 <?php
-namespace lib\enum;
-abstract class BaseEnum extends \core\Lib
+namespace hodphp\lib\enum;
+abstract class BaseEnum extends \hodphp\core\Lib
 {
     var $__values;
     var $__names;

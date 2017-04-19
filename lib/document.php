@@ -1,7 +1,7 @@
 <?php
-namespace lib;
+namespace hodphp\lib;
 
-use core\Lib;
+use hodphp\core\Lib;
 
 class Document extends Lib
 {

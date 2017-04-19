@@ -1,6 +1,6 @@
 <?php
-namespace controller;
-class Home extends \core\controller
+namespace hodphp\controller;
+class Home extends \hodphp\core\controller
 {
     function home($param1=""){
         if(!$this->filesystem->exists("project")){

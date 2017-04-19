@@ -1,8 +1,8 @@
 <?php
-namespace modules\developer\model\module;
+namespace hodphp\modules\developer\model\module;
 
-use core\Controller;
-use lib\model\BaseModel;
+use hodphp\core\Controller;
+use hodphp\lib\model\BaseModel;
 
 class Update extends BaseModel
 {

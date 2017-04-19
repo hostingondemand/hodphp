@@ -1,9 +1,9 @@
 <?php
-namespace provider\templateFunction;
+namespace hodphp\provider\templateFunction;
 
-use core\Loader;
+use hodphp\core\Loader;
 
-class FuncLanguage extends \lib\template\AbstractFunction
+class FuncLanguage extends \hodphp\lib\template\AbstractFunction
 {
     function call($parameters, $data, $content = "", $unparsed = Array(),$module=false)
     {

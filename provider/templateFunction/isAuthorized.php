@@ -1,7 +1,7 @@
 <?php
-namespace provider\templateFunction;
+namespace hodphp\provider\templateFunction;
 
-class FuncIsAuthorized extends \lib\template\AbstractFunction
+class FuncIsAuthorized extends \hodphp\lib\template\AbstractFunction
 {
     function call($parameters, $data, $content = "", $unparsed = array(),$module=false)
     {

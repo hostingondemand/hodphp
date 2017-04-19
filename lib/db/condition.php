@@ -1,9 +1,9 @@
 <?php
-namespace lib\db;
+namespace hodphp\lib\db;
 
-use core\Lib;
-use core\Loader;
-use mysqli;
+use hodphp\core\Lib;
+use hodphp\core\Loader;
+use hodphp\mysqli;
 
 class Condition extends Lib
 {

@@ -1,6 +1,6 @@
 <?php
-    namespace lib\mail;
-    use core\Lib;
+    namespace hodphp\lib\mail;
+    use hodphp\core\Lib;
 
 class Message extends Lib{
         private $_to=array();

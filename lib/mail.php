@@ -1,9 +1,9 @@
 <?php
-namespace lib;
+namespace hodphp\lib;
 
-use core\Loader;
+use hodphp\core\Loader;
 
-class Mail extends \core\Lib
+class Mail extends \hodphp\core\Lib
 {
     function createMessage(){
         return Loader::createInstance("message","lib/mail");

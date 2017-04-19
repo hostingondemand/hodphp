@@ -1,10 +1,10 @@
 <?php
-namespace modules\developer\service;
+namespace hodphp\modules\developer\service;
 
-use core\Controller;
-use core\Loader;
-use lib\model\BaseModel;
-use lib\service\BaseService;
+use hodphp\core\Controller;
+use hodphp\core\Loader;
+use hodphp\lib\model\BaseModel;
+use hodphp\lib\service\BaseService;
 
 class Test extends BaseService
 {

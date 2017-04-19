@@ -1,8 +1,8 @@
 <?php
-namespace lib;
-use core\Loader;
+namespace hodphp\lib;
+use hodphp\core\Loader;
 
-class Validation extends \core\Lib{
+class Validation extends \hodphp\core\Lib{
 
     function  __construct()
     {

@@ -1,5 +1,5 @@
 <?php
-namespace core;
+namespace hodphp\core;
 
     class Lib extends Base
     {

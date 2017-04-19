@@ -1,9 +1,9 @@
 <?php
-namespace lib;
+namespace hodphp\lib;
 
-use core\Loader;
+use hodphp\core\Loader;
 
-class Event extends \core\Lib
+class Event extends \hodphp\core\Lib
 {
 
     var $eventListeners = array();

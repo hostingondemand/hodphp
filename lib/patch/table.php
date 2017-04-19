@@ -1,7 +1,7 @@
 <?php
-namespace lib\patch;
+namespace hodphp\lib\patch;
 
-use core\Lib;
+use hodphp\core\Lib;
 
 class Table extends Lib
 {

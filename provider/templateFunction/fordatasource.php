@@ -1,7 +1,7 @@
 <?php
-namespace provider\templateFunction;
+namespace hodphp\provider\templateFunction;
 
-class FuncFordatasource extends \lib\template\AbstractFunction
+class FuncFordatasource extends \hodphp\lib\template\AbstractFunction
 {
     var $requireContent = true;
 //loops through an array and interpretes the inside for every item in the array

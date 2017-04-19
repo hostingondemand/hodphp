@@ -1,5 +1,5 @@
 <?php
-namespace core;
+namespace hodphp\core;
 class Loader
 {
     static $instances;
@@ -26,7 +26,7 @@ class Loader
         $oldController = self::$controller;
         $oldAction = self::$action;
         $oldActionModule = self::$actionModule;
-        if (isset($params[$paramsFrom]) && (file_exists("modules/" . $params[$paramsFrom]) || file_exists("project/modules/" . $params[$paramsFrom]))) {
+        if (isset($params[$paramsFrom]) && (file_exists(DIR_MODULES . $params[$paramsFrom]) || file_exists(DIR_PROJECT."modules/" . $params[$paramsFrom]))) {
             self::goModule($params[$paramsFrom]);
             self::$actionModule = $params[$paramsFrom];
             $paramsFrom++;
@@ -99,7 +99,21 @@ class Loader
     {
 
         if($loadHard){
-            $path = __DIR__ . "/../" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+
+            $exp=explode("/",str_replace("\\", "/", $namespace));
+            if($exp[0]=="project"){
+                $path=DIR_PROJECT;
+                unset($exp[0]);
+                $namespacePath=implode("/",$exp);
+            }elseif($exp[0]=="modules"){
+                $path=DIR_MODULES;
+                unset($exp[0]);
+                $namespacePath=implode("/",$exp);
+            }else{
+                $namespacePath=DIR_FRAMEWORK.str_replace("\\","/",$namespace);
+            }
+
+            $path .= $namespacePath. "/" . lcfirst($class) . ".php";
             if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                 $path=str_replace("/","\\",$path);
             }
@@ -108,8 +122,10 @@ class Loader
                 return "\\";
             }
         }else {
+
+
             if ($map = self::getClassmapFor($class, $namespace)) {
-                $path = __DIR__ . "/../modules/" . $map . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+                $path = DIR_MODULES . $map . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
                 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                     $path=str_replace("/","\\",$path);
                 }
@@ -120,7 +136,7 @@ class Loader
             }
 
             if ($map = self::getNamespaceFor($namespace)) {
-                $path = __DIR__ . "/../modules/" . $map . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+                $path = DIR_MODULES . $map . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
                 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                     $path=str_replace("/","\\",$path);
                 }
@@ -130,7 +146,9 @@ class Loader
                 }
             }
 
-            $path = __DIR__ . "/../project/modules/" . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            $expNamespace=explode("/",str_replace("\\", "/", $namespace));
+
+            $path = DIR_PROJECT."modules/" . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
             if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                 $path=str_replace("/","\\",$path);
             }
@@ -139,7 +157,14 @@ class Loader
                 return "\\project\\modules\\" . self::$module . "\\";
             }
 
-            $path = __DIR__ . "/../modules/" . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            if(@$expNamespace[0]=="modules"){
+                $path=DIR_MODULES;
+                unset($expNamespace[0]);
+                $path.=implode("/",$expNamespace)."/". lcfirst($class) . ".php";
+            }else{
+                $path = DIR_MODULES . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            }
+
             if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                 $path=str_replace("/","\\",$path);
             }
@@ -149,7 +174,7 @@ class Loader
             }
 
 
-            $path = __DIR__ . "/../project/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            $path = DIR_PROJECT . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
             if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                 $path=str_replace("/","\\",$path);
             }
@@ -158,14 +183,22 @@ class Loader
                 return "\\project\\";
             }
 
+            if(@$expNamespace[0]=="project"){
+                $path=DIR_PROJECT;
+                unset($expNamespace[0]);
+                $path.=implode("/",$expNamespace)."/". lcfirst($class) . ".php";;
+            }else{
+                $path = DIR_PROJECT . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            }
 
-            $path = __DIR__ . "/../" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+
+            $path = DIR_FRAMEWORK . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
             if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                 $path=str_replace("/","\\",$path);
             }
             if (file_exists($path)) {
                 include_once($path);
-                return "\\";
+                return "\\hodphp\\";
             }
         }
         return false;
@@ -206,6 +239,7 @@ class Loader
                     $exp = explode(".", $className);
                     $className = $exp[1];
                 }
+
                 $fullclass = $prefix . $namespace . "\\" . ucfirst($classPrefix) . ucfirst($className);
                 $info= (object)array("type" => $fullclass, "module" => $module);
             }

@@ -1,6 +1,6 @@
 <?php
-    namespace controller;
-    use core\Controller;
+    namespace hodphp\controller;
+    use hodphp\core\Controller;
 
     class _files extends Controller{
         function content(){

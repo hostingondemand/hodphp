@@ -1,9 +1,9 @@
 <?php
-namespace lib;
+namespace hodphp\lib;
 
-use core\Loader;
+use hodphp\core\Loader;
 
-class Db extends \core\Lib
+class Db extends \hodphp\core\Lib
 {
 
     private $connections;

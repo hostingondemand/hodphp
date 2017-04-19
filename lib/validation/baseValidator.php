@@ -1,7 +1,7 @@
 <?php
-namespace  lib\validation;
-use core\Base;
-use core\Loader;
+namespace hodphp\lib\validation;
+use hodphp\core\Base;
+use hodphp\core\Loader;
 
 abstract class BaseValidator extends Base{
     abstract function validate($data);

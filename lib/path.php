@@ -1,6 +1,6 @@
 <?php
-namespace lib;
-class Path extends \core\Lib{
+namespace hodphp\lib;
+class Path extends \hodphp\core\Lib{
 
 
     function getApp(){

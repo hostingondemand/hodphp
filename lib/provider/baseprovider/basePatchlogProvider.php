@@ -1,7 +1,7 @@
 <?php
-namespace lib\provider\baseprovider;
-use core\Base;
-use core\Lib;
+namespace hodphp\lib\provider\baseprovider;
+use hodphp\core\Base;
+use hodphp\core\Lib;
 
 abstract class BasePatchlogProvider extends Lib
 {

@@ -1,8 +1,8 @@
 <?php
-namespace service;
+namespace hodphp\service;
 
-use core\Loader;
-use lib\service\BaseService;
+use hodphp\core\Loader;
+use hodphp\lib\service\BaseService;
 
 class Patch extends BaseService
 {

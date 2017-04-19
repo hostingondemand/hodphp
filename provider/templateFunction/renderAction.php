@@ -1,9 +1,9 @@
 <?php
-namespace provider\templateFunction;
+namespace hodphp\provider\templateFunction;
 
-use core\Loader;
+use hodphp\core\Loader;
 
-class FuncRenderAction extends \lib\template\AbstractFunction
+class FuncRenderAction extends \hodphp\lib\template\AbstractFunction
 {
 
     //make a text lowercase

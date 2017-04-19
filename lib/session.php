@@ -1,7 +1,7 @@
 <?php
-namespace lib;
+namespace hodphp\lib;
 
-class Session extends \core\Lib{
+class Session extends \hodphp\core\Lib{
     function __get($name)
     {
         if (isset($_SESSION[$name]) ){
