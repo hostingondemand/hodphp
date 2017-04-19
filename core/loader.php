@@ -26,7 +26,7 @@ class Loader
         $oldController = self::$controller;
         $oldAction = self::$action;
         $oldActionModule = self::$actionModule;
-        if (isset($params[$paramsFrom]) && (file_exists(DIR_MODULES . $params[$paramsFrom]) || file_exists(DIR_PROJECT."modules/" . $params[$paramsFrom]))) {
+        if (isset($params[$paramsFrom]) && (file_exists(DIR_FRAMEWORK."modules/" . $params[$paramsFrom]) ||file_exists(DIR_MODULES . $params[$paramsFrom]) || file_exists(DIR_PROJECT."modules/" . $params[$paramsFrom]))) {
             self::goModule($params[$paramsFrom]);
             self::$actionModule = $params[$paramsFrom];
             $paramsFrom++;
@@ -171,6 +171,23 @@ class Loader
             if (file_exists($path)) {
                 include_once($path);
                 return "\\modules\\" . self::$module . "\\";
+            }
+
+
+            if(@$expNamespace[0]=="modules"){
+                $path=DIR_FRAMEWORK."/modules/";
+                unset($expNamespace[0]);
+                $path.=implode("/",$expNamespace)."/". lcfirst($class) . ".php";
+            }else{
+                $path = DIR_FRAMEWORK."/modules/" . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            }
+
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                $path=str_replace("/","\\",$path);
+            }
+            if (file_exists($path)) {
+                include_once($path);
+                return "\\hodphp\\modules\\" . self::$module . "\\";
             }
 
 
