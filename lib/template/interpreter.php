@@ -2,6 +2,7 @@
 namespace hodphp\lib\template;
 
 use hodphp\core\Lib;
+use hodphp\core\Loader;
 
 //this class is there to inteprete the parsed code..
 class Interpreter extends Lib
