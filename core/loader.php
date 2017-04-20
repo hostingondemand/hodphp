@@ -52,7 +52,6 @@ class Loader
             return false;
         }
 
-
         if (!isset($params[$paramsFrom])) {
             $method = "home";
         } else {
@@ -93,13 +92,10 @@ class Loader
 
     }
 
-
     //just a method to load a file where a class can be found
     static function loadClass($class, $namespace,$loadHard=false)
     {
-
         if($loadHard){
-
             $exp=explode("/",str_replace("\\", "/", $namespace));
             if($exp[0]=="project"){
                 $path=DIR_PROJECT;
@@ -122,8 +118,6 @@ class Loader
                 return "\\";
             }
         }else {
-
-
             if ($map = self::getClassmapFor($class, $namespace)) {
                 $path = DIR_MODULES . $map . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
                 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
@@ -173,7 +167,6 @@ class Loader
                 return "\\modules\\" . self::$module . "\\";
             }
 
-
             if(@$expNamespace[0]=="modules"){
                 $path=DIR_FRAMEWORK."/modules/";
                 unset($expNamespace[0]);
@@ -189,7 +182,6 @@ class Loader
                 include_once($path);
                 return "\\hodphp\\modules\\" . self::$module . "\\";
             }
-
 
             $path = DIR_PROJECT . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
             if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
@@ -267,7 +259,6 @@ class Loader
         return $info;
     }
 
-
     static function hasMethod($class,$namespace,$method){
         $info=self::getInfo($class,$namespace);
         if($info){
@@ -275,7 +266,6 @@ class Loader
         }
         return false;
     }
-
 
     //if an instance of the class is already registered: use this instance otherwise return and register a new instance and register.
     static function getSingleton($class, $namespace = "", $prefix = "",$loadHard=false)
@@ -289,7 +279,6 @@ class Loader
         return self::$instances[$fullclass];
 
     }
-
 
     private static function getClassmapFor($class, $namespace)
     {

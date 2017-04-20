@@ -15,9 +15,6 @@ class Filesystem extends \hodphp\core\Lib
     //generate a full path
     function calculatePath($file)
     {
-
-
-
         //if the string doesnt start with / or ~/ it will be considered a project file
         if (!(substr($file, 0, 1) == "/" || substr($file, 0, 2) == "~/" || substr($file, 1, 2) == ":\\")) {
             $exp = explode("/", str_replace("\\", "/", $file));
@@ -49,7 +46,6 @@ class Filesystem extends \hodphp\core\Lib
         }
         return $file;
     }
-
 
     function findRightPath($file)
     {
@@ -87,7 +83,6 @@ class Filesystem extends \hodphp\core\Lib
         }
         return false;
     }
-
 
     function getContentType($file)
     {
@@ -132,7 +127,6 @@ class Filesystem extends \hodphp\core\Lib
         return $this->ignores;
 
     }
-
 
     //create an array of all directories
     function getDirs($dir, $useIgnores = true)
@@ -233,7 +227,6 @@ class Filesystem extends \hodphp\core\Lib
 
         return $files;
     }
-
 
     //write to content file if file exists clear it first
     function clearWrite($path, $content)
