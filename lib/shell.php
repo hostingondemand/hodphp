@@ -1,15 +1,17 @@
 <?php
-namespace lib;
-use \core\Lib;
+namespace hodphp\lib;
 
-class Shell extends Lib{
+use hodphp\core\Lib;
+
+class Shell extends Lib
+{
     //execute a console command
     function execute($command, $path = null)
     {
         //first set the path to theproject if no path is given
         if (!$path) {
             $path = $this->path->getApp();
-        } else  {
+        } else {
             $path = $this->filesystem->calculatePath($path);
         }
 
@@ -27,4 +29,5 @@ class Shell extends Lib{
         return rtrim($result);
     }
 }
+
 ?>

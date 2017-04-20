@@ -1,16 +1,14 @@
 <?php
-namespace lib;
+namespace hodphp\lib;
 
-use \core\Loader;
-use \core\Lib;
-
+use hodphp\core\Lib;
+use hodphp\core\Loader;
 
 //the template handler
 class template extends Lib
 {
     var $globals;
     var $globalModules = array();
-
 
     function __construct()
     {
@@ -22,7 +20,7 @@ class template extends Lib
     //parse and interpret a template
     function parse($template, $data = Array())
     {
-        $data=$this->dataHandler($data);
+        $data = $this->dataHandler($data);
         $data->add($this->globals);
 
         //get the parser
@@ -37,10 +35,18 @@ class template extends Lib
     }
 
     //use parse to parse the content of a file
+
+    function dataHandler($data)
+    {
+        $result = Loader::createInstance("dataHandler", "lib/template");
+        $result->add($data);
+        return $result;
+    }
+
     function parseFile($file, $data = array(), $fallback = false)
     {
 
-        $data=$this->dataHandler($data);
+        $data = $this->dataHandler($data);
         $data->add($this->globals);
         //get the parser
 
@@ -70,7 +76,7 @@ class template extends Lib
     {
         Loader::loadClass("baseModule", "lib\\template");
         $instance = Loader::createInstance("module", "templateModule\\" . $name);
-        if($instance) {
+        if ($instance) {
             $instance->_name = $name;
             return $instance;
         }
@@ -84,7 +90,7 @@ class template extends Lib
 
     function registerGlobalModule($module)
     {
-        if($module) {
+        if ($module) {
             $renames = $this->config->get("module.rename", "template");
             $this->globalModules[$module->_name] = $module;
             if (isset($renames[$module->_name])) {
@@ -110,14 +116,6 @@ class template extends Lib
             "text" => $text
         );
     }
-
-    function dataHandler($data)
-    {
-        $result = Loader::createInstance("dataHandler", "lib/template");
-        $result->add($data);
-        return $result;
-    }
-
 
 }
 

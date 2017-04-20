@@ -1,11 +1,11 @@
 <?php
-namespace lib;
+namespace hodphp\lib;
 
-use core\Loader;
+use hodphp\core\Loader;
 
 //simple wrapper around the serializers
 //so serialization can be done by just giving a serializername and the data
-class Serialization extends \core\Lib
+class Serialization extends \hodphp\core\Lib
 {
     function __construct()
     {
@@ -18,18 +18,14 @@ class Serialization extends \core\Lib
         return $eventData["data"];
     }
 
-    function unserialize($format, $data, $assoc = false, $type = null)
-    {
-        return $this->LoadSerializer($format)->unserialize($data, $assoc, $type);
-    }
-
-
     private function LoadSerializer($name)
     {
         return $this->provider->serializer->$name;
     }
 
-
-
+    function unserialize($format, $data, $assoc = false, $type = null)
+    {
+        return $this->LoadSerializer($format)->unserialize($data, $assoc, $type);
+    }
 
 }

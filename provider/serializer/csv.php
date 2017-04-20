@@ -1,22 +1,45 @@
 <?php
 
-namespace provider\serializer;
-use lib\serialization\Serializer;
+namespace hodphp\provider\serializer;
+
+use hodphp\lib\serialization\Serializer;
 
 class CSV extends Serializer
 {
-    function serialize($data){
-        $data=$this->prepareObject($data);
+    function serialize($data)
+    {
+        $data = $this->prepareObject($data);
         $this->arrayToCsv($data["data"], $out);
         return $out;
     }
 
-    function unserialize($data, $assoc=false, $type=null){
+    function arrayToCsv($data = [], &$target = '', $delimiter = ',')
+    {
+        if (is_array($data)) {
+            $target = join(',', array_keys($data[0])) . "\n";
+
+            foreach ($data as &$row) {
+                foreach ($row as $value) {
+                    if (strpos($value, '"') !== false) {
+                        $value = '"' . str_replace('"', '""', $value) . '"';
+                    } elseif (strpos($value, ' ') !== false || strpos($value, "\n") !== false || strpos($value, "\r\n") !== false) {
+                        $value = '"' . $value . '"';
+                    }
+                    $target .= $value . $delimiter;
+                }
+                $target = substr($target, 0, -1) . "\n";
+            }
+        }
+    }
+
+    function unserialize($data, $assoc = false, $type = null)
+    {
         $this->csvToArray($data, $out);
         return $out;
     }
 
-    function csvToArray($file = '', &$target = [], $delimiter = ',', $enclosure = '"') {
+    function csvToArray($file = '', &$target = [], $delimiter = ',', $enclosure = '"')
+    {
         $rows = [];
         if (file_exists($file) && is_readable($file)) {
             $handle = fopen($file, 'r');
@@ -32,8 +55,8 @@ class CSV extends Serializer
         } elseif (!empty($file)) {
             $rows = str_getcsv($file, "\n");
             $headers = false;
-            foreach($rows as &$row) {
-                if(!$headers) {
+            foreach ($rows as &$row) {
+                if (!$headers) {
                     $headers = str_getcsv($row, $delimiter);
                 }
                 $row = array_combine($headers, str_getcsv($row, $delimiter));
@@ -45,24 +68,6 @@ class CSV extends Serializer
         }
 
         $target = $rows;
-    }
-
-    function arrayToCsv($data = [], &$target = '', $delimiter = ',') {
-        if(is_array($data)) {
-            $target = join(',', array_keys($data[0])) . "\n";
-
-            foreach ($data as &$row) {
-                foreach($row as $value) {
-                    if(strpos($value, '"') !== false) {
-                        $value = '"' . str_replace('"', '""', $value) . '"';
-                    } elseif (strpos($value, ' ') !== false || strpos($value, "\n") !== false || strpos($value, "\r\n") !== false) {
-                        $value = '"' . $value . '"';
-                    }
-                    $target .= $value . $delimiter;
-                }
-                $target = substr($target, 0, -1) . "\n";
-            }
-        }
     }
 }
 

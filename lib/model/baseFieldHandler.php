@@ -1,26 +1,37 @@
 <?php
-namespace  lib\model;
-use core\Base;
-use core\Lib;
-
+namespace hodphp\lib\model;
+use hodphp\core\Lib;
 
 abstract class BaseFieldHandler extends Lib
 {
     var $_model;
     var $_inModelName;
-    function init($model,$fieldName){
-        $this->_model=$model;
-        $this->_inModelName=$fieldName;
+
+    function init($model, $fieldName)
+    {
+        $this->_model = $model;
+        $this->_inModelName = $fieldName;
     }
 
-    function fromAnnotation($parameters, $type, $field){}
-    function get($inModel){}
+    function fromAnnotation($parameters, $type, $field)
+    {
+    }
 
-    function set($value){}
+    function get($inModel)
+    {
+    }
 
-    function save(){}
+    function set($value)
+    {
+    }
 
-    function delete(){}
+    function save()
+    {
+    }
+
+    function delete()
+    {
+    }
 }
 
 ?>

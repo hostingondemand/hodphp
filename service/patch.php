@@ -1,18 +1,17 @@
 <?php
-namespace service;
+namespace hodphp\service;
 
-use core\Loader;
-use lib\service\BaseService;
+use hodphp\core\Loader;
+use hodphp\lib\service\BaseService;
 
 class Patch extends BaseService
 {
     var $setupDone = false;
 
-
     function setup()
     {
         if (!$this->setupDone) {
-            Loader::loadClass("basePatch","lib/patch");
+            Loader::loadClass("basePatch", "lib/patch");
             $this->provider->patchlog->default->setup();
             $this->setupDone = true;
         }
@@ -35,7 +34,6 @@ class Patch extends BaseService
             }
         }
 
-
         if ($this->filesystem->exists($folder)) {
             $files = $this->filesystem->getFiles($folder);
             foreach ($files as $file) {
@@ -50,7 +48,6 @@ class Patch extends BaseService
                     $patch = Loader::getSingleton($file, $folder);
                     $success = $patch->patch();
                     $this->goBackModule();
-
 
                     $patchModel = $this->model->patch->initialize($patchName, $success, time());
                     $this->provider->patchlog->default->save($patchModel);

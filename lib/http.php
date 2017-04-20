@@ -1,12 +1,12 @@
 <?php
-namespace lib;
+namespace hodphp\lib;
 
 //this class handles http
-class Http extends \core\Lib
+class Http extends \hodphp\core\Lib
 {
     //content type headers
     private $headersFormat;
-    private $formatHeaders=array(
+    private $formatHeaders = array(
         "json" => "application/json",
         "form" => "application/x-www-form-urlencoded",
         "xml" => "application/xml",
@@ -16,13 +16,21 @@ class Http extends \core\Lib
     function __construct()
     {
         //make a flipped version of formatHeaders
-        $this->headersFormat=array_flip($this->formatHeaders);
+        $this->headersFormat = array_flip($this->formatHeaders);
     }
 
-    function requestWithInputData($type, $url, $data, $format ,$headers=array()) {
+    function post($url, $data, $format, $headers = array())
+    {
+        return $this->requestWithInputData('post', $url, $data, $format, $headers);
+    }
+
+    //do a post request
+
+    function requestWithInputData($type, $url, $data, $format, $headers = array())
+    {
         $dataString = $this->serialization->serialize($format, $data);
 
-        if(!in_array('Content-Type: ' . $this->formatHeaders[$format], $headers) && !empty($format)) {
+        if (!in_array('Content-Type: ' . $this->formatHeaders[$format], $headers) && !empty($format)) {
             $headers = array_merge($headers, array(
                 'Content-Type: ' . $this->formatHeaders[$format]
             ));
@@ -43,23 +51,59 @@ class Http extends \core\Lib
         $header = substr($server_output, 0, $header_size);
         $body = substr($server_output, $header_size);
 
-        curl_close ($ch);
+        curl_close($ch);
         return $this->parse($header, $body);
     }
 
-    //do a post request
-    function post($url, $data, $format ,$headers=array()){
-        return $this->requestWithInputData('post', $url, $data, $format, $headers);
+    public function parse($header, $body, $assoc = false, $objectType = null)
+    {
+        //parse the headers to an array
+        if (!is_array($header)) {
+            $header = $this->headersToArray($header);
+        }
+
+        //if the content type is set
+        if (isset($header[0]["content-type"])) {
+            //unserialize the headers
+            $type = explode(";", $header[0]["content-type"])[0];
+            $serializer = $this->headersFormat[$type];
+            $body = $this->serialization->unserialize($serializer, $body, $assoc, $objectType);
+        }
+        return $body;
     }
 
-    function put($url, $data, $format, $headers = array()){
+    public function headersToArray($headerContent)
+    {
+        $result = array();
+
+        //split on double enter
+        $lines = explode("\r\n\r\n", $headerContent);
+
+        for ($i = 0; $i < count($lines) - 1; $i++) {
+            //split on single enter
+            foreach (explode("\r\n", $lines[$i]) as $lKey => $line) {
+                if ($lKey === 0) {
+                    $result[$i]['http_code'] = $line;
+                } else {
+                    list ($key, $value) = explode(': ', $line);
+                    $result[$i][strtolower($key)] = $value;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    function put($url, $data, $format, $headers = array())
+    {
         return $this->requestWithInputData('put', $url, $data, $format, $headers);
     }
 
-    function get($url, $headers=array(), $data = null){
-        if(!empty($data)) {
+    function get($url, $headers = array(), $data = null)
+    {
+        if (!empty($data)) {
             $suffix = '?';
-            foreach($data as $k => $v) {
+            foreach ($data as $k => $v) {
                 $suffix .= (($suffix !== '?') ? '&' : '') . $k . '=' . $v;
             }
             $url .= $suffix;
@@ -75,13 +119,11 @@ class Http extends \core\Lib
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
         //set url
-        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_URL, $url);
 
-
-        if(count($headers)){
+        if (count($headers)) {
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         }
-
 
         //execute the curl command
         $server_output = curl_exec($ch);
@@ -92,13 +134,14 @@ class Http extends \core\Lib
         $body = substr($server_output, $header_size);
 
         //close the request
-        curl_close ($ch);
+        curl_close($ch);
 
         //parse the result
-        return $this->parse($header,$body);
+        return $this->parse($header, $body);
     }
 
-    function delete($url, $headers){
+    function delete($url, $headers)
+    {
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -115,46 +158,6 @@ class Http extends \core\Lib
         curl_close($ch);
 
         return $this->parse($header, $body);
-    }
-
-    public function parse($header, $body,$assoc=false, $objectType=null)
-    {
-        //parse the headers to an array
-        if(!is_array($header)) {
-            $header = $this->headersToArray($header);
-        }
-
-        //if the content type is set
-        if(isset($header[0]["content-type"])){
-            //unserialize the headers
-            $type = explode(";",$header[0]["content-type"])[0];
-            $serializer = $this->headersFormat[$type];
-            $body = $this->serialization->unserialize($serializer,$body,$assoc,$objectType);
-        }
-        return $body;
-    }
-
-    public function headersToArray($headerContent)
-    {
-        $result = array();
-
-        //split on double enter
-        $lines = explode("\r\n\r\n", $headerContent);
-
-        for ($i = 0; $i < count($lines) -1; $i++) {
-            //split on single enter
-            foreach (explode("\r\n", $lines[$i]) as $lKey => $line)
-            {
-                if ($lKey === 0) {
-                    $result[$i]['http_code'] = $line;
-                } else {
-                    list ($key, $value) = explode(': ', $line);
-                    $result[$i][strtolower($key)] = $value;
-                }
-            }
-        }
-
-        return $result;
     }
 }
 

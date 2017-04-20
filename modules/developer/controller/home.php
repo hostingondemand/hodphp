@@ -1,11 +1,13 @@
 <?php
-namespace modules\developer\controller;
+namespace hodphp\modules\developer\controller;
 
-use core\Controller;
+use hodphp\core\Controller;
 
-class Home extends Controller{
+class Home extends Controller
+{
 
-    function home(){
+    function home()
+    {
         $this->response->renderView();
     }
 

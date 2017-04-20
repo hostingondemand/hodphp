@@ -1,7 +1,7 @@
 <?php
-namespace lib\db;
+namespace hodphp\lib\db;
 
-use core\Lib;
+use hodphp\core\Lib;
 
 class QueryResult extends Lib
 {
@@ -12,9 +12,13 @@ class QueryResult extends Lib
         return $this->db->fetchAll($this);
     }
 
-    function fetch()
+    function fetchAllModel($class, $namespace = false)
     {
-        return $this->db->fetch($this);
+        $result = [];
+        while ($model = $this->fetchModel($class, $namespace)) {
+            $result[] = $model;
+        }
+        return $result;
     }
 
     function fetchModel($class, $namespace = false)
@@ -30,20 +34,15 @@ class QueryResult extends Lib
         return false;
     }
 
-    function fetchAllModel($class, $namespace=false)
+    function fetch()
     {
-        $result = [];
-        while ($model = $this->fetchModel($class, $namespace)) {
-            $result[] = $model;
-        }
-        return $result;
+        return $this->db->fetch($this);
     }
 
     function numRows()
     {
         return $this->db->numRows($this);
     }
-
 
 }
 

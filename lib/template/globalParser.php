@@ -1,8 +1,8 @@
 <?php
-namespace lib\template;
+namespace hodphp\lib\template;
 
-use \Core\Loader;
-use \Core\Lib;
+use hodphp\Core\Lib;
+use hodphp\Core\Loader;
 
 class GlobalParser extends Lib
 {
@@ -15,7 +15,8 @@ class GlobalParser extends Lib
     function parse($content)
     {
         $result = Array();
-        while ($this->popUntilNextStatement($content, $result)) {}
+        while ($this->popUntilNextStatement($content, $result)) {
+        }
 
         return $result;
 
@@ -43,11 +44,10 @@ class GlobalParser extends Lib
             return true;
         }
 
-
         $var = substr($content, $pos - 1, 1);
         //if the statement is escaped
         if ($pos > 0 && substr($content, $pos - 1, 1) == "\\") {
-            $text = substr($content, 0, $pos -1)."{{";
+            $text = substr($content, 0, $pos - 1) . "{{";
             $starttext = substr($text, 0, 1);
             if ($starttext == "\n") {
                 $text = substr($text, 1);
@@ -78,7 +78,6 @@ class GlobalParser extends Lib
                 $result[] = $output;
             }
 
-
             $expression = new ExpressionParser($this->popExpression($content));
             $funcContent = "";
             if ($expression->requireContent) {
@@ -93,53 +92,10 @@ class GlobalParser extends Lib
             $output["parameters"] = $expression->parameters;
             $output["content"] = $funcContent;
 
-
             $result[] = $output;
         }
         return true;
     }
-
-
-    function popContent($func, &$content)
-    {
-        $pos = $this->findClosePos($content, $func);
-        $result = substr($content, 0, $pos);
-        $content = substr($content, $pos + strlen($func) + 5);
-        return $result;
-
-    }
-
-
-    function findClosePos($content, $func)
-    {
-        $strlen = strlen($content);
-        $funclen = strlen($func);
-        $openLength = $funclen + 3;
-        $closeLength = $funclen + 5;
-
-        $opened = 0;
-
-
-        for ($i = 0; $i <= $strlen; $i++) {
-            $opener = substr($content, $i, $openLength);
-            $closer = substr($content, $i, $closeLength);
-            if ($opener == "{{" . $func . "(") {
-                $opened++;
-            }
-
-            if ($closer == "{{/" . $func . "}}") {
-                if ($opened) {
-                    $opened--;
-                } else {
-                    return $i;
-                }
-            }
-        }
-        return $i;
-
-
-    }
-
 
     function popExpression(&$content)
     {
@@ -177,12 +133,47 @@ class GlobalParser extends Lib
                 }
             }
 
-
         }
 
         return false;
     }
 
+    function popContent($func, &$content)
+    {
+        $pos = $this->findClosePos($content, $func);
+        $result = substr($content, 0, $pos);
+        $content = substr($content, $pos + strlen($func) + 5);
+        return $result;
+
+    }
+
+    function findClosePos($content, $func)
+    {
+        $strlen = strlen($content);
+        $funclen = strlen($func);
+        $openLength = $funclen + 3;
+        $closeLength = $funclen + 5;
+
+        $opened = 0;
+
+        for ($i = 0; $i <= $strlen; $i++) {
+            $opener = substr($content, $i, $openLength);
+            $closer = substr($content, $i, $closeLength);
+            if ($opener == "{{" . $func . "(") {
+                $opened++;
+            }
+
+            if ($closer == "{{/" . $func . "}}") {
+                if ($opened) {
+                    $opened--;
+                } else {
+                    return $i;
+                }
+            }
+        }
+        return $i;
+
+    }
 
 }
 

@@ -1,9 +1,9 @@
 <?php
-namespace lib;
+namespace hodphp\lib;
 
-use core\Loader;
+use hodphp\core\Loader;
 
-class Event extends \core\Lib
+class Event extends \hodphp\core\Lib
 {
 
     var $eventListeners = array();
@@ -12,12 +12,12 @@ class Event extends \core\Lib
     function raise($name, $data)
     {
         Loader::loadClass("baseListener", "lib\\event");
-        $listeners=$this->getListenersForEvent($name);
-        foreach($listeners as $listener){
+        $listeners = $this->getListenersForEvent($name);
+        foreach ($listeners as $listener) {
             $this->goModule($listener["module"]);
-            $result=$listener["listener"]->handle($data);
-            if($result){
-                $data=$result;
+            $result = $listener["listener"]->handle($data);
+            if ($result) {
+                $data = $result;
             }
             $this->goBackModule();
         }
@@ -25,56 +25,58 @@ class Event extends \core\Lib
         return $data;
     }
 
-    function noCache(){
-        $this->_noCache=true;
-    }
     function getListenersForEvent($name)
     {
         if (!isset($this->eventListeners[$name]) || $this->_noCache) {
-            if($this->_noCache){
-                $classes=$this->doGetEventListeners($name);
-            }else{
-                $classes=$this->cache->runCachedProject("event",array("name"=>$name),function($data) {
+            if ($this->_noCache) {
+                $classes = $this->doGetEventListeners($name);
+            } else {
+                $classes = $this->cache->runCachedProject("event", array("name" => $name), function ($data) {
                     return $this->doGetEventListeners($data["name"]);
                 });
             }
-            $result=array();
-            foreach($classes as $class){
-                if($class["module"]){
+            $result = array();
+            foreach ($classes as $class) {
+                if ($class["module"]) {
                     $this->goModule($class["module"]);
                 }
-                $result[]=array("module"=>$class["module"],"listener"=>Loader::getSingleton($class["class"],$class["namespace"],"",true));
-                if($class["module"]){
+                $result[] = array("module" => $class["module"], "listener" => Loader::getSingleton($class["class"], $class["namespace"], "", true));
+                if ($class["module"]) {
                     $this->goBackModule();
                 }
             }
-            $this->eventListeners[$name]=$result;
+            $this->eventListeners[$name] = $result;
         }
         return $this->eventListeners[$name];
 
     }
 
-
-    function doGetEventListeners($name){
-        $classes=array();
-        if ($listener = Loader::getSingleton($name, "project\\listener","",true)) {
-            $classes[] =array("module"=>false,"class"=>$name,"namespace"=>"project\\listener");
+    function doGetEventListeners($name)
+    {
+        $classes = array();
+        if ($listener = Loader::getSingleton($name, "project\\listener", "", true)) {
+            $classes[] = array("module" => false, "class" => $name, "namespace" => "project\\listener");
         }
 
-        if ($listener = Loader::getSingleton($name, "listener","",true)) {
-            $classes[] =array("module"=>false,"class"=>$name,"namespace"=>"listener");
+        if ($listener = Loader::getSingleton($name, "listener", "", true)) {
+            $classes[] = array("module" => false, "class" => $name, "namespace" => "listener");
         }
 
         $dirs = $this->filesystem->getDirs("modules");
         foreach ($dirs as $module) {
             $this->goModule($module);
-            if ($listener = Loader::getSingleton($name, "modules/" . $module . "/listener","",true)) {
-                $classes[] =array("module"=>$module,"class"=>$name,"namespace"=> "modules/" . $module . "/listener");
+            if ($listener = Loader::getSingleton($name, "modules/" . $module . "/listener", "", true)) {
+                $classes[] = array("module" => $module, "class" => $name, "namespace" => "modules/" . $module . "/listener");
             }
             $this->goBackModule();
         }
 
         return $classes;
+    }
+
+    function noCache()
+    {
+        $this->_noCache = true;
     }
 }
 

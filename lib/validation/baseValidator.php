@@ -1,18 +1,25 @@
 <?php
-namespace  lib\validation;
-use core\Base;
-use core\Loader;
+namespace hodphp\lib\validation;
 
-abstract class BaseValidator extends Base{
+use hodphp\core\Base;
+use hodphp\core\Loader;
+
+abstract class BaseValidator extends Base
+{
     abstract function validate($data);
 
-    function result($success,$errors){
-        $result= Loader::CreateInstance("ValidationResult","lib/validation");
-        $result->success=$success;
-        $result->errors=$errors;
+    function result($success, $errors)
+    {
+        $result = Loader::CreateInstance("ValidationResult", "lib/validation");
+        $result->success = $success;
+        $result->errors = $errors;
         return $result;
     }
 
-    function isRequired(){return false;}
+    function isRequired()
+    {
+        return false;
+    }
 }
+
 ?>

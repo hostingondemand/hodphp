@@ -1,8 +1,7 @@
 <?php
-namespace provider\fieldHandler;
+namespace hodphp\provider\fieldHandler;
 
-use lib\model\BaseFieldHandler;
-
+use hodphp\lib\model\BaseFieldHandler;
 
 class Enum extends BaseFieldHandler
 {

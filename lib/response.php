@@ -1,8 +1,8 @@
 <?php
-namespace lib;
-use core\Loader;
+namespace hodphp\lib;
+use hodphp\core\Loader;
 
-class Response extends \core\Lib
+class Response extends \hodphp\core\Lib
 {
 
     var $partialMode = false;
@@ -14,15 +14,8 @@ class Response extends \core\Lib
         "csv" => "text/csv"
     ];
 
-    function write($string, $options = Array())
-    {
-        ob_clean();
-        echo $string;
-    }
-
     function renderAction($parameters = "")
     {
-
 
         if (func_num_args() > 1) {
             $parameters = func_get_args();
@@ -30,7 +23,6 @@ class Response extends \core\Lib
 
         Loader::loadAction($parameters);
     }
-
 
     function renderView($data = Array(), $path = "")
     {
@@ -44,16 +36,10 @@ class Response extends \core\Lib
         }
 
         if (!$path) {
-            $path = \core\Loader::$controller . "/" . (\core\Loader::$action);
+            $path = \hodphp\core\Loader::$controller . "/" . (\hodphp\core\Loader::$action);
         }
 
         $content = $this->template->parseFile($path, $data);
-        $this->write($this->template->parseFile($this->masterView, Array("content" => $content)));
-    }
-
-
-    function renderContent($content)
-    {
         $this->write($this->template->parseFile($this->masterView, Array("content" => $content)));
     }
 
@@ -65,10 +51,21 @@ class Response extends \core\Lib
         }
 
         if (!$path) {
-            $path = \core\Loader::$controller . "/" . \core\Loader::$action;
+            $path = \hodphp\core\Loader::$controller . "/" . \hodphp\core\Loader::$action;
         }
 
         $this->write($this->template->parseFile($path, $data));
+    }
+
+    function write($string, $options = Array())
+    {
+        ob_clean();
+        echo $string;
+    }
+
+    function renderContent($content)
+    {
+        $this->write($this->template->parseFile($this->masterView, Array("content" => $content)));
     }
 
     function renderFile($data, $contentType)
@@ -78,22 +75,20 @@ class Response extends \core\Lib
         die();
     }
 
-
-    function renderJson($data)
+    function contentType($type)
     {
-        $this->contentType("application/json");
-        $this->write($this->serialization->serialize("json", $data));
+        $this->header("content-type", $type);
     }
-
 
     function header($key, $value)
     {
         header($key . ": " . $value);
     }
 
-    function contentType($type)
+    function renderJson($data)
     {
-        $this->header("content-type", $type);
+        $this->contentType("application/json");
+        $this->write($this->serialization->serialize("json", $data));
     }
 
     function redirect()

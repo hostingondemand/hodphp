@@ -1,18 +1,22 @@
 <?php
-namespace lib;
-use core\Loader;
+namespace hodphp\lib;
 
-class Provider extends \core\Lib{
+use hodphp\core\Loader;
 
-    var $namespaces= array();
+class Provider extends \hodphp\core\Lib
+{
+
+    var $namespaces = array();
+
     function __get($name)
     {
-        if(!isset($this->namespaces[$name])){
-            $namespace=Loader::createInstance("providerNamespace","lib/provider");
+        if (!isset($this->namespaces[$name])) {
+            $namespace = Loader::createInstance("providerNamespace", "lib/provider");
             $namespace->init($name);
-            $this->namespaces[$name]=$namespace;
+            $this->namespaces[$name] = $namespace;
         }
         return $this->namespaces[$name];
     }
 }
+
 ?>

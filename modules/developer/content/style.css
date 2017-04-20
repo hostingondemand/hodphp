@@ -7,16 +7,18 @@ body {
 
 h1 {
     font-size: 14pt;
-    font-weight:bold;
+    font-weight: bold;
     margin: 10px;
 
 }
+
 h2 {
     font-size: 12pt;
-    font-weight:bold;
+    font-weight: bold;
     margin: 5px;
 
 }
+
 .header {
     margin: auto;
     width: 1000px;
@@ -79,108 +81,123 @@ h2 {
     padding: 6px;
     margin-right: 2px;
     color: #dde;
-    text-decoration:none;
-}
-.options a:hover{
-    color:white;
+    text-decoration: none;
 }
 
-form label{
-    width:200px;
-    display:block;
-    float:left;
+.options a:hover {
+    color: white;
 }
-input{
-    padding:4px;
-    font-size:12pt;
+
+form label {
+    width: 200px;
+    display: block;
+    float: left;
 }
-input[type="submit"],.button{
+
+input {
+    padding: 4px;
+    font-size: 12pt;
+}
+
+input[type="submit"], .button {
     display: inline-block;
     border: 1px solid #ccd;
     background-color: #445;
     padding: 6px;
     margin-right: 2px;
     color: #dde;
-    text-decoration:none;
+    text-decoration: none;
 }
-input[type="submit"]:hover,.button:hover{
-    color:white;
+
+input[type="submit"]:hover, .button:hover {
+    color: white;
 }
-table td{
-    padding:3px 10px;
-    border-style:none;
+
+table td {
+    padding: 3px 10px;
+    border-style: none;
     margin: 0;
-    border-bottom:1px solid #ccd;
+    border-bottom: 1px solid #ccd;
 
 }
-thead td{
+
+thead td {
     background-color: #445;
-    color:#dde;
-    font-weight:bold;
-    border-style:none;
+    color: #dde;
+    font-weight: bold;
+    border-style: none;
     margin: 0;
-    padding:6px 10px;
+    padding: 6px 10px;
 }
+
 table {
-    width:100%;
+    width: 100%;
     border-spacing: 0px;
 
 }
 
-.messages{
+.messages {
     position: absolute;
-    right:10px;
-    width:500px;
+    right: 10px;
+    width: 500px;
 }
 
-.messages .message{
+.messages .message {
     border-radius: 10px;
     background: #73AD21;
     padding: 30px;
     background-color: #ccd;
-    padding:10px;
-    margin-top:5px;
-    border:1px solid #445;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #445;
 
-    animation:fade-message 0.5s 1;
-    -webkit-animation:fade-message 0.5s 1;
+    animation: fade-message 0.5s 1;
+    -webkit-animation: fade-message 0.5s 1;
     animation-fill-mode: forwards;
 
-    animation-delay:5s;
-    -webkit-animation-delay:5s;
+    animation-delay: 5s;
+    -webkit-animation-delay: 5s;
     -webkit-animation-fill-mode: forwards;
 }
 
-.messages .message.info{
-    background-color:#adf;
+.messages .message.info {
+    background-color: #adf;
 }
 
-.messages .message.warning{
-    background-color:#ffa;
+.messages .message.warning {
+    background-color: #ffa;
 }
 
-.messages .message.success{
-    background-color:#cfc;
+.messages .message.success {
+    background-color: #cfc;
 }
 
-.messages .message.danger{
-    background-color:#fcc;
+.messages .message.danger {
+    background-color: #fcc;
 }
 
-
-@keyframes fade-message{
-    from {opacity :1;}
-    to {opacity :0;}
+@keyframes fade-message {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
 }
 
-@-webkit-keyframes fade-message{
-    from {opacity :1;}
-    to {opacity :0;}
+@-webkit-keyframes fade-message {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
 }
 
-.test-success{
-    background-color:#cfc;
+.test-success {
+    background-color: #cfc;
 }
-.test-fail{
-    background-color:#fcc;
+
+.test-fail {
+    background-color: #fcc;
 }

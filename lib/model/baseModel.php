@@ -1,11 +1,11 @@
 <?php
-namespace  lib\model;
-use core\Base;
-use core\Loader;
+namespace hodphp\lib\model;
+use hodphp\core\Base;
 
 abstract class BaseModel extends Base
 {
 
+    var $__requiredFieldsCache = false;
     private $_data = [];
     private $_invalidated = false;
     private $_fieldHandlers;
@@ -34,6 +34,26 @@ abstract class BaseModel extends Base
         } else {
             $this->_fieldHandlers = [];
         }
+    }
+
+    function __fieldHandlers()
+    {
+        $result = [];
+        $type = $this->_getType();
+        $vars = get_class_vars($type);
+        foreach ($vars as $var => $val) {
+            $annotations = $this->annotation->getAnnotationsForField($type, $var, "handle");
+            foreach ($annotations as $annotation) {
+                $annotation = $this->annotation->translate($annotation);
+                $handler = $this->model->fieldHandler($annotation->function);
+                if ($handler) {
+                    $handler->fromAnnotation($annotation->parameters, $this->_getType(), $var);
+                    $result[$var] = $handler;
+                }
+            }
+        }
+
+        return $result;
     }
 
     function __get($name)
@@ -88,6 +108,18 @@ abstract class BaseModel extends Base
         return $this->_data;
     }
 
+    function fromRequest()
+    {
+        $result = $this->fromArray($this->request->getData(true, $this->_getType()));
+        if (is_array($this->request->getData(true))) {
+            $validator = $this->__validator();
+            $validationResult = $validator->validate($this);
+            $result->_validationResult = $validationResult->toArray();
+        }
+
+        return $result;
+    }
+
     function fromArray($data)
     {
         if (is_array($data)) {
@@ -101,16 +133,20 @@ abstract class BaseModel extends Base
         return $this;
     }
 
-    function fromRequest()
+    function __validator()
     {
-        $result = $this->fromArray($this->request->getData(true, $this->_getType()));
-        if (is_array($this->request->getData(true))) {
-            $validator = $this->__validator();
-            $validationResult = $validator->validate($this);
-            $result->_validationResult = $validationResult->toArray();
+        $validator = $this->validation->validator("model");
+        $type = $this->_getType();
+        $vars = get_class_vars($type);
+        foreach ($vars as $var => $val) {
+            $annotations = $this->annotation->getAnnotationsForField($type, $var, "validate");
+            foreach ($annotations as $annotation) {
+                $annotation = $this->annotation->translate($annotation);
+                $validator->add($var, $annotation->function, $annotation->parameters);
+            }
         }
 
-        return $result;
+        return $validator;
     }
 
     function toArray()
@@ -162,63 +198,6 @@ abstract class BaseModel extends Base
         $this->_invalidated = false;
     }
 
-    function __validator()
-    {
-        $validator = $this->validation->validator("model");
-        $type = $this->_getType();
-        $vars = get_class_vars($type);
-        foreach ($vars as $var => $val) {
-            $annotations = $this->annotation->getAnnotationsForField($type, $var, "validate");
-            foreach ($annotations as $annotation) {
-                $annotation = $this->annotation->translate($annotation);
-                $validator->add($var, $annotation->function, $annotation->parameters);
-            }
-        }
-
-        return $validator;
-    }
-
-    var $__requiredFieldsCache = false;
-
-    function __requiredFields()
-    {
-        if (!$this->__requiredFieldsCache) {
-            $type = $this->_getType();
-            $vars = get_class_vars($type);
-            $required = [];
-            foreach ($vars as $var => $val) {
-                $annotations = $this->annotation->getAnnotationsForField($type, $var, "validate");
-                foreach ($annotations as $annotation) {
-                    $annotation = $this->annotation->translate($annotation);
-                    $required[$var] = $this->validation->validator($annotation->function)->isRequired();
-                }
-            }
-            $this->__requiredFieldsCache = $required;
-        }
-
-        return $this->__requiredFieldsCache;
-    }
-
-    function __fieldHandlers()
-    {
-        $result = [];
-        $type = $this->_getType();
-        $vars = get_class_vars($type);
-        foreach ($vars as $var => $val) {
-            $annotations = $this->annotation->getAnnotationsForField($type, $var, "handle");
-            foreach ($annotations as $annotation) {
-                $annotation = $this->annotation->translate($annotation);
-                $handler = $this->model->fieldHandler($annotation->function);
-                if ($handler) {
-                    $handler->fromAnnotation($annotation->parameters, $this->_getType(), $var);
-                    $result[$var] = $handler;
-                }
-            }
-        }
-
-        return $result;
-    }
-
     function isValid()
     {
         return $this->_validationResult["success"];
@@ -256,6 +235,25 @@ abstract class BaseModel extends Base
         }
 
         return false;
+    }
+
+    function __requiredFields()
+    {
+        if (!$this->__requiredFieldsCache) {
+            $type = $this->_getType();
+            $vars = get_class_vars($type);
+            $required = [];
+            foreach ($vars as $var => $val) {
+                $annotations = $this->annotation->getAnnotationsForField($type, $var, "validate");
+                foreach ($annotations as $annotation) {
+                    $annotation = $this->annotation->translate($annotation);
+                    $required[$var] = $this->validation->validator($annotation->function)->isRequired();
+                }
+            }
+            $this->__requiredFieldsCache = $required;
+        }
+
+        return $this->__requiredFieldsCache;
     }
 }
 

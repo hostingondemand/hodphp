@@ -1,8 +1,8 @@
 <?php
 
-namespace provider\templateFunction;
+namespace hodphp\provider\templateFunction;
 
-class FuncRenderHead extends \lib\template\AbstractFunction
+class FuncRenderHead extends \hodphp\lib\template\AbstractFunction
 {
 
     //make a text lowercase
@@ -14,8 +14,7 @@ class FuncRenderHead extends \lib\template\AbstractFunction
             $result .= $this->template->parseFile("components/stylesheet", array("stylesheet" => $stylesheet)) . "\n";
         }
 
-
-        $varContent="";
+        $varContent = "";
         foreach ($this->document->getVars() as $key => $value) {
             $varContent .= $this->template->parseFile("components/var", array(
                 "key" => $key,
@@ -27,15 +26,15 @@ class FuncRenderHead extends \lib\template\AbstractFunction
             "value" => json_encode($this->debug->getInitArray())
         ));
 
-        if($varContent){
-            $result.=$this->template->parseFile("components/inlineScript",array("content"=>$varContent));
+        if ($varContent) {
+            $result .= $this->template->parseFile("components/inlineScript", array("content" => $varContent));
         }
 
         foreach ($this->document->getScripts() as $script) {
             $result .= $this->template->parseFile("components/script", array("script" => $script)) . "\n";
         }
 
-        if($this->session->_debugMode) {
+        if ($this->session->_debugMode) {
             $result .= $this->template->parseFile("components/script", array("script" => "js/hoddebug.js")) . "\n";
         }
 
@@ -43,6 +42,5 @@ class FuncRenderHead extends \lib\template\AbstractFunction
         return $result;
     }
 }
-
 
 ?>

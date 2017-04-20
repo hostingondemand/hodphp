@@ -1,39 +1,43 @@
 <?php
-namespace provider\mapping;
-use lib\provider\baseprovider\BaseMappingProvider;
+namespace hodphp\provider\mapping;
 
-class Config extends BaseMappingProvider{
+use hodphp\lib\provider\baseprovider\BaseMappingProvider;
 
-    var $modelToTable=array();
-    var $tableToModel=array();
+class Config extends BaseMappingProvider
+{
 
-    function __construct(){
-        $mappings=$this->config->get("tables","mapping");
-        if(is_array($mappings)){
-            foreach($mappings as $mapping){
-                $this->modelToTable[$mapping["model"]]=$mapping["table"];
-                $this->tableToModel[$mapping["table"]]=$mapping["model"];
+    var $modelToTable = array();
+    var $tableToModel = array();
+
+    function __construct()
+    {
+        $mappings = $this->config->get("tables", "mapping");
+        if (is_array($mappings)) {
+            foreach ($mappings as $mapping) {
+                $this->modelToTable[$mapping["model"]] = $mapping["table"];
+                $this->tableToModel[$mapping["table"]] = $mapping["model"];
             }
         }
     }
 
     function getTableForClass($class)
     {
-        $class=strtolower($class);
+        $class = strtolower($class);
         $exp = explode("\\", $class);
         $class = $exp[count($exp) - 1];
-        if( $exp[count($exp) - 2]!="model"){
+        if ($exp[count($exp) - 2] != "model") {
             $namespace = $exp[count($exp) - 2];
-        }else{
+        } else {
             $namespace = "";
         }
 
-        return isset($this->modelToTable[$namespace."\\".$class]) ? $this->modelToTable[$namespace."\\".$class] : "";
+        return isset($this->modelToTable[$namespace . "\\" . $class]) ? $this->modelToTable[$namespace . "\\" . $class] : "";
     }
 
     function getModelForTable($table)
     {
-        return isset($this->tableToModel[$table])?$this->tableToModel[$table]:"";
+        return isset($this->tableToModel[$table]) ? $this->tableToModel[$table] : "";
     }
 }
+
 ?>

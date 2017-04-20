@@ -1,8 +1,7 @@
 <?php
-namespace modules\developer\model;
+namespace hodphp\modules\developer\model;
 
-use core\Controller;
-use lib\model\BaseModel;
+use hodphp\lib\model\BaseModel;
 
 class Install extends BaseModel
 {
@@ -25,7 +24,5 @@ class Install extends BaseModel
         $this->service->project->updateFramework();
         $this->service->project->removeCache();
     }
-
-
 
 }

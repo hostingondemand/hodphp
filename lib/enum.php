@@ -1,22 +1,24 @@
 <?php
-namespace  lib;
-use core\Lib;
-use core\Loader;
+namespace hodphp\lib;
+
+use hodphp\core\Lib;
+use hodphp\core\Loader;
 
 //simple wrapper to call services
-class Enum extends Lib{
+class Enum extends Lib
+{
 
     public function __construct()
     {
-        Loader::loadClass("baseEnum","lib\\enum");;
+        Loader::loadClass("baseEnum", "lib\\enum");;
     }
 
     public function __get($name)
     {
-        $result= Loader::getSingleton($name, "enum");
+        $result = Loader::getSingleton($name, "enum");
         return $result;
     }
 
-
 }
+
 ?>

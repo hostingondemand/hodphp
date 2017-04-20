@@ -1,7 +1,7 @@
 <?php
-namespace lib\template;
-use core\Base;
-use core\Lib;
+namespace hodphp\lib\template;
+
+use hodphp\core\Lib;
 
 //an abstraction layer for functions
 abstract class AbstractFunction extends Lib
@@ -12,11 +12,10 @@ abstract class AbstractFunction extends Lib
 
     function __construct()
     {
-        $this->interpreter = \core\Loader::getSingleton("interpreter", "lib\\template");
+        $this->interpreter = \hodphp\core\Loader::getSingleton("interpreter", "lib\\template");
     }
 
-    abstract function call($parameters, $data, $content = "", $unparsed = Array(),$module=false);
-
+    abstract function call($parameters, $data, $content = "", $unparsed = Array(), $module = false);
 
 }
 

@@ -1,7 +1,7 @@
 <?php
-namespace provider\patchlog;
+namespace hodphp\provider\patchlog;
 
-use lib\provider\baseprovider\BasePatchlogProvider;
+use hodphp\lib\provider\baseprovider\BasePatchlogProvider;
 
 class Db extends BasePatchlogProvider
 {
@@ -24,7 +24,7 @@ class Db extends BasePatchlogProvider
     function needPatch($name)
     {
         $prefix = $this->db->getPrefix();
-        $query = $this->db->query("select id from ".$prefix."hodpatch where patch='" . $name . "' and success=1");
+        $query = $this->db->query("select id from " . $prefix . "hodpatch where patch='" . $name . "' and success=1");
         return !$this->db->numRows($query);
     }
 }

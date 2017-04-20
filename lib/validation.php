@@ -1,21 +1,22 @@
 <?php
-namespace lib;
-use core\Loader;
+namespace hodphp\lib;
 
-class Validation extends \core\Lib{
+use hodphp\core\Loader;
 
-    function  __construct()
+class Validation extends \hodphp\core\Lib
+{
+
+    function __construct()
     {
         $this->language->load("_validation");
-        Loader::LoadClass("BaseValidator","lib/validation");
+        Loader::LoadClass("BaseValidator", "lib/validation");
     }
 
-
-    function validator($name){
-       return $this->provider->validator->$name();
+    function validator($name)
+    {
+        return $this->provider->validator->$name();
     }
-
-
 
 }
+
 ?>

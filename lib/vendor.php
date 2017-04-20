@@ -1,14 +1,17 @@
 <?php
-namespace lib;
-    use core\Lib;
-    use core\Loader;
+namespace hodphp\lib;
 
-    class Vendor extends Lib{
-        function load($file){
-            $path=$this->filesystem->findRightPath("vendor/".$file.".php");
-            if($path){
-                include($path);
-            }
+use hodphp\core\Lib;
+
+class Vendor extends Lib
+{
+    function load($file)
+    {
+        $path = $this->filesystem->findRightPath("vendor/" . $file . ".php");
+        if ($path) {
+            include($path);
         }
     }
+}
+
 ?>

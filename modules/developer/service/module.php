@@ -1,9 +1,7 @@
 <?php
-namespace modules\developer\service;
+namespace hodphp\modules\developer\service;
 
-use core\Controller;
-use lib\model\BaseModel;
-use lib\service\BaseService;
+use hodphp\lib\service\BaseService;
 
 class Module extends BaseService
 {
@@ -22,7 +20,7 @@ class Module extends BaseService
     {
         $result = array();
         $required = $this->config->get("requirements.modules", "components");
-        if(is_array($required)) {
+        if (is_array($required)) {
             foreach ($required as $key => $val) {
                 if (!is_array($val)) {
                     $val = $this->getModuleByName($val, true);
@@ -35,30 +33,11 @@ class Module extends BaseService
         return $result;
     }
 
-    function getInstalledModules()
-    {
-        $result = array();
-        $folders = $this->filesystem->getDirs("modules");
-        foreach ($folders as $folder) {
-            $module = $this->getModuleByName($folder);
-            $module["installed"] = true;
-            $result[$folder] = $module;
-        }
-
-
-        $folders = $this->filesystem->getDirs("project/modules");
-        foreach ($folders as $folder) {
-            $module = $this->getModuleByName($folder);
-            $result[$folder] = $module;
-        }
-        return $result;
-    }
-
     function getModuleByName($name, $repositoryOnly = false)
     {
         if (!$repositoryOnly) {
             $modules = $this->config->get("requirements.modules", "components");
-            if(is_array($modules)) {
+            if (is_array($modules)) {
                 foreach ($modules as $key => $val) {
                     if (isset($val["name"]) && $val["name"] == $name) {
                         $module = $val;
@@ -73,8 +52,8 @@ class Module extends BaseService
             $modules = $this->config->get("modules", "_repository");
             if (isset($modules[$name])) {
                 $module = $modules[$name];
-            }else{
-                $module=  array(
+            } else {
+                $module = array(
                     "name" => $name,
                     "type" => "none"
 
@@ -82,41 +61,36 @@ class Module extends BaseService
             }
 
             $localModules = $this->config->get("modules.local", "repository");
-            if(isset($localModules[$name])) {
-                $localModule=$localModules[$name];
-                if (isset($module) && $module["type"]==$localModule["type"]) {
-                    $module["upstream"]=$module["source"];
-                    $module["source"]=$localModule["source"];
+            if (isset($localModules[$name])) {
+                $localModule = $localModules[$name];
+                if (isset($module) && $module["type"] == $localModule["type"]) {
+                    $module["upstream"] = $module["source"];
+                    $module["source"] = $localModule["source"];
                 } else {
-                    $module=$localModule;
+                    $module = $localModule;
                 }
             }
         }
 
-        if(isset($module)){
-            if($this->filesystem->exists("project/modules/".$name)){
-                $module["folder"]="project/modules/".$name;
-            }else{
-                $module["folder"]="modules/".$name;
+        if (isset($module)) {
+            if ($this->filesystem->exists("project/modules/" . $name)) {
+                $module["folder"] = "project/modules/" . $name;
+            } else {
+                $module["folder"] = "modules/" . $name;
             }
-            $module["installed"]=$this->isInstalled($name);
+            $module["installed"] = $this->isInstalled($name);
         }
 
-
-        if($this->filesystem->exists("project/modules/".$name)){
-            $module["parentFolder"]="project/modules";
-            $module["folder"]="project/modules/".$name;
-        }else{
-            $module["parentFolder"]="modules";
-            $module["folder"]="modules/".$name;
+        if ($this->filesystem->exists("project/modules/" . $name)) {
+            $module["parentFolder"] = "project/modules";
+            $module["folder"] = "project/modules/" . $name;
+        } else {
+            $module["parentFolder"] = "modules";
+            $module["folder"] = "modules/" . $name;
         }
-        $module["installed"]=$this->isInstalled($name);
-
-
-
+        $module["installed"] = $this->isInstalled($name);
 
         return $module;
-
 
     }
 
@@ -125,9 +99,27 @@ class Module extends BaseService
         return $this->filesystem->exists("modules/" . $name) || $this->filesystem->exists("project/modules/" . $name);
     }
 
+    function getInstalledModules()
+    {
+        $result = array();
+        $folders = $this->filesystem->getDirs("modules");
+        foreach ($folders as $folder) {
+            $module = $this->getModuleByName($folder);
+            $module["installed"] = true;
+            $result[$folder] = $module;
+        }
+
+        $folders = $this->filesystem->getDirs("project/modules");
+        foreach ($folders as $folder) {
+            $module = $this->getModuleByName($folder);
+            $result[$folder] = $module;
+        }
+        return $result;
+    }
+
     function install($name)
     {
-        $result=false;
+        $result = false;
         if (!isset($this->handled[$name]) || !$this->handled[$name]) {
 
             $this->event->raise("modulePreInstall", array("name" => $name));
@@ -135,7 +127,7 @@ class Module extends BaseService
             $module = $this->getModuleByName($name);
             if ($module) {
                 $installService = "method" . ucfirst($module["type"]);
-               $result= $this->service->$installService->install($module["name"]);
+                $result = $this->service->$installService->install($module["name"]);
             }
             $this->handleRequirements($name);
             $this->service->patch->setup();
@@ -145,29 +137,6 @@ class Module extends BaseService
             $this->handled[$name] = true;
         }
 
-        return $result;
-    }
-
-    function update($name)
-    {
-        $result=false;
-        if (!isset($this->handled[$name]) || !$this->handled[$name]) {
-            $this->event->raise("modulePreUpdate", array("name" => $name));
-
-            $module = $this->getModuleByName($name);
-            if ($module) {
-                $installService = "method" . ucfirst($module["type"]);
-                $result=$this->service->$installService->update($module["name"]);
-            }
-
-            $this->handleRequirements($name);
-
-            $this->service->patch->setup();
-            $this->service->patch->doPatch($name);
-            $this->event->raise("modulePostUpdate", array("name" => $name));
-
-            $this->handled[$name] = true;
-        }
         return $result;
     }
 
@@ -189,5 +158,28 @@ class Module extends BaseService
                 }
             }
         }
+    }
+
+    function update($name)
+    {
+        $result = false;
+        if (!isset($this->handled[$name]) || !$this->handled[$name]) {
+            $this->event->raise("modulePreUpdate", array("name" => $name));
+
+            $module = $this->getModuleByName($name);
+            if ($module) {
+                $installService = "method" . ucfirst($module["type"]);
+                $result = $this->service->$installService->update($module["name"]);
+            }
+
+            $this->handleRequirements($name);
+
+            $this->service->patch->setup();
+            $this->service->patch->doPatch($name);
+            $this->event->raise("modulePostUpdate", array("name" => $name));
+
+            $this->handled[$name] = true;
+        }
+        return $result;
     }
 }

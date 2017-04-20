@@ -1,17 +1,17 @@
 <?php
-namespace modules\developer\service;
+namespace hodphp\modules\developer\service;
 
-use core\Controller;
-use lib\model\BaseModel;
+use hodphp\lib\model\BaseModel;
 
 class MethodNone extends BaseModel
 {
-    function install($name){
+    function install($name)
+    {
 
     }
 
-
-    function update($name){
+    function update($name)
+    {
 
     }
 }

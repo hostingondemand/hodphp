@@ -1,15 +1,18 @@
 <?php
-namespace modules\developer\controller;
+namespace hodphp\modules\developer\controller;
 
-use core\Controller;
+use hodphp\core\Controller;
 
-class Test extends Controller{
-    function home(){
-        return  $this->response->renderView();
+class Test extends Controller
+{
+    function home()
+    {
+        return $this->response->renderView();
     }
 
-    function runUnitTest(){
-        $model=$this->model->test->unitTest;
+    function runUnitTest()
+    {
+        $model = $this->model->test->unitTest;
         $this->db->startTestMode();
         $model->setupDatabase();
         $model->runTests();

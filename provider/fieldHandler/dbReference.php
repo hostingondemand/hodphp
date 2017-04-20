@@ -1,7 +1,7 @@
 <?php
-namespace  provider\fieldHandler;
-use lib\model\BaseFieldHandler;
+namespace hodphp\provider\fieldHandler;
 
+use hodphp\lib\model\BaseFieldHandler;
 
 class DbReference extends BaseFieldHandler
 {
@@ -15,7 +15,7 @@ class DbReference extends BaseFieldHandler
     private $_cascadeDelete;
     private $_cascadeSave;
 
-    function fromAnnotation($parameters,$type,$field)
+    function fromAnnotation($parameters, $type, $field)
     {
         $mapping = $this->provider->mapping->default;
         if (isset($parameters["model"])) {
@@ -26,88 +26,88 @@ class DbReference extends BaseFieldHandler
                 ->toTable($parameters["toTable"]);
         }
 
-        if(isset($parameters["key"])){
+        if (isset($parameters["key"])) {
             $this->field($parameters["key"]);
-        }else if(isset($parameters["model"])){
-            $this->field($mapping->getTableForClass($parameters["model"])."_id");
+        } else if (isset($parameters["model"])) {
+            $this->field($mapping->getTableForClass($parameters["model"]) . "_id");
         }
 
-        if(isset($parameters["cascade"])){
-            if($parameters["cascade"]=="all"){
+        if (isset($parameters["cascade"])) {
+            if ($parameters["cascade"] == "all") {
                 $this->cascadeAll();
             }
-            if($parameters["cascade"]=="delete"){
+            if ($parameters["cascade"] == "delete") {
                 $this->cascadeDelete();
             }
-            if($parameters["cascade"]=="save"){
+            if ($parameters["cascade"] == "save") {
                 $this->cascadeSave();
             }
-            if($parameters["cascade"]=="reference"){
+            if ($parameters["cascade"] == "reference") {
                 $this->updateReference();
             }
         }
 
-
-
-    }
-
-    function field($field){
-        $this->_field=$field;
-        return $this;
-    }
-
-    function  toTable($toTable){
-        $this->_toTable=$toTable;
-        return $this;
-    }
-
-    function  fromTable($toTable){
-        $this->_fromTable=$toTable;
-        return $this;
-    }
-
-    function  updateReference(){
-        $this->_updateReference=true;
-        return $this;
     }
 
     function toModel($model, $namespace = false)
     {
-        if(!$namespace){
-            $model=str_replace("/","\\",$model);
-            $exp=explode("\\",$model);
-            if(isset($exp[1])){
-                $this->_toModel=$exp[1];
-                $this->_toModelNamespace=$exp[0];
-            }else{
-                $this->_toModel=$exp[0];
+        if (!$namespace) {
+            $model = str_replace("/", "\\", $model);
+            $exp = explode("\\", $model);
+            if (isset($exp[1])) {
+                $this->_toModel = $exp[1];
+                $this->_toModelNamespace = $exp[0];
+            } else {
+                $this->_toModel = $exp[0];
             }
-        }else {
+        } else {
             $this->_toModel = $model;
             $this->_toModelNamespace = $namespace;
         }
         return $this;
     }
 
-    function cascadeAll(){
-        $this->_cascadeDelete=true;
-        $this->_cascadeSave=true;
+    function toTable($toTable)
+    {
+        $this->_toTable = $toTable;
         return $this;
     }
 
-    function cascadeDelete(){
-        $this->_cascadeDelete=true;
+    function field($field)
+    {
+        $this->_field = $field;
         return $this;
     }
 
-    function cascadeSave(){
-        $this->_cascadeSave=true;
+    function cascadeAll()
+    {
+        $this->_cascadeDelete = true;
+        $this->_cascadeSave = true;
         return $this;
     }
 
-    function save(){
-        if($this->loaded) {
-            if(!$this->_fromTable && $this->_model) {
+    function cascadeDelete()
+    {
+        $this->_cascadeDelete = true;
+        return $this;
+    }
+
+    function cascadeSave()
+    {
+        $this->_cascadeSave = true;
+        return $this;
+    }
+
+    function updateReference()
+    {
+        $this->_updateReference = true;
+        return $this;
+    }
+
+    function save()
+    {
+        if ($this->loaded) {
+            if (!$this->_fromTable && $this->_model) {
                 $mapping = $this->provider->mapping->default;
                 $this->fromTable($mapping->getTableForClass($this->_model->_getType()));
             }
@@ -128,26 +128,32 @@ class DbReference extends BaseFieldHandler
 
     }
 
+    function fromTable($toTable)
+    {
+        $this->_fromTable = $toTable;
+        return $this;
+    }
 
-
-    function get($inModel){
-        if(!$this->loaded ){
-            if($this->_field){
-                $field=$this->_field;
-                $id=$this->_model->$field;
-            }else{
-                $id=$inModel;
+    function get($inModel)
+    {
+        if (!$this->loaded) {
+            if ($this->_field) {
+                $field = $this->_field;
+                $id = $this->_model->$field;
+            } else {
+                $id = $inModel;
             }
-            $this->obj=$this->db->query("select * from ".$this->_toTable." where id ='".$id."'")->fetchModel($this->_toModel,$this->_toModelNamespace);
-            $this->loaded=true;
+            $this->obj = $this->db->query("select * from " . $this->_toTable . " where id ='" . $id . "'")->fetchModel($this->_toModel, $this->_toModelNamespace);
+            $this->loaded = true;
         }
         return $this->obj;
     }
 
-    function set($obj){
-        if(is_array($obj)) {
-            $this->obj=$this->get(false);
-            if(!$this->obj) {
+    function set($obj)
+    {
+        if (is_array($obj)) {
+            $this->obj = $this->get(false);
+            if (!$this->obj) {
                 if ($this->_toModelNamespace) {
                     $this->obj = $this->model->{$this->_toModelNamespace}->{$this->_toModel};
                 } else {
@@ -156,10 +162,10 @@ class DbReference extends BaseFieldHandler
             }
             $this->obj->fromArray($obj);
         }
-        if(is_object($obj)) {
+        if (is_object($obj)) {
             $this->obj = $obj;
         }
-        $this->loaded=true;
+        $this->loaded = true;
     }
 
 }

@@ -1,21 +1,23 @@
 <?php
-namespace  lib\model;
-use core\Base;
-use core\Lib;
-use core\Loader;
+namespace hodphp\lib\model;
+use hodphp\core\Lib;
+use hodphp\core\Loader;
 
-class ModelNamespace extends Lib{
+class Modelnamespace extends Lib
+{
 
     var $namespace;
 
-    function init($namespace){
-        $this->namespace=$namespace;
+    function init($namespace)
+    {
+        $this->namespace = $namespace;
     }
 
     function __get($name)
     {
-       return   Loader::createInstance($name, $this->namespace);
+        return Loader::createInstance($name, $this->namespace);
     }
-    
+
 }
+
 ?>
