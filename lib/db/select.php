@@ -235,6 +235,18 @@ class Select extends Lib
             $queryString .= ")";
         }
 
+        if (count($this->_group)) {
+            $queryString .= " group by ";
+            $i = 0;
+            foreach ($this->_group as $groupby => $order) {
+                if ($i) {
+                    $queryString .= " , ";
+                }
+                $queryString .= " " . $groupby . " " . $order;
+                $i++;
+            }
+        }
+
         if (count($this->_orderBy)) {
             $queryString .= " order by ";
             $i = 0;
@@ -243,18 +255,6 @@ class Select extends Lib
                     $queryString .= " , ";
                 }
                 $queryString .= $orderby . " " . $order;
-                $i++;
-            }
-        }
-
-        if (count($this->_group)) {
-            $queryString .= " order by ";
-            $i = 0;
-            foreach ($this->_group as $groupby => $order) {
-                if ($i) {
-                    $queryString .= " , ";
-                }
-                $queryString .= " " . $groupby . " " . $order;
                 $i++;
             }
         }
