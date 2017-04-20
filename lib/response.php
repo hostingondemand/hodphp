@@ -14,15 +14,8 @@ class Response extends \hodphp\core\Lib
         "csv" => "text/csv"
     ];
 
-    function write($string, $options = Array())
-    {
-        ob_clean();
-        echo $string;
-    }
-
     function renderAction($parameters = "")
     {
-
 
         if (func_num_args() > 1) {
             $parameters = func_get_args();
@@ -30,7 +23,6 @@ class Response extends \hodphp\core\Lib
 
         Loader::loadAction($parameters);
     }
-
 
     function renderView($data = Array(), $path = "")
     {
@@ -51,12 +43,6 @@ class Response extends \hodphp\core\Lib
         $this->write($this->template->parseFile($this->masterView, Array("content" => $content)));
     }
 
-
-    function renderContent($content)
-    {
-        $this->write($this->template->parseFile($this->masterView, Array("content" => $content)));
-    }
-
     function renderPartial($data = Array(), $path = "")
     {
         if (!is_array($data) && !is_object($data)) {
@@ -71,6 +57,17 @@ class Response extends \hodphp\core\Lib
         $this->write($this->template->parseFile($path, $data));
     }
 
+    function write($string, $options = Array())
+    {
+        ob_clean();
+        echo $string;
+    }
+
+    function renderContent($content)
+    {
+        $this->write($this->template->parseFile($this->masterView, Array("content" => $content)));
+    }
+
     function renderFile($data, $contentType)
     {
         $this->contentType($contentType);
@@ -78,22 +75,20 @@ class Response extends \hodphp\core\Lib
         die();
     }
 
-
-    function renderJson($data)
+    function contentType($type)
     {
-        $this->contentType("application/json");
-        $this->write($this->serialization->serialize("json", $data));
+        $this->header("content-type", $type);
     }
-
 
     function header($key, $value)
     {
         header($key . ": " . $value);
     }
 
-    function contentType($type)
+    function renderJson($data)
     {
-        $this->header("content-type", $type);
+        $this->contentType("application/json");
+        $this->write($this->serialization->serialize("json", $data));
     }
 
     function redirect()

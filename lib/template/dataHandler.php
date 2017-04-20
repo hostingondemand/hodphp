@@ -22,16 +22,6 @@ class DataHandler extends Lib
         unset($this->__data[$key]);
     }
 
-    function getData($key = 0)
-    {
-        $data = $this->__data[$key];
-        //in case its nested by some internal construction
-        if (is_object($data) && $data->_getType() == $this->_getType()) {
-            return $data->getData();
-        }
-        return $data;
-    }
-
     function __get($key)
     {
         $result = "";
@@ -58,38 +48,6 @@ class DataHandler extends Lib
         return "";
     }
 
-    function set($key, $val = "")
-    {
-        if (is_array($key)) {
-            foreach ($key as $k => $v) {
-                $this->__set($k, $v);
-            }
-        } else {
-            $this->__set($key, $val);
-        }
-        return $this;
-    }
-
-    function __debugInfo()
-    {
-      return  $this->getDebugInfo($this->__data);
-    }
-
-    function getDebugInfo($data){
-        if (is_object($data)) {
-            if(method_exists($data,"__debugInfo")){
-                return $data->__debugInfo();
-            }elseif(method_exists($data,"toArray")){
-                return $data->toArray();
-            }
-        }if(is_array($data)){
-            foreach($data as $key=>$val){
-                $data[$key]=$this->getDebugInfo($val);
-            }
-        }
-        return $data;
-    }
-
     function __set($key, $val)
     {
         if (is_array($key)) {
@@ -104,13 +62,59 @@ class DataHandler extends Lib
         }
     }
 
-    function isFieldRequired($field){
-        $data=$this->getData();
-        if(method_exists($data,"hasMethod")&&$data->hasMethod("isFieldRequired")){
+    function set($key, $val = "")
+    {
+        if (is_array($key)) {
+            foreach ($key as $k => $v) {
+                $this->__set($k, $v);
+            }
+        } else {
+            $this->__set($key, $val);
+        }
+        return $this;
+    }
+
+    function __debugInfo()
+    {
+        return $this->getDebugInfo($this->__data);
+    }
+
+    function getDebugInfo($data)
+    {
+        if (is_object($data)) {
+            if (method_exists($data, "__debugInfo")) {
+                return $data->__debugInfo();
+            } elseif (method_exists($data, "toArray")) {
+                return $data->toArray();
+            }
+        }
+        if (is_array($data)) {
+            foreach ($data as $key => $val) {
+                $data[$key] = $this->getDebugInfo($val);
+            }
+        }
+        return $data;
+    }
+
+    function isFieldRequired($field)
+    {
+        $data = $this->getData();
+        if (method_exists($data, "hasMethod") && $data->hasMethod("isFieldRequired")) {
             return $data->isFieldRequired($field);
         }
 
         return false;
     }
+
+    function getData($key = 0)
+    {
+        $data = $this->__data[$key];
+        //in case its nested by some internal construction
+        if (is_object($data) && $data->_getType() == $this->_getType()) {
+            return $data->getData();
+        }
+        return $data;
+    }
 }
+
 ?>

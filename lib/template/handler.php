@@ -6,8 +6,6 @@ abstract class Handler extends \hodphp\core\Lib
 {
     abstract function handle($data = array());
 
-
 }
-
 
 ?>

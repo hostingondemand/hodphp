@@ -1,13 +1,16 @@
 <?php
-    namespace hodphp\lib;
-    use hodphp\core\Lib;
+namespace hodphp\lib;
 
-    class Hash extends Lib{
+use hodphp\core\Lib;
 
-        function __call($name,$arguments){
-            return hash ( $name , $arguments[0]);
-        }
+class Hash extends Lib
+{
 
+    function __call($name, $arguments)
+    {
+        return hash($name, $arguments[0]);
     }
-    
+
+}
+
 ?>

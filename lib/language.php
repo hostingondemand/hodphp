@@ -31,36 +31,6 @@ class Language extends \hodphp\core\Lib
         $this->session->__language = $language;
     }
 
-    function getCurrentCode(){
-        if ($this->session->__language) {
-            $lang = $this->session->__language;
-        } else {
-            $lang = $this->config->get("language", "website");
-        }
-
-        //if language settings are missing
-        if (!$lang) {
-            $lang = "en";
-        }
-        return $lang;
-    }
-
-    function load($file)
-    {
-        $lang= $this->getCurrentCode();
-        if (isset($this->data[$file])) {
-            $this->data[$file] = array_merge($this->data[$file], $this->filesystem->getArray("language/" . $lang . "/" . $file . ".php"));
-        } else {
-            $this->data[$file] = $this->filesystem->getArray("language/" . $lang . "/" . $file . ".php");
-        }
-
-        //english as fallback language.
-        if ($lang != "en") {
-            $this->data[$file] = array_merge($this->filesystem->getArray("language/en/" . $file . ".php"), $this->data[$file]);
-        }
-
-    }
-
     function get($string, $file = "")
     {
         if ($file && !isset($data[$file])) {
@@ -78,6 +48,37 @@ class Language extends \hodphp\core\Lib
             }
         }
         return "";
+    }
+
+    function load($file)
+    {
+        $lang = $this->getCurrentCode();
+        if (isset($this->data[$file])) {
+            $this->data[$file] = array_merge($this->data[$file], $this->filesystem->getArray("language/" . $lang . "/" . $file . ".php"));
+        } else {
+            $this->data[$file] = $this->filesystem->getArray("language/" . $lang . "/" . $file . ".php");
+        }
+
+        //english as fallback language.
+        if ($lang != "en") {
+            $this->data[$file] = array_merge($this->filesystem->getArray("language/en/" . $file . ".php"), $this->data[$file]);
+        }
+
+    }
+
+    function getCurrentCode()
+    {
+        if ($this->session->__language) {
+            $lang = $this->session->__language;
+        } else {
+            $lang = $this->config->get("language", "website");
+        }
+
+        //if language settings are missing
+        if (!$lang) {
+            $lang = "en";
+        }
+        return $lang;
     }
 
 }

@@ -2,7 +2,8 @@
 namespace hodphp\controller;
 class FatalError extends \hodphp\core\controller
 {
-    function home(){
+    function home()
+    {
         $this->response->renderView();
     }
 

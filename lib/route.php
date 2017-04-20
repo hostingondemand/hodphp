@@ -1,5 +1,6 @@
 <?php
 namespace hodphp\lib;
+
 use hodphp\core\Lib;
 
 class Route extends Lib
@@ -44,6 +45,29 @@ class Route extends Lib
         }
     }
 
+    function getRenames()
+    {
+        static $renames = false;
+        if (!$renames) {
+            $renames = $this->config->get("module.rename", "route");
+            if (!$renames) {
+                $renames = [];
+            }
+        }
+
+        return $renames;
+    }
+
+    function get($key)
+    {
+        $route = $this->getRoute();
+        if (isset($route[$key])) {
+            return $route[$key];
+        } else {
+            return "";
+        }
+    }
+
     function getRoute()
     {
         static $route = false;
@@ -66,37 +90,14 @@ class Route extends Lib
         return $route;
     }
 
-    function get($key)
-    {
-        $route = $this->getRoute();
-        if (isset($route[$key])) {
-            return $route[$key];
-        } else {
-            return "";
-        }
-    }
-
-    function setAutoRoute($arr)
-    {
-        $this->autoRoute = $arr;
-    }
-
     function removeAutoRoute()
     {
         $this->setAutoRoute([]);
     }
 
-    function getRenames()
+    function setAutoRoute($arr)
     {
-        static $renames = false;
-        if (!$renames) {
-            $renames = $this->config->get("module.rename", "route");
-            if (!$renames) {
-                $renames = [];
-            }
-        }
-
-        return $renames;
+        $this->autoRoute = $arr;
     }
 }
 

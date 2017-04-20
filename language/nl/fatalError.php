@@ -1,3 +1,3 @@
 <?php
-    return array("error.fatal"=>"Er is een fatale fout opgetreden");
+return array("error.fatal" => "Er is een fatale fout opgetreden");
 ?>

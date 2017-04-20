@@ -1,23 +1,25 @@
 <?php
 namespace hodphp\lib;
+
 use hodphp\core\Lib;
 use hodphp\core\Loader;
 
 //simple wrapper to call services
-class Model extends Lib{
+class Model extends Lib
+{
 
     public function __construct()
     {
-        Loader::loadClass("baseModel","lib\\model");
-        Loader::loadClass("baseFieldHandler","lib\\model");
+        Loader::loadClass("baseModel", "lib\\model");
+        Loader::loadClass("baseFieldHandler", "lib\\model");
     }
 
     public function __get($name)
     {
-        $result= Loader::createInstance($name, "model");
-        if(!$result){
-            $result=Loader::createInstance("modelNamespace","lib\\model");
-            $result->init("model\\".$name);
+        $result = Loader::createInstance($name, "model");
+        if (!$result) {
+            $result = Loader::createInstance("modelNamespace", "lib\\model");
+            $result->init("model\\" . $name);
         }
         return $result;
     }
@@ -26,8 +28,8 @@ class Model extends Lib{
     {
         return Loader::createInstance($handler, "provider\\fieldHandler");
 
-   }
-
+    }
 
 }
+
 ?>

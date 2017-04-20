@@ -7,9 +7,9 @@ class funcContent extends \hodphp\lib\template\AbstractFunction
 {
     function call($parameters, $data, $content = "", $unparsed = Array(), $module = false)
     {
-        foreach($parameters as $key=>$parameter){
-            if(is_object($parameter)){
-                $parameters[$key]=$parameter->getData();
+        foreach ($parameters as $key => $parameter) {
+            if (is_object($parameter)) {
+                $parameters[$key] = $parameter->getData();
             }
         }
 
@@ -31,17 +31,15 @@ class funcContent extends \hodphp\lib\template\AbstractFunction
             $path = "";
         }
 
-
-        if($module){
-            $parameters = array_merge(array($module,"_files", "content"), array($path));
-        }else{
+        if ($module) {
+            $parameters = array_merge(array($module, "_files", "content"), array($path));
+        } else {
             $parameters = array_merge(array("_files", "content"), array($path));
         }
 
-
-        $oldAutoRoute=$this->route->autoRoute;
+        $oldAutoRoute = $this->route->autoRoute;
         $this->route->setAutoRoute(array());
-        $route= $this->route->createRoute($parameters);
+        $route = $this->route->createRoute($parameters);
         $this->route->setAutoRoute($oldAutoRoute);
         return $route;
 

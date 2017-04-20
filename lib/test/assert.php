@@ -8,13 +8,6 @@ class assert extends Base
     var $function;
     var $inputData;
 
-    function initialize($title, $data, $function)
-    {
-        $this->title=$title;
-        $this->function = $function;
-        $this->inputData = $data;
-    }
-
     function eq($expected)
     {
         $function = $this->function;
@@ -22,13 +15,12 @@ class assert extends Base
         $this->results[] =
             array(
                 "title" => $this->title,
-                "comparison" => $result." == ".$expected,
+                "comparison" => $result . " == " . $expected,
                 "success" => $expected == $result
             );
 
         return $this;
     }
-
 
     function gt($expected)
     {
@@ -37,7 +29,7 @@ class assert extends Base
         $this->results[] =
             array(
                 "title" => $this->title,
-                "comparison" => $result." > ".$expected,
+                "comparison" => $result . " > " . $expected,
                 "success" => $result > $expected
             );
 
@@ -51,13 +43,12 @@ class assert extends Base
         $this->results[] =
             array(
                 "title" => $this->title,
-                "comparison" => $result." < ".$expected,
+                "comparison" => $result . " < " . $expected,
                 "success" => $result < $expected
             );
 
         return $this;
     }
-
 
     function gtEq($expected)
     {
@@ -66,7 +57,7 @@ class assert extends Base
         $this->results[] =
             array(
                 "title" => $this->title,
-                "comparison" => $result." >= ".$expected,
+                "comparison" => $result . " >= " . $expected,
                 "success" => $result >= $expected
             );
 
@@ -80,7 +71,7 @@ class assert extends Base
         $this->results[] =
             array(
                 "title" => $this->title,
-                "comparison" => $result." <= ".$expected,
+                "comparison" => $result . " <= " . $expected,
                 "success" => $result <= $expected
             );
 
@@ -99,6 +90,19 @@ class assert extends Base
         });
     }
 
+    function anonymous($title, $data, $callback)
+    {
+        $this->initialize($title, $data, $callback);
+        return $this;
+    }
+
+    function initialize($title, $data, $function)
+    {
+        $this->title = $title;
+        $this->function = $function;
+        $this->inputData = $data;
+    }
+
     function field($instance, $field)
     {
         $title = $instance->_getType() . "->" . $field;
@@ -109,17 +113,12 @@ class assert extends Base
         });
     }
 
-    function value($value){
+    function value($value)
+    {
         return $this->anonymous($value, $value, function ($value) {
             return $value;
         });
     }
-
-    function anonymous($title,$data,$callback){
-        $this->initialize($title, $data, $callback);
-        return $this;
-    }
-
 
 }
 

@@ -1,24 +1,24 @@
 <?php
 namespace hodphp\modules\developer\service;
 
-use hodphp\core\Controller;
-use hodphp\lib\model\BaseModel;
 use hodphp\lib\service\BaseService;
 
 class Project extends BaseService
 {
-    function create($git=null){
-        if(@$git){
+    function create($git = null)
+    {
+        if (@$git) {
             $this->filesystem->mkdir("project");
             $this->git->init("project");
-            $this->git->addRemote("project","origin", $git);
-            $this->git->pull("project", "master","origin");
-        }else{
+            $this->git->addRemote("project", "origin", $git);
+            $this->git->pull("project", "master", "origin");
+        } else {
             $this->filesystem->mkdir("project");
         }
     }
 
-    function setup($project){
+    function setup($project)
+    {
         if (!$this->filesystem->exists("project/config")) {
             $this->filesystem->mkdir("project/config");
         }
@@ -31,33 +31,35 @@ class Project extends BaseService
         ));
     }
 
-
-    function updateFramework(){
+    function updateFramework()
+    {
         $framework = $this->config->get("framework", "_repository");
         $localFramework = $this->config->get("framework.local", "repository");
-        if($localFramework){
-            $this->git->removeRemote(".","upstream");
-            $this->git->addRemote(".","upstream", $framework);
-            $this->git->removeRemote(".","origin");
-            $this->git->addRemote(".","origin", $localFramework);
-            $this->git->pull(".","master","upstream");
-            $this->git->pull(".","master","origin");
+        if ($localFramework) {
+            $this->git->removeRemote(".", "upstream");
+            $this->git->addRemote(".", "upstream", $framework);
+            $this->git->removeRemote(".", "origin");
+            $this->git->addRemote(".", "origin", $localFramework);
+            $this->git->pull(".", "master", "upstream");
+            $this->git->pull(".", "master", "origin");
 
-        }else{
-            $this->git->removeRemote(".","origin");
-            $this->git->addRemote(".","origin", $framework);
-            $this->git->pull(".","master","origin");
+        } else {
+            $this->git->removeRemote(".", "origin");
+            $this->git->addRemote(".", "origin", $framework);
+            $this->git->pull(".", "master", "origin");
         }
     }
 
-    function updateProject(){
-        $this->git->pull("project","master","origin");
+    function updateProject()
+    {
+        $this->git->pull("project", "master", "origin");
         $this->service->patch->setup();
         $this->service->patch->doPatchProject();
-        $this->event->raise("projectPostUpdate",array());
+        $this->event->raise("projectPostUpdate", array());
     }
 
-    function removeCache(){
+    function removeCache()
+    {
         $this->cache->destroy();
     }
 

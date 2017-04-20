@@ -3,7 +3,6 @@ namespace hodphp\provider\fieldHandler;
 
 use hodphp\lib\model\BaseFieldHandler;
 
-
 class DbManyToMany extends BaseFieldHandler
 {
     private $_fromField;
@@ -19,64 +18,65 @@ class DbManyToMany extends BaseFieldHandler
     private $_saveReset;
     private $_initArray;
 
-    function fromAnnotation($parameters,$type,$field)
+    function fromAnnotation($parameters, $type, $field)
     {
-        $mapping=$this->provider->mapping->default;
-        if(isset($parameters["model"])){
+        $mapping = $this->provider->mapping->default;
+        if (isset($parameters["model"])) {
             $this->toTable($mapping->getTableForClass($parameters["model"]))
                 ->toModel($parameters["model"]);
-        }else if(isset($parameters["toTable"])){
+        } else if (isset($parameters["toTable"])) {
             $this->toModel($mapping->getModelForTable($parameters["toTable"]))
                 ->toTable($parameters["toTable"]);
         }
 
-        if(isset($parameters["toKey"])){
+        if (isset($parameters["toKey"])) {
             $this->toField($parameters["toKey"]);
-        }else if(isset($parameters["model"])){
-            $this->toField($mapping->getTableForClass($parameters["model"])."_id");
+        } else if (isset($parameters["model"])) {
+            $this->toField($mapping->getTableForClass($parameters["model"]) . "_id");
         }
-        if(isset($parameters["fromKey"])){
+        if (isset($parameters["fromKey"])) {
             $this->fromField($parameters["fromKey"]);
-        }else{
-            $this->fromField($mapping->getTableForClass($type)."_id");
+        } else {
+            $this->fromField($mapping->getTableForClass($type) . "_id");
         }
 
-        if(isset($parameters["glueTable"])){
+        if (isset($parameters["glueTable"])) {
             $this->glueTable($parameters["glueTable"]);
         }
 
-        if(isset($parameters["updateList"])){
-            if($parameters["updateList"]=="all"){
+        if (isset($parameters["updateList"])) {
+            if ($parameters["updateList"] == "all") {
                 $this->updateList();
                 $this->saveReset();
             }
-            if($parameters["updateList"]=="insert"){
+            if ($parameters["updateList"] == "insert") {
                 $this->updateList();
             }
         }
 
-        if(isset($parameters["cascade"])){
-            if($parameters["cascade"]=="all"||$parameters["cascade"]=="save"){
+        if (isset($parameters["cascade"])) {
+            if ($parameters["cascade"] == "all" || $parameters["cascade"] == "save") {
                 $this->cascadeSave();
             }
         }
     }
 
-    function fromField($field)
+    function toModel($model, $namespace = false)
     {
-        $this->_fromField = $field;
-        return $this;
-    }
+        if (!$namespace) {
+            $model = str_replace("/", "\\", $model);
+            $exp = explode("\\", $model);
 
-    function toField($field)
-    {
-        $this->_toField = $field;
-        return $this;
-    }
-
-    function glueTable($glueTable)
-    {
-        $this->_glueTable = $glueTable;
+            if (isset($exp[1])) {
+                $this->_toModel = $exp[1];
+                $this->_toModelNamespace = $exp[0];
+            } else {
+                $this->_toModel = $exp[0];
+            }
+        } else {
+            $this->_toModel = $model;
+            $this->_toModelNamespace = $namespace;
+        }
         return $this;
     }
 
@@ -86,64 +86,52 @@ class DbManyToMany extends BaseFieldHandler
         return $this;
     }
 
-    function toModel($model, $namespace = false)
+    function toField($field)
     {
-        if(!$namespace){
-            $model=str_replace("/","\\",$model);
-            $exp=explode("\\",$model);
-
-            if(isset($exp[1])){
-                $this->_toModel=$exp[1];
-                $this->_toModelNamespace=$exp[0];
-            }else{
-                $this->_toModel=$exp[0];
-            }
-        }else {
-            $this->_toModel = $model;
-            $this->_toModelnamespace= $namespace;
-        }
+        $this->_toField = $field;
         return $this;
     }
 
-    function get($inModel)
+    function fromField($field)
     {
-        if (!$this->loaded) {
-            if ($this->_initArray) {
+        $this->_fromField = $field;
+        return $this;
+    }
 
-                $this->obj = array();
-                foreach ($this->_initArray as $val) {
-                    $model = $this->_toModel;
-                    if ($this->_toModelNamespace) {
-                        $namespace = $this->_toModelNamespace;
-                        $this->obj[] = $this->model->$namespace->$model->fromArray($val);
-                    } else {
-                        $this->obj[] = $this->model->$model->fromArray($val);
-                    }
+    function glueTable($glueTable)
+    {
+        $this->_glueTable = $glueTable;
+        return $this;
+    }
 
-                }
-            } else {
-                $this->obj = $this->db->query("select tt.* from `" . $this->_toTable . "` as tt
-                left join `" . $this->_glueTable . "` as gt on gt.`" . $this->_toField . "`=tt.id
-                where gt.`" . $this->_fromField . "` ='" . $this->_model->id . "'")
-                    ->fetchAllModel($this->_toModel, $this->_toModelNamespace);
-            }
-            $this->loaded = true;
-        }
-        return $this->obj;
+    function updateList()
+    {
+        $this->_updateList = true;
+        return $this;
+    }
+
+    function saveReset()
+    {
+        $this->_saveReset = true;
+        return $this;
+    }
+
+    function cascadeSave()
+    {
+        $this->_cascadeSave = true;
+        return $this;
     }
 
     function set($value)
     {
         if (is_array($value)) {
             $this->_initArray = $value;
-            $this->loaded=false;
+            $this->loaded = false;
         }
     }
 
     function save()
     {
-
-
         $originalData = $this->db->query("select tt.* from `" . $this->_toTable . "` as tt
                 left join `" . $this->_glueTable . "` as gt on gt.`" . $this->_toField . "`=tt.id
                 where gt.`" . $this->_fromField . "` ='" . $this->_model->id . "'")
@@ -151,7 +139,6 @@ class DbManyToMany extends BaseFieldHandler
 
         $originalData = $this->toIdMap($originalData);
         $data = $this->get(true);
-
 
         if ($this->_saveReset) {
             if ($this->db->parent) {
@@ -181,7 +168,6 @@ class DbManyToMany extends BaseFieldHandler
                          parent_module='" . $this->db->parent["module"] . "' ";
                     }
 
-
                     $this->db->query($query);
                 }
 
@@ -199,13 +185,10 @@ class DbManyToMany extends BaseFieldHandler
                          parent_module='" . $this->db->parent["module"] . "' ";
                 }
 
-
                 $this->db->query($query);
 
             }
         }
-
-
     }
 
     private function toIdMap($array)
@@ -222,27 +205,37 @@ class DbManyToMany extends BaseFieldHandler
         return $result;
     }
 
+    function get($inModel)
+    {
+        if (!$this->loaded) {
+            if ($this->_initArray) {
+
+                $this->obj = array();
+                foreach ($this->_initArray as $val) {
+                    $model = $this->_toModel;
+                    if ($this->_toModelNamespace) {
+                        $namespace = $this->_toModelNamespace;
+                        $this->obj[] = $this->model->$namespace->$model->fromArray($val);
+                    } else {
+                        $this->obj[] = $this->model->$model->fromArray($val);
+                    }
+
+                }
+            } else {
+                $this->obj = $this->db->query("select tt.* from `" . $this->_toTable . "` as tt
+                left join `" . $this->_glueTable . "` as gt on gt.`" . $this->_toField . "`=tt.id
+                where gt.`" . $this->_fromField . "` ='" . $this->_model->id . "'")
+                    ->fetchAllModel($this->_toModel, $this->_toModelNamespace);
+            }
+            $this->loaded = true;
+        }
+        return $this->obj;
+    }
+
     function cascadeAll()
     {
         $this->_cascadeSave = true;
         $this->_updateList = true;
-        return $this;
-    }
-
-    function cascadeSave(){
-        $this->_cascadeSave = true;
-        return $this;
-    }
-
-    function updateList()
-    {
-        $this->_updateList = true;
-        return $this;
-    }
-
-    function saveReset()
-    {
-        $this->_saveReset = true;
         return $this;
     }
 }

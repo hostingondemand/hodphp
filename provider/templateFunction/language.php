@@ -1,18 +1,16 @@
 <?php
 namespace hodphp\provider\templateFunction;
 
-use hodphp\core\Loader;
-
 class FuncLanguage extends \hodphp\lib\template\AbstractFunction
 {
-    function call($parameters, $data, $content = "", $unparsed = Array(),$module=false)
+    function call($parameters, $data, $content = "", $unparsed = Array(), $module = false)
     {
-        if(!isset($parameters[1])){
-            $parameters[1]=false;
+        if (!isset($parameters[1])) {
+            $parameters[1] = false;
         }
-        $text=$this->language->get($parameters[0],$parameters[1]);
+        $text = $this->language->get($parameters[0], $parameters[1]);
 
-        return $this->template->parse($text,$data);
+        return $this->template->parse($text, $data);
     }
 }
 

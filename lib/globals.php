@@ -1,12 +1,14 @@
 <?php
 namespace hodphp\lib;
 
-class Globals extends \hodphp\core\Lib{
+class Globals extends \hodphp\core\Lib
+{
 
-    var $data=array();
+    var $data = array();
+
     function __get($name)
     {
-        if (isset($this->data[$name]) ){
+        if (isset($this->data[$name])) {
             return $this->data[$name];
         }
         return "";
@@ -14,8 +16,9 @@ class Globals extends \hodphp\core\Lib{
 
     function __set($name, $value)
     {
-        $this->data[$name]=$value;
+        $this->data[$name] = $value;
     }
 
 }
+
 ?>

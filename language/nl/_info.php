@@ -1,6 +1,6 @@
 <?php
-    return array(
-        "name"=>"Nederlands",
-        "code"=>"nl"
-    );
+return array(
+    "name" => "Nederlands",
+    "code" => "nl"
+);
 ?>

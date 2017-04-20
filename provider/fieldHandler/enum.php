@@ -3,7 +3,6 @@ namespace hodphp\provider\fieldHandler;
 
 use hodphp\lib\model\BaseFieldHandler;
 
-
 class Enum extends BaseFieldHandler
 {
     private $_name;

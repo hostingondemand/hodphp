@@ -3,9 +3,8 @@ namespace hodphp\lib;
 
 //a simple wrapper around the filesystem to be able to use files in the right directory
 use hodphp\core\Loader;
-use \RecursiveDirectoryIterator;
-use \RecursiveIteratorIterator;
-use \RecursiveTreeIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 class Filesystem extends \hodphp\core\Lib
 {
@@ -13,39 +12,17 @@ class Filesystem extends \hodphp\core\Lib
     var $customExtensions = array("css" => "text/css");
 
     //generate a full path
-    function calculatePath($file)
+    var $ignores = false;
+
+    function getFile($file)
     {
-        //if the string doesnt start with / or ~/ it will be considered a project file
-        if (!(substr($file, 0, 1) == "/" || substr($file, 0, 2) == "~/" || substr($file, 1, 2) == ":\\")) {
-            $exp = explode("/", str_replace("\\", "/", $file));
-            if ($exp[0] == "project") {
-                $path = DIR_PROJECT;
-                unset($exp[0]);
-	    } elseif($exp[0]=="modules" && @$exp[1]=="developer") {
-		$path = DIR_FRAMEWORK."/modules/";
-                unset($exp[0]);
-            } elseif ($exp[0] == "modules") {
-                $path = DIR_MODULES;
-                unset($exp[0]);
-            } elseif($exp[0] == "data"){
-                $path = DIR_DATA;
-                unset($exp[0]);
-            }else{
-                $path=DIR_FRAMEWORK;
-            }
-
-            $file=$path.implode("/",$exp);
+        if ($fullPath = $this->findRightPath($file)) {
+            return file_get_contents($fullPath);
         }
-
-        //if it starts with ~/ it will be considered a developer file..
-        if (substr($file, 0, 2) == "~/") {
-            $file = str_replace("~/", $_SERVER["HOME"] . "/", $file);
-        }
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $file = str_replace("/", "\\", $file);
-        }
-        return $file;
+        return false;
     }
+
+    //read a file entirely
 
     function findRightPath($file)
     {
@@ -55,12 +32,12 @@ class Filesystem extends \hodphp\core\Lib
                 return $fullPath;
             }
 
-            $fullPath = $this->calculatePath("modules/". Loader::$module . "/" . $file);
+            $fullPath = $this->calculatePath("modules/" . Loader::$module . "/" . $file);
             if (file_exists($fullPath)) {
                 return $fullPath;
             }
 
-            $fullPath = $this->calculatePath("project/". $file);
+            $fullPath = $this->calculatePath("project/" . $file);
             if (file_exists($fullPath)) {
                 return $fullPath;
             }
@@ -75,14 +52,41 @@ class Filesystem extends \hodphp\core\Lib
         return false;
     }
 
-    //read a file entirely
-    function getFile($file)
+    function calculatePath($file)
     {
-        if ($fullPath = $this->findRightPath($file)) {
-            return file_get_contents($fullPath);
+        //if the string doesnt start with / or ~/ it will be considered a project file
+        if (!(substr($file, 0, 1) == "/" || substr($file, 0, 2) == "~/" || substr($file, 1, 2) == ":\\")) {
+            $exp = explode("/", str_replace("\\", "/", $file));
+            if ($exp[0] == "project") {
+                $path = DIR_PROJECT;
+                unset($exp[0]);
+            } elseif ($exp[0] == "modules" && @$exp[1] == "developer") {
+                $path = DIR_FRAMEWORK . "/modules/";
+                unset($exp[0]);
+            } elseif ($exp[0] == "modules") {
+                $path = DIR_MODULES;
+                unset($exp[0]);
+            } elseif ($exp[0] == "data") {
+                $path = DIR_DATA;
+                unset($exp[0]);
+            } else {
+                $path = DIR_FRAMEWORK;
+            }
+
+            $file = $path . implode("/", $exp);
         }
-        return false;
+
+        //if it starts with ~/ it will be considered a developer file..
+        if (substr($file, 0, 2) == "~/") {
+            $file = str_replace("~/", $_SERVER["HOME"] . "/", $file);
+        }
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $file = str_replace("/", "\\", $file);
+        }
+        return $file;
     }
+
+    //check if folder or file exists
 
     function getContentType($file)
     {
@@ -95,15 +99,8 @@ class Filesystem extends \hodphp\core\Lib
         return false;
     }
 
-    //check if folder or file exists
-    function exists($path)
-    {
-        $path = $this->calculatePath($path);
-        return file_exists($path);
-    }
-
-
     //create a directory
+
     function mkDir($folder)
     {
         if (!$this->exists($this->calculatePath($folder))) {
@@ -111,24 +108,12 @@ class Filesystem extends \hodphp\core\Lib
         }
     }
 
-    var $ignores = false;
-
-    function getIgnores($useIgnores = true)
+    function exists($path)
     {
-        if (!$useIgnores) {
-            return false;
-        }
-        if ($this->ignores === false) {
-            $this->ignores = $this->config->get("filesystem.ignore", "server");
-            if (!$this->ignores) {
-                $this->ignores = array();
-            }
-        }
-        return $this->ignores;
-
+        $path = $this->calculatePath($path);
+        return file_exists($path);
     }
 
-    //create an array of all directories
     function getDirs($dir, $useIgnores = true)
     {
         static $dirResults;
@@ -158,6 +143,22 @@ class Filesystem extends \hodphp\core\Lib
         return $dirResults[$path];
     }
 
+    //create an array of all directories
+
+    function getIgnores($useIgnores = true)
+    {
+        if (!$useIgnores) {
+            return false;
+        }
+        if ($this->ignores === false) {
+            $this->ignores = $this->config->get("filesystem.ignore", "server");
+            if (!$this->ignores) {
+                $this->ignores = array();
+            }
+        }
+        return $this->ignores;
+
+    }
 
     function getFilesRecursive($dir, $type = false)
     {
@@ -166,8 +167,8 @@ class Filesystem extends \hodphp\core\Lib
         }
         $ignores = $this->getIgnores();
         $files = array();
-        foreach($dir as $currentDir) {
-            if($this->exists($currentDir)) {
+        foreach ($dir as $currentDir) {
+            if ($this->exists($currentDir)) {
                 $path = $this->calculatePath($currentDir);
                 $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS));
                 foreach ($it as $path) {
@@ -187,17 +188,17 @@ class Filesystem extends \hodphp\core\Lib
         }
         $ignores = $this->getIgnores();
         $files = array();
-        foreach($dir as $currentDir) {
-            if($this->exists($currentDir)) {
+        foreach ($dir as $currentDir) {
+            if ($this->exists($currentDir)) {
                 $path = $this->calculatePath($currentDir);
-                $realPath=$path;
+                $realPath = $path;
                 $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS));
                 foreach ($it as $path) {
                     if ((!is_array($ignores) || !in_array($path, $ignores)) && (!$type || substr($path, -strlen($type)) == $type)) {
-                        $addFile["absolutePath"]= $path->getRealPath();
-                        $addFile["relativePath"]=str_replace($realPath,$currentDir,$addFile["absolutePath"]);
-                        $addFile["path"]=str_replace($realPath,"",$path->getRealPath());
-                        $files[]=$addFile;
+                        $addFile["absolutePath"] = $path->getRealPath();
+                        $addFile["relativePath"] = str_replace($realPath, $currentDir, $addFile["absolutePath"]);
+                        $addFile["path"] = str_replace($realPath, "", $path->getRealPath());
+                        $files[] = $addFile;
                     }
                 }
             }
@@ -229,13 +230,6 @@ class Filesystem extends \hodphp\core\Lib
     }
 
     //write to content file if file exists clear it first
-    function clearWrite($path, $content)
-    {
-        $path = $this->calculatePath($path);
-        $handle = fopen($path, "w+");
-        fwrite($handle, $content);
-        fclose($handle);
-    }
 
     function getArray($file)
     {
@@ -251,6 +245,14 @@ class Filesystem extends \hodphp\core\Lib
     {
         $serialized = "<?php return " . var_export($data, true) . ";";
         $this->clearWrite($file, $serialized);
+    }
+
+    function clearWrite($path, $content)
+    {
+        $path = $this->calculatePath($path);
+        $handle = fopen($path, "w+");
+        fwrite($handle, $content);
+        fclose($handle);
     }
 
     function getModified($file)
@@ -297,7 +299,6 @@ class Filesystem extends \hodphp\core\Lib
         }
         return 0;
     }
-
 
     function prefixFilesWithFolder($files, $folder)
     {

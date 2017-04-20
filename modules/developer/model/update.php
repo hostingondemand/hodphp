@@ -1,7 +1,6 @@
 <?php
 namespace hodphp\modules\developer\model;
 
-use hodphp\core\Controller;
 use hodphp\lib\model\BaseModel;
 
 class Update extends BaseModel

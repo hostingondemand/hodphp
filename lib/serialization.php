@@ -18,18 +18,14 @@ class Serialization extends \hodphp\core\Lib
         return $eventData["data"];
     }
 
-    function unserialize($format, $data, $assoc = false, $type = null)
-    {
-        return $this->LoadSerializer($format)->unserialize($data, $assoc, $type);
-    }
-
-
     private function LoadSerializer($name)
     {
         return $this->provider->serializer->$name;
     }
 
-
-
+    function unserialize($format, $data, $assoc = false, $type = null)
+    {
+        return $this->LoadSerializer($format)->unserialize($data, $assoc, $type);
+    }
 
 }

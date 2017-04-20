@@ -12,6 +12,10 @@ class Annotation extends \hodphp\core\Lib
         Loader::loadClass("baseAspect", "lib/annotation");
     }
 
+    function classHasAnnotations($class, $prefix = "")
+    {
+        return count($this->getAnnotationsForClass($class, $prefix));
+    }
 
     function getAnnotationsForClass($class, $prefix = "", $uncached = false)
     {
@@ -47,11 +51,79 @@ class Annotation extends \hodphp\core\Lib
         return array();
     }
 
-    function classHasAnnotations($class, $prefix = "")
+    function getAllAnnotations()
     {
-        return count($this->getAnnotationsForClass($class, $prefix));
-    }
+        static $annotations = false;
+        if (!$annotations) {
+            $annotations = $this->cache->runCachedProject(
+                "annotation_", array(),
+                function () {
+                    Loader::loadClass("baseModel", "lib/model");
+                    Loader::loadClass("baseService", "lib/service");
+                    $result = array();
+                    $files = $this->filesystem->getFilesRecursiveWithInfo(array("project/controller", "project/service", "project/model", "project/modules", "modules"), "php");
+                    foreach ($files as $fileWithInfo) {
+                        $file = $fileWithInfo["absolutePath"];
 
+                        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                            $useFile = str_replace("\\", "/", $file);
+                        } else {
+                            $useFile = $file;
+                        }
+                        if (strpos($useFile, '/controller/') !== false || strpos($useFile, '/service/') !== false || strpos($useFile, '/model/') !== false) {
+                            $type = $fileWithInfo["relativePath"];
+                            $type = str_replace(".php", "", $type);
+                            $type = str_replace("/", "\\", $type);
+                            include_once($file);
+                            if (class_exists($type)) {
+                                $subResult = array();
+
+                                //annoatations for class
+                                try {
+                                    $classAnnotations = $this->getAnnotationsForClass($type, "", true);
+                                } catch (exception $ex) {
+                                    $classAnnotations = array();
+                                }
+                                foreach ($classAnnotations as $annotation) {
+                                    $subResult["class"][] = $annotation;
+                                }
+
+                                $methods = get_class_methods($type);
+                                foreach ($methods as $method) {
+                                    try {
+                                        $methodAnnotations = $this->getAnnotationsForMethod($type, $method, "", true, true);
+                                    } catch (exception $ex) {
+                                        $methodAnnotations = array();
+                                    }
+                                    foreach ($methodAnnotations as $annotation) {
+                                        $subResult["method"][strtolower($method)][] = $annotation;
+                                    }
+                                }
+
+                                $fields = get_class_vars($type);
+                                foreach ($fields as $field => $val) {
+                                    try {
+                                        $fieldAnnotations = $this->getAnnotationsForField($type, $field, "", true, true);
+                                    } catch (exception $ex) {
+                                        $fieldAnnotations = array();
+                                    }
+                                    foreach ($fieldAnnotations as $annotation) {
+                                        $subResult["field"][strtolower($field)][] = $annotation;
+                                    }
+                                }
+                                if (substr($type, 0, 1) != "\\") {
+                                    $type = "\\" . $type;
+                                }
+                                $result[strtolower($type)] = $subResult;
+                            }
+                        }
+                    }
+                    return $result;
+                }
+            );
+        }
+        return $annotations;
+    }
 
     function getAnnotationsForMethod($class, $method, $prefix = "", $uncached = false, $noClass = false)
     {
@@ -97,11 +169,6 @@ class Annotation extends \hodphp\core\Lib
             return array();
         }
         return $this->getAnnotationsForClass($class, $prefix, $uncached);
-    }
-
-    function methodHasAnnotations($class, $method, $prefix = "")
-    {
-        return count($this->getAnnotationsForMethod($class, $method, $prefix));
     }
 
     function getAnnotationsForField($class, $field, $prefix = "", $uncached = false, $noClass = false)
@@ -151,81 +218,10 @@ class Annotation extends \hodphp\core\Lib
         return $this->getAnnotationsForClass($class, $prefix, $uncached);
     }
 
-    function getAllAnnotations()
+    function methodHasAnnotations($class, $method, $prefix = "")
     {
-        static $annotations = false;
-        if (!$annotations) {
-            $annotations = $this->cache->runCachedProject(
-                "annotation_", array(),
-                function () {
-                    Loader::loadClass("baseModel", "lib/model");
-                    Loader::loadClass("baseService", "lib/service");
-                    $result = array();
-                    $files = $this->filesystem->getFilesRecursiveWithInfo(array("project/controller", "project/service", "project/model", "project/modules", "modules"), "php");
-                    foreach ($files as $fileWithInfo) {
-                        $file = $fileWithInfo["absolutePath"];
-
-                        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-                            $useFile = str_replace("\\", "/", $file);
-                        } else {
-                            $useFile = $file;
-                        }
-                        if (strpos($useFile, '/controller/') !== false || strpos($useFile, '/service/') !== false || strpos($useFile, '/model/') !== false) {
-                            $type = $fileWithInfo["relativePath"];
-                            $type = str_replace(".php", "", $type);
-                            $type = str_replace("/", "\\", $type);
-                            include_once($file);
-                            if (class_exists($type)) {
-                                $subResult = array();
-
-                                //annoatations for class
-                                try {
-                                    $classAnnotations = $this->getAnnotationsForClass($type, "", true);
-                                } catch (exception $ex) {
-                                    $classAnnotations = array();
-                                }
-                                foreach ($classAnnotations as $annotation) {
-                                    $subResult["class"][] = $annotation;
-                                }
-
-
-                                $methods = get_class_methods($type);
-                                foreach ($methods as $method) {
-                                    try {
-                                        $methodAnnotations = $this->getAnnotationsForMethod($type, $method, "", true, true);
-                                    } catch (exception $ex) {
-                                        $methodAnnotations = array();
-                                    }
-                                    foreach ($methodAnnotations as $annotation) {
-                                        $subResult["method"][strtolower($method)][] = $annotation;
-                                    }
-                                }
-
-                                $fields = get_class_vars($type);
-                                foreach ($fields as $field => $val) {
-                                    try {
-                                        $fieldAnnotations = $this->getAnnotationsForField($type, $field, "", true, true);
-                                    } catch (exception $ex) {
-                                        $fieldAnnotations = array();
-                                    }
-                                    foreach ($fieldAnnotations as $annotation) {
-                                        $subResult["field"][strtolower($field)][] = $annotation;
-                                    }
-                                }
-                                if (substr($type, 0, 1) != "\\") {
-                                    $type = "\\" . $type;
-                                }
-                                $result[strtolower($type)] = $subResult;
-                            }
-                        }
-                    }
-                    return $result;
-                }
-            );
-        }
-        return $annotations;
+        return count($this->getAnnotationsForMethod($class, $method, $prefix));
     }
-
 
     function fieldHasAnnotations($class, $field, $prefix = "")
     {
@@ -251,13 +247,11 @@ class Annotation extends \hodphp\core\Lib
             }
             $result["parameters"] = $parameters;
 
-
         } else {
             $result["parameters"] = array();
         }
         return (object)$result;
     }
-
 
     function runAspect($method, $aspects, $data)
     {
@@ -286,6 +280,5 @@ class Annotation extends \hodphp\core\Lib
         }
     }
 }
-
 
 ?>

@@ -1,8 +1,8 @@
 <?php
 namespace hodphp\lib\template;
 
-use hodphp\core\Loader;
 use hodphp\core\Lib;
+use hodphp\core\Loader;
 
 //this is a subparser used by the globalParser
 //this parser is specifically used to parse expressions
@@ -14,12 +14,12 @@ class ExpressionParser extends Lib
     var $parseContent = true;
     var $type = "value";
 
-    function __construct($expression,$modules=array())
+    function __construct($expression, $modules = array())
     {
-        $this->parse($expression,$modules);
+        $this->parse($expression, $modules);
     }
 
-    function parse($expression,$modules=array())
+    function parse($expression, $modules = array())
     {
         //first make sure the abstractionlayer for functions are loaded
         Loader::loadClass("abstractFunction", "lib\\template");
@@ -27,11 +27,10 @@ class ExpressionParser extends Lib
         //remove brackets from the expression
         $this->cleanupExpression($expression);
 
-
-        if($this->currentLevelContains(Array("<", ">", "=", ">=", "<=", "==", "!=", "||", "&&"), $expression)) {
+        if ($this->currentLevelContains(Array("<", ">", "=", ">=", "<=", "==", "!=", "||", "&&"), $expression)) {
             $this->parameters = $this->splitComparison($expression);
             $this->type = "comparison_root";
-        }else {
+        } else {
 
             //look for the first function call
             $function = $this->popFunction($expression);
@@ -73,8 +72,73 @@ class ExpressionParser extends Lib
         }
     }
 
-
     //this function is made to handle comparisons
+
+    function cleanupExpression(&$expression)
+    {
+        $expression = trim($expression, " \t");
+        $lastDouble = substr($expression, -2);
+        $firstDouble = substr($expression, 0, 2);
+
+        $last = substr($expression, -1);
+        if ($last == ")") {
+            $expression = substr($expression, 0, -1);
+        }
+
+        if ($lastDouble == "}}") {
+            $expression = substr($expression, 0, -2);
+        }
+        if ($firstDouble == "{{") {
+            $expression = substr($expression, 2);
+        }
+    }
+
+    //this function decides which operands should be used
+
+    function currentLevelContains($comparers, $expression)
+    {
+
+        //some basic setup
+        $result[0][0] = Array();
+
+        $strlen = strlen($expression);
+        $foundQuotes = 0;
+        $openedBrackets = 0;
+
+        $currentOr = 0;
+        $currentAnd = 0;
+
+        //loop through text
+        for ($i = 0; $i <= $strlen; $i++) {
+            //set some variables to search for
+            $firstChar = substr($expression, $i, 1);
+            $secondChar = substr($expression, $i + 1, 1);
+            $doubleChar = substr($expression, $i, 2);
+
+            //decide if there should be skipped
+            if ($firstChar == '"' || $firstChar == "'" || ($firstChar == "\\" && $secondChar == "'") || ($firstChar == "\\" && $secondChar == '"')) {
+                $foundQuotes++;
+            } elseif ($firstChar == "(") {
+                $openedBrackets++;
+            } elseif ($firstChar == ")") {
+                $openedBrackets--;
+            }
+
+            //only if we are not skipping
+            if (!fmod($foundQuotes, 2) && !$openedBrackets) {
+                //return true if one of the characters are found.
+                foreach ($comparers as $val) {
+                    if ($val == $firstChar || $val == $doubleChar) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+    }
+
+    //a function to check if the string contains  this method takes an array as parameter..
+
     function splitComparison($expression)
     {
 
@@ -91,7 +155,6 @@ class ExpressionParser extends Lib
         $lengthLeft = 0;
         $startright = 0;
         $currentOperator = "";
-
 
         //loop through the text letter by letter
         for ($i = 0; $i <= $strlen; $i++) {
@@ -152,15 +215,14 @@ class ExpressionParser extends Lib
                     $startright = $i + 1;
                 }
 
-
             }
         }
         return $result;
 
     }
 
+    //just remove brackets from an expression.
 
-    //this function decides which operands should be used
     function buildSubComparison($expression, $startleft, $lengthLeft, $startright, $currentOperator, $i)
     {
 
@@ -181,7 +243,7 @@ class ExpressionParser extends Lib
                 $result["content"] = "";
             }
 
-        //if the comparison has 2 operands parse both same trick as above but for 2 sides.
+            //if the comparison has 2 operands parse both same trick as above but for 2 sides.
         } else {
 
             $parser = new expressionParser(substr($expression, $startleft, $lengthLeft));
@@ -208,7 +270,6 @@ class ExpressionParser extends Lib
                 $result["right"]["content"] = "";
             }
 
-
             $result["type"] = "comparison_sub";
             $result["operator"] = $currentOperator;
 
@@ -217,78 +278,37 @@ class ExpressionParser extends Lib
 
     }
 
-
-    //a function to check if the string contains  this method takes an array as parameter..
-    function currentLevelContains($comparers, $expression)
-    {
-
-
-        //some basic setup
-        $result[0][0] = Array();
-
-        $strlen = strlen($expression);
-        $foundQuotes = 0;
-        $openedBrackets=0;
-
-        $currentOr = 0;
-        $currentAnd = 0;
-
-
-        //loop through text
-        for ($i = 0; $i <= $strlen; $i++) {
-            //set some variables to search for
-            $firstChar = substr($expression, $i, 1);
-            $secondChar = substr($expression, $i + 1, 1);
-            $doubleChar = substr($expression, $i, 2);
-
-
-            //decide if there should be skipped
-            if ($firstChar == '"' || $firstChar == "'" || ($firstChar == "\\" && $secondChar == "'") || ($firstChar == "\\" && $secondChar == '"')) {
-                $foundQuotes++;
-            }
-
-            elseif($firstChar=="("){
-                $openedBrackets++;
-            }elseif($firstChar==")"){
-                $openedBrackets--;
-            }
-
-            //only if we are not skipping
-            if (!fmod($foundQuotes, 2) && ! $openedBrackets) {
-                //return true if one of the characters are found.
-                foreach ($comparers as $val) {
-                    if ($val == $firstChar || $val == $doubleChar) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-    }
-
-
-    //just remove brackets from an expression.
-    function cleanupExpression(&$expression)
-    {
-        $expression=trim($expression," \t");
-        $lastDouble = substr($expression, -2);
-        $firstDouble = substr($expression, 0, 2);
-
-        $last = substr($expression, -1);
-        if ($last == ")") {
-            $expression = substr($expression, 0, -1);
-        }
-
-        if ($lastDouble == "}}") {
-            $expression = substr($expression, 0, -2);
-        }
-        if ($firstDouble == "{{") {
-            $expression = substr($expression, 2);
-        }
-    }
-
-
     //search for a function and pop all text until the function starts
+
+    function parseArrayparameters($param)
+    {
+        $param = substr($param, 0, -1);
+
+        $exp1 = explode("[", $param);
+        foreach ($exp1 as $key => $exprStr) {
+            if ($key) {
+                if (substr($exprStr, -1) == "]") {
+                    $exprStr = substr($exprStr, 0, -1);
+                }
+                $parser = new ExpressionParser($exprStr);
+                $param = Array();
+                $param["type"] = $parser->type;
+                $param["parameters"] = $parser->parameters;
+                if ($parser->type == "function") {
+                    $param["function"] = $parser->function;
+                }
+                $result[] = $param;
+            } else {
+                $result[] = $exprStr;
+            }
+        }
+
+        return $result;
+
+    }
+
+    //search for where the function starts
+
     function popFunction(&$expression)
     {
         $pos = $this->getFunctionPos($expression);
@@ -301,8 +321,8 @@ class ExpressionParser extends Lib
         }
     }
 
+    //split all parameters for a function and parse those.
 
-    //search for where the function starts
     function getFunctionPos($expression)
     {
         $strlen = strlen($expression);
@@ -327,8 +347,8 @@ class ExpressionParser extends Lib
 
     }
 
+    //array keys in arrays wont work witht his setup. just avoid this for now.
 
-    //split all parameters for a function and parse those.
     function splitparameters(&$expression)
     {
         $parameters = Array();
@@ -343,7 +363,6 @@ class ExpressionParser extends Lib
                 $expression = "";
             }
 
-
             $parser = new ExpressionParser($parameterstr);
             $param["type"] = $parser->type;
 
@@ -357,46 +376,13 @@ class ExpressionParser extends Lib
                 $param["content"] = "";
             }
 
-
             $parameters[] = $param;
         } while ($pos !== false);
         return $parameters;
     }
 
-
-    //array keys in arrays wont work witht his setup. just avoid this for now.
-    function parseArrayparameters($param)
-    {
-        $param = substr($param, 0, -1);
-
-
-        $exp1 = explode("[", $param);
-        foreach ($exp1 as $key => $exprStr) {
-            if ($key) {
-                if (substr($exprStr, -1) == "]") {
-                    $exprStr = substr($exprStr, 0, -1);
-                }
-                $parser = new ExpressionParser($exprStr);
-                $param = Array();
-                $param["type"] = $parser->type;
-                $param["parameters"] = $parser->parameters;
-                if ($parser->type == "function") {
-                    $param["function"] = $parser->function;
-                }
-                $result[] = $param;
-            } else {
-                $result[] = $exprStr;
-            }
-        }
-
-
-        return $result;
-
-    }
-
-
-
     //find the next position  to split the parameters same tricks as the functions before..
+
     function findNextSplit($content)
     {
         $strlen = strlen($content);
@@ -428,27 +414,25 @@ class ExpressionParser extends Lib
 
             }
 
-
         }
 
         return false;
     }
 
-    private function getFunctionInstance($function,$modules)
+    private function getFunctionInstance($function, $modules)
     {
-        $exp=explode(".",$function);
-        if(count($exp)>1){
-            foreach($modules as $module){
-                if($module->_name==$exp[0]){
+        $exp = explode(".", $function);
+        if (count($exp) > 1) {
+            foreach ($modules as $module) {
+                if ($module->_name == $exp[0]) {
                     return $module->getFunction($exp[1]);
                 }
             }
-        }else{
+        } else {
             return Loader::getSingleton($exp[0], "provider\\templateFunction", "func");
         }
 
     }
-
 
 }
 

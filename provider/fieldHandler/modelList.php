@@ -1,7 +1,7 @@
 <?php
 namespace hodphp\provider\fieldHandler;
-use hodphp\lib\model\BaseFieldHandler;
 
+use hodphp\lib\model\BaseFieldHandler;
 
 class ModelList extends BaseFieldHandler
 {
@@ -9,28 +9,31 @@ class ModelList extends BaseFieldHandler
     private $_namespace;
     private $_data;
 
-    function fromAnnotation($parameters,$type,$field)
+    function fromAnnotation($parameters, $type, $field)
     {
         $this->_class = $parameters[0];
-        $this->_namespace= @$parameters[1] ?: false;
+        $this->_namespace = @$parameters[1] ?: false;
     }
 
-    function model($class, $namespace = false) {
+    function model($class, $namespace = false)
+    {
         $this->_class = $class;
-        $this->_namespace= $namespace;
+        $this->_namespace = $namespace;
     }
 
-    function get($inModel){
-        if(empty($this->_data)){
+    function get($inModel)
+    {
+        if (empty($this->_data)) {
             return null;
         }
         return $this->_data;
     }
 
-    function set($values){
-        if(is_array($values)) {
+    function set($values)
+    {
+        if (is_array($values)) {
             $result = array();
-            foreach($values as $value) {
+            foreach ($values as $value) {
                 if (!$this->_namespace) {
                     $model = $this->model->{$this->_class};
                 } else {

@@ -11,24 +11,19 @@ class Debug extends Lib
     var $profileStack = array();
     var $profiles = array();
 
-    function error($title, $detail)
-    {
-        $trace = array_slice($this->trace, -5, 5, true);
-        $this->errors[] = array("title" => $title, "detail" => $detail, "stackTrace" => $trace);
-    }
-
     function getInitArray()
     {
         return array(
             "errors" => $this->errors,
-            "profiles"=>$this->removeKeys($this->profiles)
+            "profiles" => $this->removeKeys($this->profiles)
         );
     }
 
-    function removeKeys($input){
-        $result=array();
-        foreach($input as $val){
-            $result[]=$val;
+    function removeKeys($input)
+    {
+        $result = array();
+        foreach ($input as $val) {
+            $result[] = $val;
         }
         return $result;
     }
@@ -39,6 +34,12 @@ class Debug extends Lib
         if ($reporting) {
             $this->error("PHP:" . @$errstr, array("file" => @$errfile, "line" => @$errline, "errno" => @$errno));
         }
+    }
+
+    function error($title, $detail)
+    {
+        $trace = array_slice($this->trace, -5, 5, true);
+        $this->errors[] = array("title" => $title, "detail" => $detail, "stackTrace" => $trace);
     }
 
     function handleShutdown()
@@ -69,25 +70,23 @@ class Debug extends Lib
         );
     }
 
-
-    function profileOut()
-    {
-        $last = array_pop($this->profileStack);
-        if (!isset($this->profiles[$last["name"]])) {
-            $this->profiles[$last["name"]] = array("name"=>$last["name"],"seconds" => 0, "occurances" => 0);
-        }
-        $time = $this->microtime_float() - $last["start"];
-        $this->profiles[$last["name"]]["occurances"]++;
-        $this->profiles[$last["name"]]["seconds"] += $time;
-
-    }
-
     function microtime_float()
     {
         list($usec, $sec) = explode(" ", microtime());
         return ((float)$usec + (float)$sec);
     }
 
+    function profileOut()
+    {
+        $last = array_pop($this->profileStack);
+        if (!isset($this->profiles[$last["name"]])) {
+            $this->profiles[$last["name"]] = array("name" => $last["name"], "seconds" => 0, "occurances" => 0);
+        }
+        $time = $this->microtime_float() - $last["start"];
+        $this->profiles[$last["name"]]["occurances"]++;
+        $this->profiles[$last["name"]]["seconds"] += $time;
+
+    }
 
     function _debugIn($type, $name, $arguments = array())
     {

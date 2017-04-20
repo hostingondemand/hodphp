@@ -17,12 +17,10 @@ class Select extends Lib
     var $executed = null;
     var $model = null;
 
-
     function __construct()
     {
 
     }
-
 
     function ignoreParent()
     {
@@ -30,11 +28,11 @@ class Select extends Lib
         return $this;
     }
 
-    function byModel($model, $namespace,$alias=false)
+    function byModel($model, $namespace, $alias = false)
     {
         $this->model = $namespace . "\\" . $model;
-        $table = $this->db->tableForModel($model,$namespace);
-        $this->table($table,$alias);
+        $table = $this->db->tableForModel($model, $namespace);
+        $this->table($table, $alias);
         return $this;
     }
 
@@ -50,7 +48,6 @@ class Select extends Lib
         }
         $this->_table = $table;
         return $this;
-
 
     }
 
@@ -70,13 +67,14 @@ class Select extends Lib
         return $this;
     }
 
-    function joinModel($model,$namespace, $onLeft, $onRight, $alias){
-        $table=$this->db->tableForModel($model,$namespace);
-        $this->join($table,$onLeft,$onRight,$alias);
+    function joinModel($model, $namespace, $onLeft, $onRight, $alias)
+    {
+        $table = $this->db->tableForModel($model, $namespace);
+        $this->join($table, $onLeft, $onRight, $alias);
         return $this;
     }
 
-    function join($table, $onLeft, $onRight=false, $alias = false)
+    function join($table, $onLeft, $onRight = false, $alias = false)
     {
 
         if (!is_array($table)) {
@@ -91,13 +89,6 @@ class Select extends Lib
             "left" => $onLeft,
             "right" => $onRight,
         );
-
-        return $this;
-    }
-
-    function where($condition)
-    {
-        $this->_where[] = $condition;
 
         return $this;
     }
@@ -144,6 +135,14 @@ class Select extends Lib
         return $this;
     }
 
+    function fetchAll()
+    {
+        if ($this->executed === null) {
+            $this->execute();
+        }
+        return $this->executed->fetchAll();
+    }
+
     function execute()
     {
 
@@ -159,7 +158,7 @@ class Select extends Lib
 
         $prefix = $this->db->getPrefix();
         if ($this->db->parent && !$this->_ignoreParent) {
-            $this->where($alias.".parent_id='" . $this->db->parent["id"] . "' && ".$alias.".parent_module='" . $this->db->parent["module"] . "'");
+            $this->where($alias . ".parent_id='" . $this->db->parent["id"] . "' && " . $alias . ".parent_module='" . $this->db->parent["module"] . "'");
         }
 
         $queryString = "select ";
@@ -181,12 +180,10 @@ class Select extends Lib
             $queryString .= " * ";
         }
 
-
-        $queryString .= " from `" . $prefix . $table."`";
+        $queryString .= " from `" . $prefix . $table . "`";
         if ($table != $alias) {
             $queryString .= " as " . $alias . "";
         }
-
 
         foreach ($this->_joins as $join) {
             $queryString .= " left join ";
@@ -196,19 +193,19 @@ class Select extends Lib
             if ($alias != $table) {
                 $queryString .= " as " . $alias;
             }
-            if(is_array($join["left"]) && !$join["right"]){
-                $ij=0;
-                foreach($join["left"] as $key=>$val){
-                    if($ij){
+            if (is_array($join["left"]) && !$join["right"]) {
+                $ij = 0;
+                foreach ($join["left"] as $key => $val) {
+                    if ($ij) {
                         $queryString .= " and " . $key . " = " . $val;
-                    }else{
+                    } else {
                         $queryString .= " on (" . $key . " = " . $val;
                     }
                     $ij++;
                 }
-                $queryString.=")";
+                $queryString .= ")";
 
-            }else {
+            } else {
                 $queryString .= " on " . $join["left"] . " = " . $join["right"];
             }
         }
@@ -269,6 +266,13 @@ class Select extends Lib
         return $queryString;
     }
 
+    function where($condition)
+    {
+        $this->_where[] = $condition;
+
+        return $this;
+    }
+
     function handleFieldName($name)
     {
         if (strpos($name, '(') !== false) {
@@ -277,19 +281,11 @@ class Select extends Lib
 
         $exp = explode(".", $name);
         $corrected = array_map(function ($name) {
-            if($name=="*") return $name;
+            if ($name == "*") return $name;
             return "`" . $name . "`";
         }, $exp);
         $name = implode(".", $corrected);
         return $name;
-    }
-
-    function fetchAll()
-    {
-        if ($this->executed === null) {
-            $this->execute();
-        }
-        return $this->executed->fetchAll();
     }
 
     function fetch()
@@ -333,7 +329,6 @@ class Select extends Lib
         return $this->executed->fetchAllModel($class, $namespace);
     }
 
-
     function numRows()
     {
         if ($this->executed === null) {
@@ -341,7 +336,6 @@ class Select extends Lib
         }
         return $this->executed->numRows();
     }
-
 
 }
 

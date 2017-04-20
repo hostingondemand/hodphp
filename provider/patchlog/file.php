@@ -32,7 +32,7 @@ class File extends BasePatchlogProvider
 
     function __destruct()
     {
-        $this->data = $this->filesystem->writeArray($this->file,$this->data);
+        $this->data = $this->filesystem->writeArray($this->file, $this->data);
 
     }
 }

@@ -1,15 +1,15 @@
 <?php
 namespace hodphp\lib\db\cast;
 //This class just tells how an injector should look
-class TextToInt extends  BaseCaster
+class TextToInt extends BaseCaster
 {
-    function cast($data,$fromLength,$toLength){
-        if(!$data){
+    function cast($data, $fromLength, $toLength)
+    {
+        if (!$data) {
             return 0;
         }
-        return intval($data,0);
+        return intval($data, 0);
     }
 }
-
 
 ?>

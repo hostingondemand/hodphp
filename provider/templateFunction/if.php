@@ -6,14 +6,13 @@ class FuncIf extends \hodphp\lib\template\AbstractFunction
     var $requireContent = true;
 
     //this function handles an if
-    function call($parameters, $data, $content = "", $unparsed = array(),$module=false)
+    function call($parameters, $data, $content = "", $unparsed = array(), $module = false)
     {
         //first split up the data into if, elseif and else
         $splitted = $this->splitData($content);
 
         //loop through this block
         foreach ($splitted as $key => $val) {
-
 
             if ($key == 0) {
                 //if the condition of the first parameter is met.. interpret the content.
@@ -35,7 +34,6 @@ class FuncIf extends \hodphp\lib\template\AbstractFunction
             }
         }
     }
-
 
     //simply split up in blocks for if, elseif and else.
     function splitData($data)

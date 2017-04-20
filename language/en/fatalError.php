@@ -1,3 +1,3 @@
 <?php
-    return array("error.fatal"=>"A fatal error occured");
+return array("error.fatal" => "A fatal error occured");
 ?>

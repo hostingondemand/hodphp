@@ -9,8 +9,8 @@ class Message extends Lib
     function send($message, $type = "warning")
     {
         $messages = $this->getMessages();
-        if(is_object($type)){
-            $type=$type->name;
+        if (is_object($type)) {
+            $type = $type->name;
         }
         if (!$messages) {
             $messages = array();
@@ -24,9 +24,10 @@ class Message extends Lib
         return $this->session->messages;
     }
 
-    function popMessages(){
-        $messages=$this->getMessages();
-        $this->session->messages=array();
+    function popMessages()
+    {
+        $messages = $this->getMessages();
+        $this->session->messages = array();
         return $messages;
     }
 

@@ -1,15 +1,18 @@
 <?php
 namespace hodphp\lib;
-class Path extends \hodphp\core\Lib{
+class Path extends \hodphp\core\Lib
+{
 
-
-    function getApp(){
-        return substr(__DIR__,0,-4);
+    function getApp()
+    {
+        return substr(__DIR__, 0, -4);
     }
 
-    function getHttp(){
-       return $this->config->get("http.path","server");
+    function getHttp()
+    {
+        return $this->config->get("http.path", "server");
     }
 
 }
+
 ?>

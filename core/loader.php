@@ -14,6 +14,14 @@ class Loader
     static $setup = false;
 
     //load an action for a controller.
+    static $moduleStack = array();
+
+    //just a method to load a file where a class can be found
+    static $classStack = array();
+
+    //load the class if needed. and create an instance of the class
+    static $currentClass = null;
+
     static function loadAction($params)
     {
         if (!self::$setup) {
@@ -26,7 +34,7 @@ class Loader
         $oldController = self::$controller;
         $oldAction = self::$action;
         $oldActionModule = self::$actionModule;
-        if (isset($params[$paramsFrom]) && (file_exists(DIR_FRAMEWORK."modules/" . $params[$paramsFrom]) ||file_exists(DIR_MODULES . $params[$paramsFrom]) || file_exists(DIR_PROJECT."modules/" . $params[$paramsFrom]))) {
+        if (isset($params[$paramsFrom]) && (file_exists(DIR_FRAMEWORK . "modules/" . $params[$paramsFrom]) || file_exists(DIR_MODULES . $params[$paramsFrom]) || file_exists(DIR_PROJECT . "modules/" . $params[$paramsFrom]))) {
             self::goModule($params[$paramsFrom]);
             self::$actionModule = $params[$paramsFrom];
             $paramsFrom++;
@@ -79,7 +87,6 @@ class Loader
             $controller->__onAuthorizationFail();
         }
 
-
         self::goBackModule();
         $info = array("module" => self::$actionModule,
             "controller" => self::$controller,
@@ -92,133 +99,20 @@ class Loader
 
     }
 
-    //just a method to load a file where a class can be found
-    static function loadClass($class, $namespace,$loadHard=false)
+    public static function goModule($name)
     {
-        if($loadHard){
-            $exp=explode("/",str_replace("\\", "/", $namespace));
-            if($exp[0]=="project"){
-                $path=DIR_PROJECT;
-                unset($exp[0]);
-                $namespacePath=implode("/",$exp);
-            }elseif($exp[0]=="modules"){
-                $path=DIR_MODULES;
-                unset($exp[0]);
-                $namespacePath=implode("/",$exp);
-            }else{
-                $namespacePath=DIR_FRAMEWORK.str_replace("\\","/",$namespace);
-            }
 
-            $path .= $namespacePath. "/" . lcfirst($class) . ".php";
-            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-                $path=str_replace("/","\\",$path);
-            }
-            if (file_exists($path)) {
-                include_once($path);
-                return "\\";
-            }
-        }else {
-            if ($map = self::getClassmapFor($class, $namespace)) {
-                $path = DIR_MODULES . $map . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
-                if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-                    $path=str_replace("/","\\",$path);
-                }
-                if (file_exists($path)) {
-                    include_once($path);
-                    return array("prefix" => "\\modules\\" . $map . "\\", "module" => $map);
-                }
-            }
-
-            if ($map = self::getNamespaceFor($namespace)) {
-                $path = DIR_MODULES . $map . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
-                if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-                    $path=str_replace("/","\\",$path);
-                }
-                if (file_exists($path)) {
-                    include_once($path);
-                    return array("prefix" => "\\modules\\" . $map . "\\", "module" => $map);
-                }
-            }
-
-            $expNamespace=explode("/",str_replace("\\", "/", $namespace));
-
-            $path = DIR_PROJECT."modules/" . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
-            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-                $path=str_replace("/","\\",$path);
-            }
-            if (file_exists($path)) {
-                include_once($path);
-                return "\\project\\modules\\" . self::$module . "\\";
-            }
-
-            if(@$expNamespace[0]=="modules"){
-                $path=DIR_MODULES;
-                unset($expNamespace[0]);
-                $path.=implode("/",$expNamespace)."/". lcfirst($class) . ".php";
-            }else{
-                $path = DIR_MODULES . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
-            }
-
-            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-                $path=str_replace("/","\\",$path);
-            }
-            if (file_exists($path)) {
-                include_once($path);
-                return "\\modules\\" . self::$module . "\\";
-            }
-
-            if(@$expNamespace[0]=="modules"){
-                $path=DIR_FRAMEWORK."/modules/";
-                unset($expNamespace[0]);
-                $path.=implode("/",$expNamespace)."/". lcfirst($class) . ".php";
-            }else{
-                $path = DIR_FRAMEWORK."/modules/" . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
-            }
-
-            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-                $path=str_replace("/","\\",$path);
-            }
-            if (file_exists($path)) {
-                include_once($path);
-                return "\\hodphp\\modules\\" . self::$module . "\\";
-            }
-
-            $path = DIR_PROJECT . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
-            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-                $path=str_replace("/","\\",$path);
-            }
-            if (file_exists($path)) {
-                include_once($path);
-                return "\\project\\";
-            }
-
-            if(@$expNamespace[0]=="project"){
-                $path=DIR_PROJECT;
-                unset($expNamespace[0]);
-                $path.=implode("/",$expNamespace)."/". lcfirst($class) . ".php";;
-            }else{
-                $path = DIR_PROJECT . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
-            }
-
-
-            $path = DIR_FRAMEWORK . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
-            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-                $path=str_replace("/","\\",$path);
-            }
-            if (file_exists($path)) {
-                include_once($path);
-                return "\\hodphp\\";
-            }
-        }
-        return false;
+        self::$moduleStack[] = Loader::$module;
+        self::$module = $name;
     }
 
-    //load the class if needed. and create an instance of the class
-    static function createInstance($class, $namespace = "", $classPrefix = "",$loadHard=false)
+    //if an instance of the class is already registered: use this instance otherwise return and register a new instance and register.
+
+    static function createInstance($class, $namespace = "", $classPrefix = "", $loadHard = false)
     {
 
-        $info=self::getInfo($class,$namespace,$classPrefix,$loadHard);
-        if($info){
+        $info = self::getInfo($class, $namespace, $classPrefix, $loadHard);
+        if ($info) {
             return new Proxy($info->type, $info->module);
         }
 
@@ -226,12 +120,12 @@ class Loader
 
     }
 
-    static function getInfo($class, $namespace = "", $classPrefix = "",$loadHard=false)
+    static function getInfo($class, $namespace = "", $classPrefix = "", $loadHard = false)
     {
-        static $infoCache=array();
-        $module=self::$module;
-        $info=false;
-        if(!isset($infoCache[$module][$class][$namespace])) {
+        static $infoCache = array();
+        $module = self::$module;
+        $info = false;
+        if (!isset($infoCache[$module][$class][$namespace])) {
             $namespace = str_replace("/", "\\", $namespace);
 
             if ($loadResult = self::loadClass($class, $namespace, $loadHard)) {
@@ -250,34 +144,132 @@ class Loader
                 }
 
                 $fullclass = $prefix . $namespace . "\\" . ucfirst($classPrefix) . ucfirst($className);
-                $info= (object)array("type" => $fullclass, "module" => $module);
+                $info = (object)array("type" => $fullclass, "module" => $module);
             }
-            $infoCache[$module][$class][$namespace]=$info;
-        }else{
-            $info=$infoCache[$module][$class][$namespace];
+            $infoCache[$module][$class][$namespace] = $info;
+        } else {
+            $info = $infoCache[$module][$class][$namespace];
         }
         return $info;
     }
 
-    static function hasMethod($class,$namespace,$method){
-        $info=self::getInfo($class,$namespace);
-        if($info){
-           return method_exists($info->type,$method);
+    static function loadClass($class, $namespace, $loadHard = false)
+    {
+        if ($loadHard) {
+            $exp = explode("/", str_replace("\\", "/", $namespace));
+            if ($exp[0] == "project") {
+                $path = DIR_PROJECT;
+                unset($exp[0]);
+                $namespacePath = implode("/", $exp);
+            } elseif ($exp[0] == "modules") {
+                $path = DIR_MODULES;
+                unset($exp[0]);
+                $namespacePath = implode("/", $exp);
+            } else {
+                $namespacePath = DIR_FRAMEWORK . str_replace("\\", "/", $namespace);
+            }
+
+            $path .= $namespacePath . "/" . lcfirst($class) . ".php";
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                $path = str_replace("/", "\\", $path);
+            }
+            if (file_exists($path)) {
+                include_once($path);
+                return "\\";
+            }
+        } else {
+            if ($map = self::getClassmapFor($class, $namespace)) {
+                $path = DIR_MODULES . $map . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+                if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                    $path = str_replace("/", "\\", $path);
+                }
+                if (file_exists($path)) {
+                    include_once($path);
+                    return array("prefix" => "\\modules\\" . $map . "\\", "module" => $map);
+                }
+            }
+
+            if ($map = self::getNamespaceFor($namespace)) {
+                $path = DIR_MODULES . $map . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+                if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                    $path = str_replace("/", "\\", $path);
+                }
+                if (file_exists($path)) {
+                    include_once($path);
+                    return array("prefix" => "\\modules\\" . $map . "\\", "module" => $map);
+                }
+            }
+
+            $expNamespace = explode("/", str_replace("\\", "/", $namespace));
+
+            $path = DIR_PROJECT . "modules/" . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                $path = str_replace("/", "\\", $path);
+            }
+            if (file_exists($path)) {
+                include_once($path);
+                return "\\project\\modules\\" . self::$module . "\\";
+            }
+
+            if (@$expNamespace[0] == "modules") {
+                $path = DIR_MODULES;
+                unset($expNamespace[0]);
+                $path .= implode("/", $expNamespace) . "/" . lcfirst($class) . ".php";
+            } else {
+                $path = DIR_MODULES . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            }
+
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                $path = str_replace("/", "\\", $path);
+            }
+            if (file_exists($path)) {
+                include_once($path);
+                return "\\modules\\" . self::$module . "\\";
+            }
+
+            if (@$expNamespace[0] == "modules") {
+                $path = DIR_FRAMEWORK . "/modules/";
+                unset($expNamespace[0]);
+                $path .= implode("/", $expNamespace) . "/" . lcfirst($class) . ".php";
+            } else {
+                $path = DIR_FRAMEWORK . "/modules/" . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            }
+
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                $path = str_replace("/", "\\", $path);
+            }
+            if (file_exists($path)) {
+                include_once($path);
+                return "\\hodphp\\modules\\" . self::$module . "\\";
+            }
+
+            $path = DIR_PROJECT . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                $path = str_replace("/", "\\", $path);
+            }
+            if (file_exists($path)) {
+                include_once($path);
+                return "\\project\\";
+            }
+
+            if (@$expNamespace[0] == "project") {
+                $path = DIR_PROJECT;
+                unset($expNamespace[0]);
+                $path .= implode("/", $expNamespace) . "/" . lcfirst($class) . ".php";;
+            } else {
+                $path = DIR_PROJECT . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            }
+
+            $path = DIR_FRAMEWORK . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                $path = str_replace("/", "\\", $path);
+            }
+            if (file_exists($path)) {
+                include_once($path);
+                return "\\hodphp\\";
+            }
         }
         return false;
-    }
-
-    //if an instance of the class is already registered: use this instance otherwise return and register a new instance and register.
-    static function getSingleton($class, $namespace = "", $prefix = "",$loadHard=false)
-    {
-        $namespace = str_replace("/", "\\", $namespace);
-
-        $fullclass = "\\" . $namespace . "\\" . ucfirst($prefix) . ucfirst($class);
-        if (!isset(self::$instances[$fullclass])) {
-            self::$instances[$fullclass] = self::createInstance($class, $namespace, $prefix,$loadHard);
-        }
-        return self::$instances[$fullclass];
-
     }
 
     private static function getClassmapFor($class, $namespace)
@@ -302,18 +294,30 @@ class Loader
         return false;
     }
 
-    static $moduleStack = array();
-
-    public static function goModule($name)
-    {
-
-        self::$moduleStack[] = Loader::$module;
-        self::$module = $name;
-    }
-
     public static function goBackModule()
     {
         self::$module = array_pop(self::$moduleStack);
+    }
+
+    static function hasMethod($class, $namespace, $method)
+    {
+        $info = self::getInfo($class, $namespace);
+        if ($info) {
+            return method_exists($info->type, $method);
+        }
+        return false;
+    }
+
+    static function getSingleton($class, $namespace = "", $prefix = "", $loadHard = false)
+    {
+        $namespace = str_replace("/", "\\", $namespace);
+
+        $fullclass = "\\" . $namespace . "\\" . ucfirst($prefix) . ucfirst($class);
+        if (!isset(self::$instances[$fullclass])) {
+            self::$instances[$fullclass] = self::createInstance($class, $namespace, $prefix, $loadHard);
+        }
+        return self::$instances[$fullclass];
+
     }
 
     public static function getCallerModule()
@@ -321,19 +325,21 @@ class Loader
         return self::$moduleStack[count(self::$moduleStack) - 1];
     }
 
-    static $classStack=array();
-    static $currentClass=null;
-    public static function registerCall($class){
+    public static function registerCall($class)
+    {
         self::$classStack[] = self::$currentClass;
-        self::$currentClass=$class;
+        self::$currentClass = $class;
     }
+
     public static function unregisterCall()
     {
         self::$currentClass = array_pop(self::$classStack);
     }
 
-    public static function getCurrentClass(){
+    public static function getCurrentClass()
+    {
         return self::$currentClass;
     }
 }
+
 ?>

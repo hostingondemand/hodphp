@@ -1,22 +1,24 @@
 <?php
-    namespace hodphp\model;
-    use hodphp\lib\model\BaseModel;
+namespace hodphp\model;
 
-    class Patch extends BaseModel{
+use hodphp\lib\model\BaseModel;
 
-        var $patch;
-        var $success;
-        var $date;
+class Patch extends BaseModel
+{
 
-        function initialize($patch,$success,$date){
-            $this->patch=$patch;
-            $this->success=$success;
-            $this->date=$date;
+    var $patch;
+    var $success;
+    var $date;
 
-            return $this;
-        }
+    function initialize($patch, $success, $date)
+    {
+        $this->patch = $patch;
+        $this->success = $success;
+        $this->date = $date;
 
-
+        return $this;
     }
+
+}
 
 ?>

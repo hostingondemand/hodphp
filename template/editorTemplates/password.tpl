@@ -1,1 +1,1 @@
-<input type="password"  name="{{name}}"  {{attributes}}>
+<input type="password" name="{{name}}" {{attributes}}>

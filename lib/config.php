@@ -1,5 +1,6 @@
 <?php
 namespace hodphp\lib;
+
 use hodphp\core\Lib;
 use hodphp\core\Loader;
 
@@ -11,17 +12,18 @@ class Config extends Lib
     var $invalididated;
     var $configProvider;
 
-    function get($key, $section = "global", $default = ""){
+    function get($key, $section = "global", $default = "")
+    {
         $this->setConfigProvider();
-        if($this->configProvider && $this->configProvider->contains($key,$section)){
-            return $this->configProvider->get($key,$section);
+        if ($this->configProvider && $this->configProvider->contains($key, $section)) {
+            return $this->configProvider->get($key, $section);
         }
 
-        if(!isset($this->data[$section])){
-            $this->data[$section]=$this->filesystem->getArray("config/".$section.".php");
+        if (!isset($this->data[$section])) {
+            $this->data[$section] = $this->filesystem->getArray("config/" . $section . ".php");
         }
 
-        if(isset($this->data[$section][$key])){
+        if (isset($this->data[$section][$key])) {
             return $this->data[$section][$key];
         }
 
@@ -29,27 +31,28 @@ class Config extends Lib
     }
 
     //set a variable
-    function set($key, $val, $section = "global"){
+
+    function setConfigProvider()
+    {
+        static $configProviderLoaded = false;
+
+        if (!$configProviderLoaded && Loader::$classMaps) {
+            $configProviderLoaded = true;
+            $provider = $this->get("provider.config", "components");
+            $this->configProvider = $this->provider->config->$provider;
+        }
+    }
+
+    function set($key, $val, $section = "global")
+    {
         $this->setConfigProvider();
 
-        if($this->configProvider) {
-            $this->configProvider->set($key,$section,$val);
+        if ($this->configProvider) {
+            $this->configProvider->set($key, $section, $val);
         } else {
             $this->data[$section][$key] = $val;
             $this->invalidated = true;
         }
     }
-
-    function setConfigProvider(){
-        static $configProviderLoaded = false;
-
-        if(!$configProviderLoaded && Loader::$classMaps){
-            $configProviderLoaded = true;
-            $provider = $this->get("provider.config","components");
-            $this->configProvider = $this->provider->config->$provider;
-        }
-    }
-
-
 
 }

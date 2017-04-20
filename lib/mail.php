@@ -5,7 +5,8 @@ use hodphp\core\Loader;
 
 class Mail extends \hodphp\core\Lib
 {
-    function createMessage(){
-        return Loader::createInstance("message","lib/mail");
+    function createMessage()
+    {
+        return Loader::createInstance("message", "lib/mail");
     }
 }

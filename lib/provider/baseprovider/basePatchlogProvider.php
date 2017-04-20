@@ -1,6 +1,6 @@
 <?php
 namespace hodphp\lib\provider\baseprovider;
-use hodphp\core\Base;
+
 use hodphp\core\Lib;
 
 abstract class BasePatchlogProvider extends Lib
