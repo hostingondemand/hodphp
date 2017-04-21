@@ -14,4 +14,3 @@ class Vendor extends Lib
     }
 }
 
-?>

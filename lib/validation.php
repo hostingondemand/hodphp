@@ -19,4 +19,3 @@ class Validation extends \hodphp\core\Lib
 
 }
 
-?>

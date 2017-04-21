@@ -9,4 +9,3 @@ class FuncIsClientCacheOn extends \hodphp\lib\template\AbstractFunction
     }
 }
 
-?>

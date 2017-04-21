@@ -40,4 +40,3 @@ class test extends Lib
     }
 }
 
-?>

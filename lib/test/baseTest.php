@@ -24,4 +24,3 @@ abstract class BaseTest extends \hodphp\core\Base
     }
 }
 
-?>

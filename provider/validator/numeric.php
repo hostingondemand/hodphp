@@ -21,4 +21,3 @@ class Numeric extends BaseValidator
     }
 }
 
-?>

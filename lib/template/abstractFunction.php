@@ -19,4 +19,3 @@ abstract class AbstractFunction extends Lib
 
 }
 
-?>

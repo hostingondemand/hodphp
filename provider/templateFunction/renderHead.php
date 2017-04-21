@@ -43,4 +43,3 @@ class FuncRenderHead extends \hodphp\lib\template\AbstractFunction
     }
 }
 
-?>

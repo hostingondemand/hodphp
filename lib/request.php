@@ -68,4 +68,3 @@ class Request extends \hodphp\core\Lib
 
 }
 
-?>

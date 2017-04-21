@@ -12,4 +12,3 @@
     "options.update" => "Update all"
 );
 
-?>

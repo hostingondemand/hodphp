@@ -12,4 +12,3 @@ class FunccamelCase extends \hodphp\lib\template\AbstractFunction
 
 }
 
-?>

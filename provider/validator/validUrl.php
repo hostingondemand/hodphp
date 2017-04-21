@@ -21,4 +21,3 @@ class ValidUrl extends BaseValidator
     }
 }
 
-?>

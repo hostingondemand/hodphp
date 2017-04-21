@@ -12,4 +12,3 @@ abstract class BasePatchlogProvider extends Lib
     abstract function needPatch($name);
 }
 
-?>

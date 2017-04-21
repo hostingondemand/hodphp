@@ -37,4 +37,3 @@ class FuncForeach extends \hodphp\lib\template\AbstractFunction
     }
 }
 
-?>

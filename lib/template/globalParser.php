@@ -177,4 +177,3 @@ class GlobalParser extends Lib
 
 }
 
-?>

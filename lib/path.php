@@ -15,4 +15,3 @@ class Path extends \hodphp\core\Lib
 
 }
 
-?>

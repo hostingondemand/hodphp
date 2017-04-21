@@ -21,4 +21,3 @@ class Json extends Serializer
 
 }
 
-?>

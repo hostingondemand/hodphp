@@ -27,4 +27,3 @@ abstract class BaseModule extends \hodphp\core\Lib
 
 }
 
-?>

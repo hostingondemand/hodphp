@@ -5,4 +5,4 @@
     "footer" => "Powered by Hosting on Demand"
 );
 
-?>
+

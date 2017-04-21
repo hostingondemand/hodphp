@@ -6,4 +6,3 @@
         "numeric" => "is not a number",
         "noValidUrl" => "is not a valid url"
     );
-?>

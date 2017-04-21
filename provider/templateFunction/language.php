@@ -14,4 +14,3 @@ class FuncLanguage extends \hodphp\lib\template\AbstractFunction
     }
 }
 
-?>

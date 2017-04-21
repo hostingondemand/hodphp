@@ -43,4 +43,3 @@ class BaseAspect extends Base
 
 }
 
-?>

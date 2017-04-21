@@ -20,4 +20,3 @@ class Text extends Serializer
 
 }
 
-?>

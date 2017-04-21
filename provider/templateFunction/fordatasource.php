@@ -72,4 +72,3 @@ class FuncFordatasource extends \hodphp\lib\template\AbstractFunction
 
 }
 
-?>

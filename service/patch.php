@@ -61,5 +61,3 @@ class Patch extends BaseService
         return $this->provider->patchlog->default->needPatch($name);
     }
 }
-
-?>

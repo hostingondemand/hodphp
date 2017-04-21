@@ -16,4 +16,3 @@ $app->prepare(
 );
 
 $app->run();
-?>

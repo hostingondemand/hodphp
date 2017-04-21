@@ -83,4 +83,3 @@ class Language extends \hodphp\core\Lib
 
 }
 
-?>

@@ -30,4 +30,3 @@ class FuncRenderAction extends \hodphp\lib\template\AbstractFunction
     }
 }
 
-?>

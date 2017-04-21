@@ -33,4 +33,3 @@ class Message extends Lib
 
 }
 
-?>

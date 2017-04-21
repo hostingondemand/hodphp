@@ -59,4 +59,3 @@ function self()
     return loader::getCurrentClass();
 }
 
-?>

@@ -53,4 +53,3 @@ class FuncInputFor extends \hodphp\lib\template\AbstractFunction
     }
 }
 
-?>

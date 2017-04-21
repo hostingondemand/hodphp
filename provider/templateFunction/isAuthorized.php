@@ -10,4 +10,3 @@ class FuncIsAuthorized extends \hodphp\lib\template\AbstractFunction
 
 }
 
-?>

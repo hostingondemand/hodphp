@@ -9,4 +9,3 @@ class FatalError extends \hodphp\core\controller
 
 }
 
-?>

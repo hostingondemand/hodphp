@@ -12,4 +12,3 @@ class TextToInt extends BaseCaster
     }
 }
 
-?>

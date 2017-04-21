@@ -6,4 +6,3 @@ abstract class BaseEnsure extends \core\Lib
     abstract function ensure($data, $length);
 }
 
-?>

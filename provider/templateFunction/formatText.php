@@ -10,4 +10,3 @@ class FuncFormatText extends \hodphp\lib\template\AbstractFunction
     }
 }
 
-?>

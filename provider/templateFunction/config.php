@@ -14,4 +14,3 @@ class FuncConfig extends \hodphp\lib\template\AbstractFunction
     }
 }
 
-?>

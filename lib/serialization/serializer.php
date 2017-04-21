@@ -169,4 +169,3 @@ abstract class Serializer extends \hodphp\core\Lib
     }
 }
 
-?>

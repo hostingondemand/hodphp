@@ -10,4 +10,3 @@ class FuncEcho extends \hodphp\lib\template\AbstractFunction
     }
 }
 
-?>

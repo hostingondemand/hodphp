@@ -9,4 +9,3 @@ class FuncGetMessages extends \hodphp\lib\template\AbstractFunction
     }
 }
 
-?>

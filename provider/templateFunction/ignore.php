@@ -16,4 +16,3 @@ class FuncIgnore extends \hodphp\lib\template\AbstractFunction
 
 }
 
-?>

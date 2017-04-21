@@ -11,4 +11,3 @@ class MessageType extends BaseEnum
     var $danger;
 }
 
-?>

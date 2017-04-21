@@ -10,4 +10,3 @@ class FuncToupper extends \hodphp\lib\template\AbstractFunction
     }
 }
 
-?>

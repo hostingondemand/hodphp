@@ -45,4 +45,3 @@ class Git extends \hodphp\core\Lib
 
 }
 
-?>

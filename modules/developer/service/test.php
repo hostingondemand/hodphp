@@ -27,4 +27,3 @@ class Test extends BaseService
     }
 }
 
-?>

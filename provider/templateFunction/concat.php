@@ -10,4 +10,3 @@ class FuncConcat extends \hodphp\lib\template\AbstractFunction
     }
 }
 
-?>

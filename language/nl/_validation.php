@@ -5,4 +5,3 @@
         "noValidEmail" => "is geen geldig e-mailadres",
         "numeric" => "is geen nummer"
     );
-?>

@@ -11,4 +11,3 @@ class FuncUcfirst extends \hodphp\lib\template\AbstractFunction
     }
 }
 
-?>

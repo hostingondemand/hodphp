@@ -21,4 +21,3 @@ class FuncCurrency extends \hodphp\lib\template\AbstractFunction
     }
 }
 
-?>

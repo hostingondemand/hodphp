@@ -24,4 +24,3 @@ class Service extends Lib
 
 }
 
-?>

@@ -12,4 +12,3 @@ class VarcharToInt extends BaseCaster
     }
 }
 
-?>

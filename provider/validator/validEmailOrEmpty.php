@@ -24,4 +24,3 @@ class ValidEmailOrEmpty extends BaseValidator
     }
 }
 
-?>

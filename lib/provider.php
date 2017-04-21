@@ -19,4 +19,3 @@ class Provider extends \hodphp\core\Lib
     }
 }
 
-?>

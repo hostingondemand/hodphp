@@ -117,4 +117,3 @@ class DataHandler extends Lib
     }
 }
 
-?>

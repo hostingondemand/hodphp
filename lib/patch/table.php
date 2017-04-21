@@ -106,4 +106,3 @@ class Table extends Lib
     }
 }
 
-?>

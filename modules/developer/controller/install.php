@@ -33,4 +33,4 @@ class Install extends Controller
 
 }
 
-?>
+

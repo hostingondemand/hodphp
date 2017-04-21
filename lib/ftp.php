@@ -14,4 +14,3 @@ class Ftp extends \hodphp\core\Lib
 
 }
 
-?>

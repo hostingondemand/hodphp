@@ -21,4 +21,3 @@ class Enum extends Lib
 
 }
 
-?>

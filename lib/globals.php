@@ -21,4 +21,3 @@ class Globals extends \hodphp\core\Lib
 
 }
 
-?>

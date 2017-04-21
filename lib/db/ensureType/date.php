@@ -16,4 +16,3 @@ class Date extends BaseEnsure
 
 }
 
-?>

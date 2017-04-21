@@ -56,4 +56,3 @@ class Document extends Lib
     }
 }
 
-?>

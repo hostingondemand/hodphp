@@ -11,4 +11,3 @@ class FuncInclude extends \hodphp\lib\template\AbstractFunction
 
 }
 
-?>

@@ -46,4 +46,3 @@ class funcContent extends \hodphp\lib\template\AbstractFunction
     }
 }
 
-?>

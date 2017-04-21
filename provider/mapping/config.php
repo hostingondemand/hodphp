@@ -40,4 +40,3 @@ class Config extends BaseMappingProvider
     }
 }
 
-?>

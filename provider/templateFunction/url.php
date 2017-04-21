@@ -14,4 +14,3 @@ class FuncUrl extends \hodphp\lib\template\AbstractFunction
     }
 }
 
-?>

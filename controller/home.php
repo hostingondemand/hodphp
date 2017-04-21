@@ -14,4 +14,3 @@ class Home extends \hodphp\core\controller
 
 }
 
-?>

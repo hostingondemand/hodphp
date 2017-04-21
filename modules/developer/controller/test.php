@@ -23,4 +23,4 @@ class Test extends Controller
     }
 }
 
-?>
+

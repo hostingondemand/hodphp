@@ -287,12 +287,29 @@ class Filesystem extends \hodphp\core\Lib
         }
     }
 
+    function codeSize($directory)
+    {
+        $directory = $this->calculatePath($directory);
+        if ($directory && $this->exists($directory)) {
+            $size = 0;
+            foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
+                $ext = $file->getExtension();
+                if ($ext == "php" || $ext == "tpl") {
+                    $size += $file->getSize();
+                }
+            }
+            return $size;
+        }
+        return 0;
+    }
+
     function dirSize($directory)
     {
         $directory = $this->calculatePath($directory);
         if ($directory && $this->exists($directory)) {
             $size = 0;
             foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
+                $ext = $file->getExtension();
                 $size += $file->getSize();
             }
             return $size;
@@ -309,4 +326,4 @@ class Filesystem extends \hodphp\core\Lib
     }
 }
 
-?>
+

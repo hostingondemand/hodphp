@@ -9,4 +9,3 @@ abstract class BaseConfigProvider extends \hodphp\core\Lib
     abstract function contains($key, $section);
 }
 
-?>

@@ -13,4 +13,3 @@ class Hash extends Lib
 
 }
 
-?>

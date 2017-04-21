@@ -80,4 +80,4 @@ class Event extends \hodphp\core\Lib
     }
 }
 
-?>
+

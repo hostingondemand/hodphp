@@ -30,4 +30,3 @@ class Shell extends Lib
     }
 }
 
-?>

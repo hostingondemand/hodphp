@@ -23,4 +23,3 @@ class Session extends \hodphp\core\Lib
     }
 }
 
-?>

@@ -17,7 +17,7 @@ class Cache extends Lib
     function runCachedProject($key, $input, $function)
     {
         if ($this->projectSize == 0) {
-            $this->projectSize = $this->filesystem->dirSize("project");
+            $this->projectSize = $this->filesystem->codeSize("project");
         }
         $filename = "data/cache/" . $key . "_" . md5(print_r($input, true)) . ".php";
         $data = array();
@@ -53,5 +53,3 @@ class Cache extends Lib
         $this->filesystem->mkdir("data/cache");
     }
 }
-
-?>

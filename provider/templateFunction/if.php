@@ -58,4 +58,3 @@ class FuncIf extends \hodphp\lib\template\AbstractFunction
     }
 }
 
-?>

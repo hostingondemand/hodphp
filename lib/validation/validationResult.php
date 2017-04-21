@@ -11,4 +11,3 @@ class ValidationResult extends Base
     var $errors;
 }
 
-?>

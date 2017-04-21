@@ -13,4 +13,3 @@ class FuncDate extends \hodphp\lib\template\AbstractFunction
     }
 }
 
-?>

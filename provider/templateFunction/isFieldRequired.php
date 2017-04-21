@@ -9,4 +9,3 @@ class FuncIsFieldRequired extends \hodphp\lib\template\AbstractFunction
     }
 }
 
-?>

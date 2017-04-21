@@ -46,7 +46,7 @@ class XML extends Serializer
 
         $customWrapper = null;
         $rootElement = false;
-        $wrapper = '<?xml version="1.0" encoding="UTF-8"?>';
+        $wrapper = '<?xml version="1.0" encoding="UTF-8"';
 
         if (!is_null($data["type"])) {
             if (isset($data["classAnnotations"]["wrapper"])) {
@@ -117,4 +117,3 @@ class XML extends Serializer
     }
 }
 
-?>

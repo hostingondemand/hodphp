@@ -22,4 +22,3 @@ class NotEmpty extends BaseValidator
 
 }
 
-?>

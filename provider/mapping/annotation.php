@@ -46,7 +46,7 @@ class Annotation extends BaseMappingProvider
                     $namespace = "";
                 }
                 $info = Loader::getInfo($class, $fullnamespace, "", true);
-                $annotations = $this->annotation->getAnnotationsForClass($info->type, "dbTable");
+                $annotations = $this->annotation->getAnnotationsForClass(@$info->type, "dbTable");
                 foreach ($annotations as $annotation) {
                     $translated = $this->annotation->translate($annotation);
                     $item["model"] = lcfirst($namespace) . "\\" . lcfirst($class);
@@ -83,4 +83,3 @@ class Annotation extends BaseMappingProvider
     }
 }
 
-?>

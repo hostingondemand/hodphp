@@ -9,4 +9,3 @@ class FuncIsInDebug extends \hodphp\lib\template\AbstractFunction
     }
 }
 
-?>

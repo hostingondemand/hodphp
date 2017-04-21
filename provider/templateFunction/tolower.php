@@ -11,4 +11,3 @@ class FuncTolower extends \hodphp\lib\template\AbstractFunction
     }
 }
 
-?>
