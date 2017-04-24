@@ -231,17 +231,27 @@ class Loader
                 $path = DIR_FRAMEWORK . "/modules/";
                 unset($expNamespace[0]);
                 $path .= implode("/", $expNamespace) . "/" . lcfirst($class) . ".php";
+                if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                    $path = str_replace("/", "\\", $path);
+                }
+                if (file_exists($path)) {
+                    include_once($path);
+                    return "\\";
+                }
+
             } else {
                 $path = DIR_FRAMEWORK . "/modules/" . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+
+                if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                    $path = str_replace("/", "\\", $path);
+                }
+                if (file_exists($path)) {
+                    include_once($path);
+                    return "\\hodphp\\modules\\" . self::$module . "\\";
+                }
+
             }
 
-            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-                $path = str_replace("/", "\\", $path);
-            }
-            if (file_exists($path)) {
-                include_once($path);
-                return "\\hodphp\\modules\\" . self::$module . "\\";
-            }
 
             $path = DIR_PROJECT . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
             if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
@@ -258,6 +268,13 @@ class Loader
                 $path .= implode("/", $expNamespace) . "/" . lcfirst($class) . ".php";;
             } else {
                 $path = DIR_PROJECT . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            }
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                $path = str_replace("/", "\\", $path);
+            }
+            if (file_exists($path)) {
+                include_once($path);
+                return "\\";
             }
 
             $path = DIR_FRAMEWORK . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
