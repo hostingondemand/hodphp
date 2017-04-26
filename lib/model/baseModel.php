@@ -62,17 +62,19 @@ abstract class BaseModel extends Base
         $backtrace = debug_backtrace();
         $class = get_class($this);
         if (!($backtrace[1]["class"] == $class && $backtrace[1]["function"] == "get" . ucfirst($name)) && method_exists($this, "get" . ucfirst($name))) {
+            $this->goMyModule();
             $funcName = "get" . ucfirst($name);
             $this->_debugIn("Dynamic get", $name);
             $result = $this->$funcName();
             $this->_debugOut();
-
+            $this->goBackModule();
             return $result;
         } elseif (isset($this->_fieldHandlers[$name])) {
+            $this->goMyModule();
             $this->_debugIn("Fieldhandler get", $name);
             $result = $this->_fieldHandlers[$name]->get(isset($this->_data[$name]) ? $this->_data[$name] : false);
             $this->_debugOut();
-
+            $this->goBackModule();
             return $result;
         } elseif (isset($this->_data[$name])) {
             return $this->_data[$name];

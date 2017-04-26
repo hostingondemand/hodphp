@@ -151,21 +151,28 @@ class DbReference extends BaseFieldHandler
 
     function set($obj)
     {
-        if (is_array($obj)) {
-            $this->obj = $this->get(false);
-            if (!$this->obj) {
-                if ($this->_toModelNamespace) {
-                    $this->obj = $this->model->{$this->_toModelNamespace}->{$this->_toModel};
-                } else {
-                    $this->obj = $this->model->{$this->_toModel};
+        if(is_numeric($obj)){
+            $field = $this->_field;
+            $this->_model->$field=$obj;
+            $this->loaded=false;
+        }else {
+            if (is_array($obj)) {
+                $this->obj = $this->get(false);
+                if (!$this->obj) {
+                    if ($this->_toModelNamespace) {
+                        $this->obj = $this->model->{$this->_toModelNamespace}->{$this->_toModel};
+                    } else {
+                        $this->obj = $this->model->{$this->_toModel};
+                    }
                 }
+                $this->obj->fromArray($obj);
             }
-            $this->obj->fromArray($obj);
+            if (is_object($obj)) {
+                $this->obj = $obj;
+            }
+
+            $this->loaded = true;
         }
-        if (is_object($obj)) {
-            $this->obj = $obj;
-        }
-        $this->loaded = true;
     }
 
 }

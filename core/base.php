@@ -22,6 +22,9 @@ class Base
             if (substr($cls, 0, 7) == "modules") {
                 $exp = explode("\\", $cls);
                 $this->goModule($exp[1]);
+            } else if (substr($cls, 8, 7) == "modules") {
+                $exp = explode("\\", $cls);
+                $this->goModule($exp[2]);
             } else {
                 $this->goModule("");
             }
