@@ -150,6 +150,9 @@ class Db extends \hodphp\core\Lib
                     if ($i) {
                         $query .= " , ";
                     }
+                    $input=$data[$fieldName];
+                    if(!$input ){
+                    }
                     $query .= "`" . $fieldName . "`='" . $data[$fieldName] . "' ";
                     $i++;
                 }
