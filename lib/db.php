@@ -213,7 +213,7 @@ class Db extends \hodphp\core\Lib
         if (!$table) {
             $table = $this->provider->mapping->default->getTableForClass($model->_getType());
         }
-        $this->execute("delete from `" . $table . "` where id='" . $model->id . "'");
+        $this->query("delete from `" . $table . "` where id='" . $model->id . "'");
         $model->_deleted();
     }
 
