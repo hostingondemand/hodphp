@@ -127,7 +127,7 @@ class Select extends Lib
         return $this;
     }
 
-    function limit($max, $offset)
+    function limit($max, $offset=0)
     {
         $this->_limit = $max;
         $this->_offset = $offset;
@@ -256,7 +256,7 @@ class Select extends Lib
             }
         }
 
-        if ($this->limit) {
+        if ($this->_limit) {
             $queryString .= " limit ";
             if ($this->_offset) {
                 $queryString .= $this->_offset . ",";
