@@ -224,7 +224,12 @@ class Loader
             }
             if (file_exists($path)) {
                 include_once($path);
-                return "\\modules\\" . self::$module . "\\";
+
+                if(class_exists("\\modules\\" . self::$module . "\\" . str_replace("/", "\\", $namespace) . "\\" . ucfirst($class))) {
+                    return "\\modules\\" . self::$module . "\\";
+                } else {
+                    return "\\hodphp\\modules\\" . self::$module . "\\";
+                }
             }
 
             if (@$expNamespace[0] == "modules") {
