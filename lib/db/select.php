@@ -127,7 +127,7 @@ class Select extends Lib
         return $this;
     }
 
-    function limit($max, $offset=0)
+    function limit($max, $offset = 0)
     {
         $this->_limit = $max;
         $this->_offset = $offset;
@@ -152,7 +152,7 @@ class Select extends Lib
 
     function getQuerystring()
     {
-
+        $pagination = $this->db->paginationInfo();
         $table = array_values($this->_table)[0];
         $alias = array_keys($this->_table)[0];
 
@@ -162,6 +162,7 @@ class Select extends Lib
         }
 
         $queryString = "select ";
+        $pagination->query = "select count(*) as amount";
 
         //fields
         if (count($this->_fields)) {
@@ -180,78 +181,124 @@ class Select extends Lib
             $queryString .= " * ";
         }
 
-        $queryString .= " from `" . $prefix . $table . "`";
+        $add = " from `" . $prefix . $table . "`";
+        $queryString .= $add;
+        $pagination->query .= $add;
+
         if ($table != $alias) {
-            $queryString .= " as " . $alias . "";
+            $add = " as " . $alias . "";
+            $queryString .= $add;
+            $pagination->query .= $add;
         }
 
         foreach ($this->_joins as $join) {
-            $queryString .= " left join ";
+            $add = " left join ";
+            $queryString .= $add;
+            $pagination->query .= $add;
+
             $table = array_keys($join["table"])[0];
             $alias = array_values($join["table"])[0];
-            $queryString .= "`" . $prefix . $table . "`";
+
+            $add = "`" . $prefix . $table . "`";
+            $queryString .= $add;
+            $pagination->query .= $add;
+
             if ($alias != $table) {
-                $queryString .= " as " . $alias;
+                $add = " as " . $alias;
+                $queryString .= $add;
+                $pagination->query .= $add;
             }
             if (is_array($join["left"]) && !$join["right"]) {
                 $ij = 0;
                 foreach ($join["left"] as $key => $val) {
                     if ($ij) {
-                        $queryString .= " and " . $key . " = " . $val;
+                        $add = " and " . $key . " = " . $val;
                     } else {
-                        $queryString .= " on (" . $key . " = " . $val;
+                        $add = " on (" . $key . " = " . $val;
                     }
+                    $queryString .= $add;
+                    $pagination->query .= $add;
                     $ij++;
                 }
-                $queryString .= ")";
+                $add = ")";
+                $queryString .= $add;
+                $pagination->query .= $add;
 
             } else {
-                $queryString .= " on " . $join["left"] . " = " . $join["right"];
+                $add = " on " . $join["left"] . " = " . $join["right"];
+                $queryString .= $add;
+                $pagination->query .= $add;
             }
         }
 
         if (count($this->_where)) {
-            $queryString .= " where (";
+            $add = " where (";
+            $queryString .= $add;
+            $pagination->query .= $add;
+
             $i = 0;
             foreach ($this->_where as $where) {
                 if ($i) {
-                    $queryString .= ")and(";
+                    $add = ")and(";
+                    $queryString .= $add;
+                    $pagination->query .= $add;
                 }
                 if (is_callable($where)) {
                     $condition = $this->db->condition();
                     $where($condition);
-                    $queryString .= $condition->render();
+                    $add = $condition->render();
+                    $queryString .= $add;
+                    $pagination->query .= $add;
                 } elseif (is_object($where)) {
-                    $queryString .= $where->render();
+                    $add = $where->render();
+                    $queryString .= $add;
+                    $pagination->query .= $add;
                 } else {
-                    $queryString .= $where;
+                    $add = $where;
+                    $queryString .= $add;
+                    $pagination->query .= $add;
                 }
 
                 $i++;
             }
-            $queryString .= ")";
+            $add = ")";
+            $queryString .= $add;
+            $pagination->query .= $add;
         }
 
         if (count($this->_group)) {
-            $queryString .= " group by ";
+            $add = " group by ";
+            $queryString .= $add;
+            $pagination->query .= $add;
+
             $i = 0;
             foreach ($this->_group as $groupby => $order) {
                 if ($i) {
-                    $queryString .= " , ";
+                    $add = " , ";
+                    $queryString .= $add;
+                    $pagination->query .= $add;
                 }
-                $queryString .= " " . $groupby . " " . $order;
+                $add = " " . $groupby . " " . $order;
+                $queryString .= $add;
+                $pagination->query .= $add;
                 $i++;
             }
         }
 
         if (count($this->_orderBy)) {
-            $queryString .= " order by ";
+            $add = " order by ";
+            $queryString .= $add;
+            $pagination->query .= $add;
             $i = 0;
             foreach ($this->_orderBy as $orderby => $order) {
                 if ($i) {
-                    $queryString .= " , ";
+                    $add = " , ";
+                    $queryString .= $add;
+                    $pagination->query .= $add;
                 }
-                $queryString .= $orderby . " " . $order;
+                $add = $orderby . " " . $order;
+                $queryString .= $add;
+                $pagination->query .= $add;
                 $i++;
             }
         }
@@ -262,7 +309,10 @@ class Select extends Lib
                 $queryString .= $this->_offset . ",";
             }
             $queryString .= " " . $this->_limit;
+        } elseif ($pagination->status) {
+            $queryString .= " limit " . $pagination->getLimit();
         }
+
         return $queryString;
     }
 
