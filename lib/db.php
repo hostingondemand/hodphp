@@ -299,6 +299,20 @@ class Db extends \hodphp\core\Lib
         $table = $this->provider->mapping->default->getTableForClass($modelPath);
         return $table;
     }
+
+    function paginationInfo(){
+        return Loader::getSingleton("pagination","lib/db");
+    }
+
+    function paginated($function,$perPage){
+        $pagination=$this->paginationInfo();
+        $pagination->turnOn($perPage);
+        $result["result"]=$function();
+        $result["pagination"]=$pagination->pagination();
+        $pagination->turnOff();
+        return (object)$result;
+
+    }
 }
 
 

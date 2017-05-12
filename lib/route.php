@@ -45,6 +45,23 @@ class Route extends Lib
         }
     }
 
+    function parameter($key,$val){
+        $get=$this->request->get;
+        $get[$key]=$val;
+        $url=$this->path->getHttp();
+        $i=0;
+        foreach($get as $key=>$val){
+            if($i){
+                $url.="&";
+            }else{
+                $url.="?";
+            }
+            $url.=$key."=".$val;
+            $i++;
+        }
+        return $url;
+    }
+
     function getRenames()
     {
         static $renames = false;
