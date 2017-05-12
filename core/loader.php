@@ -225,10 +225,10 @@ class Loader
             if (file_exists($path)) {
                 include_once($path);
 
-                if(class_exists("\\modules\\" . self::$module . "\\" . str_replace("/", "\\", $namespace) . "\\" . ucfirst($class))) {
-                    return "\\modules\\" . self::$module . "\\";
-                } else {
+                if(strpos($path, 'developer') !== false) {
                     return "\\hodphp\\modules\\" . self::$module . "\\";
+                } else {
+                    return "\\modules\\" . self::$module . "\\";
                 }
             }
 
