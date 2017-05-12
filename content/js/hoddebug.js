@@ -2,8 +2,8 @@ hoddebug = new function (serverInput) {
     console.log("%c Debugging is enabled. The hoddebug object is available for debug purposes.", "color:green;");
     this.getErrors = function () {
         console.log("===Errors===");
-        for (errorKey in serverInput.errors) {
-            var error = serverInput.errors[errorKey];
+        for (errorKey in serverInput.messages) {
+            var error = serverInput.messages[errorKey];
             console.log("%c " + error.title + ":", "color:red;");
             console.log("details", error.detail);
             console.log("stack trace", error.stackTrace);

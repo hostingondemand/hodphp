@@ -255,6 +255,14 @@ class Filesystem extends \hodphp\core\Lib
         fclose($handle);
     }
 
+    function append($path, $content)
+    {
+        $path = $this->calculatePath($path);
+        $handle = fopen($path, "a");
+        fwrite($handle, $content);
+        fclose($handle);
+    }
+
     function getModified($file)
     {
         $path = $this->findRightPath($file);
