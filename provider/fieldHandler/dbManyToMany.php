@@ -212,14 +212,17 @@ class DbManyToMany extends BaseFieldHandler
 
                 $this->obj = array();
                 foreach ($this->_initArray as $val) {
-                    $model = $this->_toModel;
-                    if ($this->_toModelNamespace) {
-                        $namespace = $this->_toModelNamespace;
-                        $this->obj[] = $this->model->$namespace->$model->fromArray($val);
+                    if (is_object($val)) {
+                        $this->obj[] = $val;
                     } else {
-                        $this->obj[] = $this->model->$model->fromArray($val);
+                        $model = $this->_toModel;
+                        if ($this->_toModelNamespace) {
+                            $namespace = $this->_toModelNamespace;
+                            $this->obj[] = $this->model->$namespace->$model->fromArray($val);
+                        } else {
+                            $this->obj[] = $this->model->$model->fromArray($val);
+                        }
                     }
-
                 }
             } else {
                 $this->obj = $this->db->query("select tt.* from `" . $this->_toTable . "` as tt

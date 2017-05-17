@@ -187,19 +187,16 @@ class Db extends \hodphp\core\Lib
     function insertModel($model, $table, $con)
     {
         $prefix = $this->db->getPrefix();
-        $query = "insert into `" . $prefix . $table . "` set ";
+        $query = "insert into `" . $prefix . $table . "` set id=null";
         $data = $model->toArray();
-        $i = 0;
         foreach ($this->fields[$table] as $field) {
             $fieldName = $field["Field"];
             if (isset($data[$fieldName]) && $fieldName != "id") {
-                if ($i) {
-                    $query .= " , ";
-                }
+                $query .= " , ";
                 $query .= "`" . $fieldName . "`='" . $data[$fieldName] . "' ";
-                $i++;
             }
         }
+
         $q = $this->query($query, $con);
         $model->id = $this->lastId($con);
         $model->_saved();

@@ -30,7 +30,7 @@ class DbToMany extends BaseFieldHandler
         if (isset($parameters["key"])) {
             $this->field($parameters["key"]);
         } else {
-            $this->field($mapping->getTableForClass($type)) . "_id";
+            $this->field($mapping->getTableForClass($type). "_id");
         }
 
         if (isset($parameters["saveReset"]) && $parameters["saveReset"] == "true") {

@@ -12,7 +12,7 @@ class Pagination extends Lib
     var $query;
 
     function __construct(){
-        $this->page=$this->request->get["page"]?:1;
+        $this->page=@$this->request->get["page"]?:1;
     }
 
     function pagination(){
