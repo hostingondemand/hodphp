@@ -28,7 +28,10 @@ class Request extends \hodphp\core\Lib
     public function getData($assoc = false, $type = null)
     {
         $data = $this->getRawData();
-        return $this->http->parse($this->getHeaders(), $data, $assoc, $type);
+        if($data) {
+            return $this->http->parse($this->getHeaders(), $data, $assoc, $type);
+        }
+        return $_GET;
     }
 
     public function getRawData()

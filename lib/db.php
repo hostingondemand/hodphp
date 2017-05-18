@@ -301,10 +301,10 @@ class Db extends \hodphp\core\Lib
         return Loader::getSingleton("pagination","lib/db");
     }
 
-    function paginated($function,$perPage){
+    function paginated($function,$perPage,$params=array()){
         $pagination=$this->paginationInfo();
         $pagination->turnOn($perPage);
-        $result["result"]=$function();
+        $result["result"]=$function($params);
         $result["pagination"]=$pagination->pagination();
         $pagination->turnOff();
         return (object)$result;
