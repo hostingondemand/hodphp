@@ -4,6 +4,19 @@ use hodphp\lib\helper\BaseHelper;
 
 class DateTime extends BaseHelper
 {
+
+    function addYear($date,$amount=1){
+        $year=date("Y",$date);
+        $year+=$amount;
+        return mktime(date("H"),date("i"),date("s"),date("n"),date("j"),$year);
+    }
+
+    function addMonth($date,$amount=1){
+        $month=date("j",$date);
+        $month+=$amount;
+        return mktime(date("H"),date("i"),date("s"),date("n"),$month ,date("Y"));
+    }
+
     function formattedToTimestamp($date, $split = "-", $order = array(1, 0, 2))
     {
         $exp = explode($split, $date);

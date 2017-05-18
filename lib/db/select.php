@@ -36,16 +36,18 @@ class Select extends Lib
         return $this;
     }
 
-    function table($table, $alias = false)
+    function table($table, $alias = false, $ignoreModel = false)
     {
-        $this->model = $this->provider->mapping->default->getModelForTable($table);
-
+        if (!$ignoreModel) {
+            $this->model = $this->provider->mapping->default->getModelForTable($table);
+        }
         if (!is_array($table)) {
             if (!$alias) {
                 $alias = $table;
             }
             $table = array($alias => $table);
         }
+
         $this->_table = $table;
         return $this;
 
