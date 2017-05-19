@@ -199,8 +199,6 @@ class DbToMany extends BaseFieldHandler
             } else {
                 if ($this->_field == "parent") {
                     $where = "parent_id='" . $this->db->parent["id"] . "' and parent_module='" . $this->db->parent["module"] . "'";
-                } elseif ($this->db->parent) {
-                    $where = "parent_id='" . $this->db->parent["id"] . "' and parent_module='" . $this->db->parent["module"] . "' and  `" . $this->_field . "` ='" . $this->_model->id . "' ";
                 } else {
                     $where = "`" . $this->_field . "` ='" . $this->_model->id . "'";
                 }
