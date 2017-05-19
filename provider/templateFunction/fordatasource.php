@@ -30,11 +30,16 @@ class FuncFordatasource extends \hodphp\lib\template\AbstractFunction
                 //loop through the items
                 foreach ($datasource["data"] as $val) {
                     if (is_object($val)) {
-                        $val = $val->toArray();
+                        $data->_value = $val->{$datasource["value"]};
+                        $data->_text = $val->{$datasource["text"]};
+                        $data->_selected = isset($dataSelected[$val->{$datasource["value"]}]) && $dataSelected[$val->{$datasource["value"]}];
+                    }elseif(is_array($val)){
+                        $data->_value = $val[$datasource["value"]];
+                        $data->_text = $val[$datasource["text"]];
+                        $data->_selected = isset($dataSelected[$val[$datasource["value"]]]) && $dataSelected[$val[$datasource["value"]]];
                     }
-                    $data->_value = $val[$datasource["value"]];
-                    $data->_text = $val[$datasource["text"]];
-                    $data->_selected = isset($dataSelected[$val[$datasource["value"]]]) && $dataSelected[$val[$datasource["value"]]];
+
+
                     $result .= $this->interpreter->interpret($content, $this->template->dataHandler($data));
                 }
 

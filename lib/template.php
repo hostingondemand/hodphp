@@ -108,8 +108,11 @@ class template extends Lib
         return false;
     }
 
-    function createDataSource($data, $value, $text)
+    function createDataSource($data, $value, $text,$optional=false)
     {
+        if($optional){
+            array_unshift($data,array($value=>"",$text=>""));
+        }
         return array(
             "data" => $data,
             "value" => $value,
