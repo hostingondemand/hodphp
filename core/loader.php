@@ -166,6 +166,7 @@ class Loader
                 unset($exp[0]);
                 $namespacePath = implode("/", $exp);
             } else {
+                $path=DIR_FRAMEWORK;
                 $namespacePath = DIR_FRAMEWORK . str_replace("\\", "/", $namespace);
             }
 
