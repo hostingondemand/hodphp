@@ -111,6 +111,10 @@ class Db extends \hodphp\core\Lib
 
     function saveModel($model, $table = false, $ignoreParent = false, $con = "default")
     {
+        if($model->hasMethod('_preSave')) {
+            $model->_preSave();
+        }
+
         $prefix = $this->db->getPrefix();
         if (!$table) {
             $table = $this->provider->mapping->default->getTableForClass($model->_getType());

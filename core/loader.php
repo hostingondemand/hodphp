@@ -143,7 +143,11 @@ class Loader
                     $className = $exp[1];
                 }
 
-                $fullclass = $prefix . $namespace . "\\" . ucfirst($classPrefix) . ucfirst($className);
+                if(strpos("\\" . $namespace, $prefix) !== false) {
+                    $fullclass = "\\" . $namespace . "\\" . ucfirst($classPrefix) . ucfirst($className);
+                } else {
+                    $fullclass = $prefix . $namespace . "\\" . ucfirst($classPrefix) . ucfirst($className);
+                }
                 $info = (object)array("type" => $fullclass, "module" => $module);
             }
             $infoCache[$module][$class][$namespace] = $info;

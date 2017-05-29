@@ -119,7 +119,8 @@ class DbReference extends BaseFieldHandler
             }
 
             if ($this->_cascadeSave) {
-                $this->db->saveModel($this->get(false), $this->_toTable);
+                $thisGet = $this->get(false);
+                $this->db->saveModel($thisGet, $this->_toTable);
                 $this->db->query(
                     "update `" . $this->_fromTable . "` set `" . $this->_field . "`='" . $this->obj->id . "' where id='" . $this->_model->id . "'"
                 );
@@ -136,7 +137,7 @@ class DbReference extends BaseFieldHandler
 
     function get($inModel)
     {
-        if (!$this->loaded) {
+        if (!$this->loaded && !$this->obj) {
             if ($this->_field) {
                 $field = $this->_field;
                 $id = $this->_model->$field;

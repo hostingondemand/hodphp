@@ -184,6 +184,14 @@ abstract class BaseModel extends Base
         return $this->_invalidated;
     }
 
+    function _preSave()
+    {
+        foreach ($this->_fieldHandlers as $handler) {
+            $handler->preSave();
+        }
+
+    }
+
     function _saved()
     {
         foreach ($this->_fieldHandlers as $handler) {

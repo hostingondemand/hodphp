@@ -25,6 +25,10 @@ abstract class BaseFieldHandler extends Lib
     {
     }
 
+    function preSave()
+    {
+    }
+
     function save()
     {
     }

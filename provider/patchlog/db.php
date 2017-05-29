@@ -12,7 +12,7 @@ class Db extends BasePatchlogProvider
             $table->addField("patch", "varchar(50)");
             $table->addField("success", "int");
             $table->addField("date", "int");
-            $table->create();
+            $table->save();
         }
     }
 

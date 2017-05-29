@@ -41,4 +41,11 @@ class Enum extends BaseFieldHandler
 
         $this->_model->_setInData($this->_inModelName, $this->_data->value);
     }
+
+    function preSave()
+    {
+        if(!$this->get(false)) {
+            $this->_model->_setInData($this->_inModelName, 0);
+        }
+    }
 }

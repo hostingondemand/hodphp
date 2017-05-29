@@ -26,7 +26,7 @@ class Serialized extends BaseFieldHandler
     function set($value)
     {
         if (is_string($value)) {
-            $data = @unserialize($str);
+            $data = @unserialize($value);
             if($data!==false) {
                 $this->_data = unserialize($value);
                 $this->_model->_setInData($this->_inModelName, $value);
