@@ -5,17 +5,16 @@ class FuncCurrency extends \hodphp\lib\template\AbstractFunction
 {
     function call($parameters, $data, $content = "", $unparsed = Array(), $module = false)
     {
-        $currency = $this->config->get("currency.symbol", "website");
+        $currency = $this->config->get("currency.symbol", "website") ?: "€";
+        $roundingMethod = $this->config->get("currency.rounding", "website") ?: PHP_ROUND_HALF_EVEN;
 
-        if (!$currency) {
-            $currency = "€";
-        }
         if (is_numeric($parameters[0])) {
             $value = $parameters[0];
         } else {
             $value = 0;
         }
-        $formatted = number_format($value, 2);
+
+        $formatted = sprintf("%0.2f", round($value, 2, $roundingMethod));
 
         return $currency . " " . $formatted;
     }
