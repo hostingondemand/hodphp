@@ -104,7 +104,7 @@ class Http extends \hodphp\core\Lib
         if (!empty($data)) {
             $suffix = '?';
             foreach ($data as $k => $v) {
-                $suffix .= (($suffix !== '?') ? '&' : '') . $k . '=' . $v;
+                $suffix .= (($suffix !== '?') ? '&' : '') . urlencode($k) . '=' . urlencode($v);
             }
             $url .= $suffix;
         }
