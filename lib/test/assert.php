@@ -1,5 +1,7 @@
 <?php
 namespace hodphp\lib\test;
+use hodphp\core\Base;
+
 class assert extends Base
 {
     var $results = array();
