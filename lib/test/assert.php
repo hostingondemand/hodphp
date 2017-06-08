@@ -113,9 +113,9 @@ class assert extends Base
         });
     }
 
-    function value($value)
+    function value($value,$name="")
     {
-        return $this->anonymous($value, $value, function ($value) {
+        return $this->anonymous($name?:$value, $value, function ($value) {
             return $value;
         });
     }
