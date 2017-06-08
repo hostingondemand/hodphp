@@ -8,13 +8,13 @@ class DateTime extends BaseHelper
     function addYear($date,$amount=1){
         $year=date("Y",$date);
         $year+=$amount;
-        return mktime(date("H"),date("i"),date("s"),date("n"),date("j"),$year);
+        return mktime(date("H",$date),date("i",$date),date("s",$date),date("n",$date),date("j",$date),$year);
     }
 
     function addMonth($date,$amount=1){
         $month=date("j",$date);
         $month+=$amount;
-        return mktime(date("H"),date("i"),date("s"),date("n"),$month ,date("Y"));
+        return mktime(date("H",$date),date("i",$date),date("s",$date),date("n",$date),$month ,date("Y",$date));
     }
 
     function formattedToTimestamp($date, $split = "-", $order = array(1, 0, 2))
