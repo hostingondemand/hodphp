@@ -24,6 +24,21 @@ class assert extends Base
         return $this;
     }
 
+    function nEq($expected)
+    {
+        $function = $this->function;
+        $result = $function($this->inputData);
+        $this->results[] =
+            array(
+                "title" => $this->title,
+                "comparison" => $result . " != " . $expected,
+                "success" => $expected != $result
+            );
+
+        return $this;
+    }
+
+
     function gt($expected)
     {
         $function = $this->function;
