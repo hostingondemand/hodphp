@@ -10,13 +10,15 @@ class Http extends \hodphp\core\Lib
         "json" => "application/json",
         "form" => "application/x-www-form-urlencoded",
         "xml" => "application/xml",
-        "csv" => "text/csv"
+        "csv" => "text/csv",
+        "text" => "text/html"
     );
 
     function __construct()
     {
         //make a flipped version of formatHeaders
         $this->headersFormat = array_flip($this->formatHeaders);
+        $this->headersFormat['text/xml'] = $this->headersFormat['application/xml'];
     }
 
     function post($url, $data, $format, $headers = array())
