@@ -21,14 +21,14 @@ class Http extends \hodphp\core\Lib
         $this->headersFormat['text/xml'] = $this->headersFormat['application/xml'];
     }
 
-    function post($url, $data, $format, $headers = array())
+    function post($url, $data, $format, $headers = array(),$raw=false)
     {
-        return $this->requestWithInputData('post', $url, $data, $format, $headers);
+        return $this->requestWithInputData('post', $url, $data, $format, $headers,$raw);
     }
 
     //do a post request
 
-    function requestWithInputData($type, $url, $data, $format, $headers = array())
+    function requestWithInputData($type, $url, $data, $format, $headers = array(),$raw=false)
     {
         $dataString = $this->serialization->serialize($format, $data);
 
@@ -54,6 +54,9 @@ class Http extends \hodphp\core\Lib
         $body = substr($server_output, $header_size);
 
         curl_close($ch);
+        if($raw){
+            return (object)array("body"=>$body,"header"=>$header);
+        }
         return $this->parse($header, $body);
     }
 
@@ -96,12 +99,12 @@ class Http extends \hodphp\core\Lib
         return $result;
     }
 
-    function put($url, $data, $format, $headers = array())
+    function put($url, $data, $format, $headers = array(),$raw=false)
     {
-        return $this->requestWithInputData('put', $url, $data, $format, $headers);
+        return $this->requestWithInputData('put', $url, $data, $format, $headers,$raw);
     }
 
-    function get($url, $headers = array(), $data = null)
+    function get($url, $headers = array(), $data = null,$raw=false)
     {
         if (!empty($data)) {
             $suffix = '?';
@@ -137,7 +140,9 @@ class Http extends \hodphp\core\Lib
 
         //close the request
         curl_close($ch);
-
+        if($raw){
+            return (object)array("body"=>$body,"header"=>$header);
+        }
         //parse the result
         return $this->parse($header, $body);
     }
