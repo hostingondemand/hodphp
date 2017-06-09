@@ -136,22 +136,24 @@ class Annotation extends \hodphp\core\Lib
             $this->getAllAnnotations();
             $all = $this->getAllAnnotations();
             $result = array();
-            if (isset($all[$class]["method"][$method])) {
-                if (!$prefix) {
-                    $result = $all[$class]["method"][$method];
-                } else {
-                    $len = strlen($prefix);
-                    foreach ($all[$class]["method"][$method] as $val) {
-                        if (substr($val, 0, $len) == $prefix) {
-                            $result[] = substr($val, $len);
+            if(isset($all[$class])) {
+                if (isset($all[$class]["method"][$method])) {
+                    if (!$prefix) {
+                        $result = $all[$class]["method"][$method];
+                    } else {
+                        $len = strlen($prefix);
+                        foreach ($all[$class]["method"][$method] as $val) {
+                            if (substr($val, 0, $len) == $prefix) {
+                                $result[] = substr($val, $len);
+                            }
                         }
                     }
                 }
+                if ($noClass) {
+                    return $result;
+                }
+                return array_merge($this->getAnnotationsForClass($class, $prefix, $uncached), $result);
             }
-            if ($noClass) {
-                return $result;
-            }
-            return array_merge($this->getAnnotationsForClass($class, $prefix, $uncached), $result);
         }
         try {
             $r = new \ReflectionMethod($class, $method);

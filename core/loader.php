@@ -233,6 +233,10 @@ class Loader
                 if(strpos($path, 'developer') !== false) {
                     return "\\hodphp\\modules\\" . self::$module . "\\";
                 } else {
+                    if(substr($namespace,0,7)=="modules"){
+
+                        return array("prefix"=>"\\","module"=>$expNamespace[1]);
+                    }
                     return "\\modules\\" . self::$module . "\\";
                 }
             }

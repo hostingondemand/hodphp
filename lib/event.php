@@ -53,6 +53,7 @@ class Event extends \hodphp\core\Lib
 
     function doGetEventListeners($name)
     {
+        $modules = $this->config->get("requirements.modules", "components");
         $classes = array();
         if ($listener = Loader::getSingleton($name, "project\\listener", "", true)) {
             $classes[] = array("module" => false, "class" => $name, "namespace" => "project\\listener");
@@ -64,11 +65,13 @@ class Event extends \hodphp\core\Lib
 
         $dirs = $this->filesystem->getDirs("modules");
         foreach ($dirs as $module) {
-            $this->goModule($module);
-            if ($listener = Loader::getSingleton($name, "modules/" . $module . "/listener", "", true)) {
-                $classes[] = array("module" => $module, "class" => $name, "namespace" => "modules/" . $module . "/listener");
+            if(in_array($module,$modules)) {
+                $this->goModule($module);
+                if ($listener = Loader::getSingleton($name, "modules/" . $module . "/listener", "", true)) {
+                    $classes[] = array("module" => $module, "class" => $name, "namespace" => "modules/" . $module . "/listener");
+                }
+                $this->goBackModule();
             }
-            $this->goBackModule();
         }
 
         return $classes;

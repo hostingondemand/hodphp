@@ -101,12 +101,15 @@ class Module extends BaseService
 
     function getInstalledModules()
     {
+        $externalModules = $this->config->get("requirements.modules", "components");
         $result = array();
         $folders = $this->filesystem->getDirs("modules");
         foreach ($folders as $folder) {
-            $module = $this->getModuleByName($folder);
-            $module["installed"] = true;
-            $result[$folder] = $module;
+            if(in_array($folder,$externalModules)) {
+                $module = $this->getModuleByName($folder);
+                $module["installed"] = true;
+                $result[$folder] = $module;
+            }
         }
 
         $folders = $this->filesystem->getDirs("project/modules");

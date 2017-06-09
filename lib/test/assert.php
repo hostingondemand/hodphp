@@ -1,5 +1,7 @@
 <?php
 namespace hodphp\lib\test;
+use hodphp\core\Base;
+
 class assert extends Base
 {
     var $results = array();
@@ -21,6 +23,21 @@ class assert extends Base
 
         return $this;
     }
+
+    function nEq($expected)
+    {
+        $function = $this->function;
+        $result = $function($this->inputData);
+        $this->results[] =
+            array(
+                "title" => $this->title,
+                "comparison" => $result . " != " . $expected,
+                "success" => $expected != $result
+            );
+
+        return $this;
+    }
+
 
     function gt($expected)
     {
@@ -113,9 +130,9 @@ class assert extends Base
         });
     }
 
-    function value($value)
+    function value($value,$name="")
     {
-        return $this->anonymous($value, $value, function ($value) {
+        return $this->anonymous($name?:$value, $value, function ($value) {
             return $value;
         });
     }
