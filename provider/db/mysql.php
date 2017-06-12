@@ -2,8 +2,9 @@
 namespace hodphp\provider\db;
 
 use hodphp\core\Loader;
+use hodphp\lib\provider\baseprovider\BaseDbProvider;
 
-class Mysql extends \hodphp\core\Lib
+class Mysql extends BaseDbProvider
 {
     private $connections;
     private $fields = array();
