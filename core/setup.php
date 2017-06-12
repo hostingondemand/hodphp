@@ -4,6 +4,8 @@ class setup extends Base
 {
     function setup()
     {
+        global $routerStarted;
+
 
         $maps = $this->config->get("maps.class", "components");
         if (is_array($maps)) {
@@ -23,6 +25,22 @@ class setup extends Base
         if (!$this->session->__started) {
             $this->session->__started = true;
             $this->startSession();
+        }
+
+        $newPath=APP_MODE."/.htaccess";
+        $path="provider/route/".$this->provider->route->getDefaultName()."/.htaccess";
+
+        if(!$this->filesystem->exists($path) && $this->filesystem->exists($newPath)){
+            $this->filesystem->rm($newPath);
+        }
+        elseif(!$this->filesystem->exists($newPath) || !$this->filesystem->isSame($path,$newPath)){
+            $this->filesystem->rm($newPath);
+            $this->filesystem->cp($path,$newPath);
+        }else{
+            if(@!$routerStarted && substr($_SERVER["SERVER_SOFTWARE"], 0,3)=="PHP" && $this->filesystem->exists($newPath)){
+                $file=$this->filesystem->findRightPath("router.php");
+                die("Php server is not configured to use router script. Please use the following file as router script: ".$file);
+            }
         }
     }
 

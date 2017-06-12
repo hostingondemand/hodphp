@@ -49,6 +49,7 @@ class App
             define("DIR_MODULES", @$config["filesystem.modules"] ?: __DIR__ . "/modules/");
             define("DIR_PROJECT", @$config["filesystem.project"] ?: __DIR__ . "/project/");
             define("DIR_DATA", @$config["filesystem.data"] ?: __DIR__ . "/data/");
+            define("APP_MODE", @$config["app_mode"] ?: "project");
         }
     }
 }

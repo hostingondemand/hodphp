@@ -295,6 +295,20 @@ class Filesystem extends \hodphp\core\Lib
         }
     }
 
+    function md5($file)
+    {
+        $path = $this->calculatePath($file);
+        if ($this->exists($path)) {
+           return md5_file($path);
+        }
+        return false;
+    }
+
+    function isSame($file1, $file2)
+    {
+        return $this->md5($file1) == $this->md5($file2);
+    }
+
     function codeSize($directory)
     {
         $directory = $this->calculatePath($directory);
@@ -331,6 +345,13 @@ class Filesystem extends \hodphp\core\Lib
             $files[$key] = $folder . $file;
         }
         return $files;
+    }
+
+    function cp($from, $to)
+    {
+        $from = $this->calculatePath($from);
+        $to = $this->calculatePath($to);
+        copy($from,$to);
     }
 }
 

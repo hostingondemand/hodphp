@@ -5,15 +5,15 @@ use hodphp\core\Loader;
 
 class Db extends \hodphp\core\Lib
 {
-
     var $parent = false;
     var $testMode = false;
+    var $_provider;
     private $connections;
-    private $errors = array();
     private $fields = array();
 
     function __construct()
     {
+        $this->_provider=$this->provider->db->default;
         $this->connectConfigName("default");
     }
 
@@ -33,10 +33,7 @@ class Db extends \hodphp\core\Lib
 
     function connect($host, $username, $password, $db, $connection)
     {
-        if ($this->connections[$connection] = new \mysqli($host, $username, $password, $db)) {
-            return true;
-        }
-        return false;
+        return  call_user_func_array(array($this->_provider,"connect"),func_get_args());
     }
 
     function getPrefix()
@@ -49,7 +46,7 @@ class Db extends \hodphp\core\Lib
 
     function numRows($query)
     {
-        return mysqli_num_rows($query->result);
+        return  call_user_func_array(array($this->_provider,"numRows"),func_get_args());
     }
 
     function fetchAll($query, $data = null)
@@ -62,7 +59,7 @@ class Db extends \hodphp\core\Lib
 
     function fetch($query)
     {
-        return mysqli_fetch_assoc($query->result);
+        return  call_user_func_array(array($this->_provider,"fetch"),func_get_args());
     }
 
     function cast($data, $from, $to)
@@ -104,148 +101,36 @@ class Db extends \hodphp\core\Lib
 
     function escape($string, $con = "default")
     {
-        return $this->connections[$con]->real_escape_string($string);
+        return  call_user_func_array(array($this->_provider,"escape"),func_get_args());
     }
 
     //dummy for now thought this could be useful in the future or when errors occur
 
     function saveModel($model, $table = false, $ignoreParent = false, $con = "default")
     {
-        if($model->hasMethod('_preSave')) {
-            $model->_preSave();
-        }
-
-        $prefix = $this->db->getPrefix();
-        if (!$table) {
-            $table = $this->provider->mapping->default->getTableForClass($model->_getType());
-        }
-        if ($this->parent && !$ignoreParent) {
-            $model->parent_id = $this->parent["id"];
-            $model->parent_module = $this->parent["module"];
-        }
-
-        if (!isset($this->fields[$table])) {
-            $this->fields[$table] = $this->db->query("SHOW columns FROM `" . $prefix . $table . "`", $con)->fetchAll();
-        }
-
-        if ($model->id) {
-            $this->updateModel($model, $table, $con);
-            $mode = "update";
-            $id = $this->db->lastId();
-        } else {
-            $this->insertModel($model, $table, $con);
-            $mode = "insert";
-            $id = $model->id;
-        }
-
-        return array("mode" => $mode, "id" => $id);
+        return  call_user_func_array(array($this->_provider,"saveModel"),func_get_args());
     }
 
-    function updateModel($model, $table, $con)
-    {
-        $prefix = $this->db->getPrefix();
-        if ((method_exists($model, "_isInvalidated") && $model->_isInvalidated()) || !method_exists($model, "_isInvalidated")) {
-            $query = "update `" . $prefix . $table . "` set ";
-            $data = $model->toArray();
-            $i = 0;
-            foreach ($this->fields[$table] as $field) {
-                $fieldName = $field["Field"];
-                if (isset($data[$fieldName])) {
-                    if ($i) {
-                        $query .= " , ";
-                    }
-                    $input=$data[$fieldName];
-                    if(!$input ){
-                    }
-                    $query .= "`" . $fieldName . "`='" . $data[$fieldName] . "' ";
-                    $i++;
-                }
-            }
-            $query .= " where id='" . $data["id"] . "'";
-            $this->query($query, $con);
-            $model->_saved();
-        }
-    }
 
     function query($queryString, $connection = "default")
     {
-        if (!isset($this->connections[$connection])) {
-            $this->connectConfigName($connection); //to avoid manual connecting  a lot
-        }
-
-        $query = $this->connections[$connection]->query($queryString);
-        if (!$query) {
-            $error = $this->connections[$connection]->error;
-            $this->debug->error("SQL Query:" . $error, array(
-                "error" => $error,
-                "connection" => $connection,
-                "query" => $queryString
-            ));
-        }
-        $result = Loader::createInstance("queryResult", "lib\db");
-        $result->result = $query;
-
-        return $result;
+        return  call_user_func_array(array($this->_provider,"query"),func_get_args());
     }
 
-    function insertModel($model, $table, $con)
-    {
-        $prefix = $this->db->getPrefix();
-        $query = "insert into `" . $prefix . $table . "` set id=null";
-        $data = $model->toArray();
-        foreach ($this->fields[$table] as $field) {
-            $fieldName = $field["Field"];
-            if (isset($data[$fieldName]) && $fieldName != "id") {
-                $query .= " , ";
-                $query .= "`" . $fieldName . "`='" . $data[$fieldName] . "' ";
-            }
-        }
-
-        $q = $this->query($query, $con);
-        $model->id = $this->lastId($con);
-        $model->_saved();
-
-    }
 
     function lastId($connection = "default")
     {
-        return MySqli_Insert_Id($this->connections[$connection]);
+        return  call_user_func_array(array($this->_provider,"lastId"),func_get_args());
     }
 
     function deleteModel($model, $table = false)
     {
-        if (!$table) {
-            $table = $this->provider->mapping->default->getTableForClass($model->_getType());
-        }
-        $this->query("delete from `" . $table . "` where id='" . $model->id . "'");
-        $model->_deleted();
+        return  call_user_func_array(array($this->_provider,"deleteModel"),func_get_args());
     }
 
     function execute($queryString, $connection = "default", $params)
     {
-        if (!isset($this->connections[$connection])) {
-            $this->connectConfigName($connection); //to avoid manual connecting  a lot
-        }
-
-        if ($query = $this->connections[$connection]->prepare($queryString)) {
-            $prefix = array(str_repeat("s", count($params)));
-            $merged = array_merge($prefix, $params);
-            $bound = call_user_func_array(array($query, "bind_param"), $this->refValues($merged));
-
-            $result = $query->execute();
-            if (!$result) {
-                $this->debug->error("SQL Execute:" . $query->error, array(
-                    "error" => $query->error,
-                    "connection" => $connection,
-                    "query" => $queryString
-                ));
-            }
-
-            return $result;
-        }
-
-        return false;
-
+        return  call_user_func_array(array($this->_provider,"execute"),func_get_args());
     }
 
     function refValues($arr)
