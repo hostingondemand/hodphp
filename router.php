@@ -11,6 +11,8 @@
                 $url=preg_replace($pattern,$replacement,$url);
             }
         }
+    }else{
+        return false;
     }
 
     $exp=explode("?",$url);
