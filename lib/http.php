@@ -10,8 +10,7 @@ class Http extends \hodphp\core\Lib
         "json" => "application/json",
         "form" => "application/x-www-form-urlencoded",
         "xml" => "application/xml",
-        "csv" => "text/csv",
-        "text" => "text/html"
+        "csv" => "text/csv"
     );
 
     function __construct()
