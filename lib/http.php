@@ -17,6 +17,7 @@ class Http extends \hodphp\core\Lib
     {
         //make a flipped version of formatHeaders
         $this->headersFormat = array_flip($this->formatHeaders);
+        $this->headersFormat['text/xml'] = $this->headersFormat['application/xml'];
     }
 
     function post($url, $data, $format, $headers = array(),$raw=false)

@@ -80,7 +80,7 @@ class XML extends Serializer
         foreach ($data as $key => $value) {
             $namespace = null;
             $namespacePrefix = null;
-            if ($value["_annotations"]["namespace"]) {
+            if (!empty($value["_annotations"]["namespace"])) {
                 $namespace = $value["_annotations"]["namespace"]->parameters[0];
                 $namespacePrefix = $namespace . ":";
             }
