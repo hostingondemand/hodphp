@@ -49,6 +49,10 @@ class App
             define("DIR_MODULES", @$config["filesystem.modules"] ?: __DIR__ . "/modules/");
             define("DIR_PROJECT", @$config["filesystem.project"] ?: __DIR__ . "/project/");
             define("DIR_DATA", @$config["filesystem.data"] ?: __DIR__ . "/data/");
+
+            //There are 2 different starting points for the framework to run from, either the framework itself or a project.
+            //The framework injects a key "framework" into this variable. If its not, assume that the framework is started by the project.
+            define("APP_MODE", @$config["app_mode"] ?: "project");
         }
     }
 }

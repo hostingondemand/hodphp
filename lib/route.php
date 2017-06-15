@@ -2,65 +2,35 @@
 namespace hodphp\lib;
 
 use hodphp\core\Lib;
+use hodphp\core\Loader;
 
 class Route extends Lib
 {
-    var $autoRoute = [];
+    var $_provider;
+    function __construct(){
+        $this->_provider=$this->provider->route->default;
+    }
 
-    function createRoute($first = "")
+    function createRoute($first = ""){
+      return  call_user_func_array(array($this->_provider,"createRoute"),func_get_args());
+    }
+
+    function parameter($key, $val)
     {
-
-        if (func_num_args() > 1) {
-            $first = func_get_args();
-        }
-        if (!is_array($first)) {
-            array_shift($first);
-        }
-
-        if ($first[0] == '/') {
-            unset($first[0]);
-        } else {
-            $first = array_merge($this->autoRoute, $first);
-        }
-
-        if (is_array($first)) {
-            foreach ($first as $key => $val) {
-                if (!$val) {
-                    $fromRoute = $this->route->get($key);
-                    $parameters[$key] = $fromRoute;
-                } else {
-                    $parameters[$key] = $val;
-                }
-            }
-
-            if (is_array($this->getRenames()) && isset($renames[$parameters[0]])) {
-                $parameters[0] = $renames[$parameters[0]];
-            }
-
-            return $this->path->getHttp() . "?route=" . implode("/", $parameters);
-        } elseif (!$first) {
-            return $this->path->getHttp();
-        } else {
-            return $this->path->getHttp() . "?route=" . implode("/", func_get_args());
-        }
+       return  call_user_func_array(array($this->_provider,"parameter"),func_get_args());
     }
 
-    function parameter($key,$val){
-        $get=$this->request->get;
-        $get[$key]=$val;
-        $url=$this->path->getHttp();
-        $i=0;
-        foreach($get as $key=>$val){
-            if($i){
-                $url.="&";
-            }else{
-                $url.="?";
-            }
-            $url.=$key."=".$val;
-            $i++;
-        }
-        return $url;
+    function get($key)
+    {
+        return call_user_func_array(array($this->_provider,"get"),func_get_args());
     }
+
+    function getRoute()
+    {
+        return call_user_func_array(array($this->_provider,"getRoute"),func_get_args());
+    }
+
+    var $autoRoute = [];
 
     function getRenames()
     {
@@ -73,38 +43,6 @@ class Route extends Lib
         }
 
         return $renames;
-    }
-
-    function get($key)
-    {
-        $route = $this->getRoute();
-        if (isset($route[$key])) {
-            return $route[$key];
-        } else {
-            return "";
-        }
-    }
-
-    function getRoute()
-    {
-        static $route = false;
-        if (!$route) {
-            if (isset($this->request->get["route"])) {
-                $route = explode("/", $this->request->get["route"]);
-                $renames = $this->getRenames();
-                if (is_array($renames)) {
-                    $renames = array_flip($renames);
-                    if (isset($renames[$route[0]])) {
-                        $route[0] = $renames[$route[0]];
-                    }
-                }
-            }
-            if (!$route) {
-                $route = [];
-            }
-        }
-
-        return $route;
     }
 
     function removeAutoRoute()
