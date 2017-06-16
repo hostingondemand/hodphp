@@ -83,7 +83,7 @@ class Interpreter extends Lib
             if ($key == 0) {
                 $result = $data->{$keys[0]};
             } else {
-                $keyname = $this->interpretElement($key, $data);
+                $keyname = $this->interpretElement($key, $data)?:0;
                 $result = @$result->$keyname;
             }
         }

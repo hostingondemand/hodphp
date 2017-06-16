@@ -1,15 +1,15 @@
 <?php
 namespace hodphp\provider\templateFunction;
 
+use hodphp\core\Loader;
+use hodphp\lib\template\ExpressionParser;
+
 class FuncInputFor extends \hodphp\lib\template\AbstractFunction
 {
 
     //make a text lowercase
     function call($parameters, $data, $content = "", $unparsed = Array(), $module = false)
     {
-        $input = array(
-            "name" => $parameters[0]);
-
         if (@$data->validationResult->errors->{$parameters[0]}) {
             $input["invalid"] = true;
         } else {
@@ -21,11 +21,23 @@ class FuncInputFor extends \hodphp\lib\template\AbstractFunction
             $input["type"] = "string";
         }
 
-        if (@$data->{$parameters[0]}) {
-            $input["value"] = $data->{$parameters[0]};
-        } else {
-            $input["value"] = "";
+        $parserInput=str_replace("\\\"","\"",$parameters[0]);
+        $expressionParser=new ExpressionParser($parserInput);
+        $input["value"] =  $this->interpreter->interpretElement((array)$expressionParser,$data);
+
+        if($expressionParser->parameters=="variable"){
+            $input["name"]=$expressionParser->parameters[0];
+        }elseif($expressionParser->type=="array"){
+            $input["name"]="";
+            foreach($expressionParser->parameters as $parameter){
+                if(is_array($parameter)){
+                    $input["name"].="[".  ($this->interpreter->interpretElement($parameter,$data)?:"0")."]";
+                }else{
+                    $input["name"].=$parameter;
+                }
+            }
         }
+
         $attributes = "";
         if (isset($parameters[2])) {
             $array = json_decode(str_replace("'", '"', $parameters[2]), true);
