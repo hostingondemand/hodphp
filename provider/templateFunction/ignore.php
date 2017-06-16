@@ -11,7 +11,11 @@ class FuncIgnore extends \hodphp\lib\template\AbstractFunction
 
     function call($parameters, $data, $content = "", $unparsed = "", $module = false)
     {
+        if(isset($parameters[0]) && $parameters[0] && $parameters[0]!="false") {
+            return "";
+        }
         return $content;
+
     }
 
 }
