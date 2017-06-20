@@ -145,17 +145,17 @@ class Db extends \hodphp\core\Lib
         return $arr;
     }
 
-    function select($table, $alias = false)
+    function select($table, $alias = false,$con = "default")
     {
         $select = Loader::createInstance("select", "lib/db");
-        $select->table($table, $alias);
+        $select->table($table, $alias,$con);
         return $select;
     }
 
-    function selectModel($class, $namespace = "", $alias = false)
+    function selectModel($class, $namespace = "", $alias = false,$con = "default")
     {
         $select = Loader::createInstance("select", "lib/db");
-        $select->byModel($class, $namespace, $alias);
+        $select->byModel($class, $namespace, $alias,$con);
         return $select;
     }
 

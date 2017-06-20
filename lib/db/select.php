@@ -16,6 +16,7 @@ class Select extends Lib
     var $_ignoreParent = false;
     var $executed = null;
     var $model = null;
+    var $_con;
 
     function __construct()
     {
@@ -28,15 +29,15 @@ class Select extends Lib
         return $this;
     }
 
-    function byModel($model, $namespace, $alias = false)
+    function byModel($model, $namespace, $alias = false,$con = "default")
     {
         $this->model = $namespace . "\\" . $model;
         $table = $this->db->tableForModel($model, $namespace);
-        $this->table($table, $alias);
+        $this->table($table, $alias,$con);
         return $this;
     }
 
-    function table($table, $alias = false, $ignoreModel = false)
+    function table($table, $alias = false, $ignoreModel = false,$con = "default")
     {
         if (!$ignoreModel) {
             $this->model = $this->provider->mapping->default->getModelForTable($table);
@@ -49,6 +50,7 @@ class Select extends Lib
         }
 
         $this->_table = $table;
+        $this->_con=$con;
         return $this;
 
     }
@@ -149,7 +151,7 @@ class Select extends Lib
     {
 
         $queryString = $this->getQueryString();
-        $this->executed = $this->db->query($queryString);
+        $this->executed = $this->db->query($queryString,$this->_con);
     }
 
     function getQuerystring()
