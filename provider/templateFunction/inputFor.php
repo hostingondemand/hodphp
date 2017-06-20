@@ -22,6 +22,7 @@ class FuncInputFor extends \hodphp\lib\template\AbstractFunction
         }
 
         $parserInput=str_replace("\\\"","\"",$parameters[0]);
+        Loader::getInfo("expressionParser","lib/template");
         $expressionParser=new ExpressionParser($parserInput);
         $input["value"] =  $this->interpreter->interpretElement((array)$expressionParser,$data);
 
