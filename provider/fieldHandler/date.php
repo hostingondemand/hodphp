@@ -26,6 +26,7 @@ class Date extends BaseFieldHandler
         }elseif($dateTime=\DateTime::createFromFormat(\DateTime::W3C,$regexVal)){
             $this->set($dateTime->getTimestamp());
         }elseif($dateTime=\DateTime::createFromFormat("Y-m-d",$value)){
+            $dateTime->setTime(0,0,0);
             $this->set($dateTime->getTimestamp());
         }elseif($dateTime=\DateTime::createFromFormat(\DateTime::ATOM,$regexVal)){
             $this->set($dateTime->getTimestamp());
