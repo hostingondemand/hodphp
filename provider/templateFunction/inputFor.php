@@ -26,7 +26,7 @@ class FuncInputFor extends \hodphp\lib\template\AbstractFunction
         $expressionParser=new ExpressionParser($parserInput);
         $input["value"] =  $this->interpreter->interpretElement((array)$expressionParser,$data);
 
-        if($expressionParser->parameters=="variable"){
+        if($expressionParser->type=="variable"){
             $input["name"]=$expressionParser->parameters[0];
         }elseif($expressionParser->type=="array"){
             $input["name"]="";
