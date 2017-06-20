@@ -148,7 +148,7 @@ class Db extends \hodphp\core\Lib
     function select($table, $alias = false,$con = "default")
     {
         $select = Loader::createInstance("select", "lib/db");
-        $select->table($table, $alias,false,$con);
+        $select->table($table, $alias,$con);
         return $select;
     }
 
