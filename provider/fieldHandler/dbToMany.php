@@ -2,6 +2,7 @@
 namespace hodphp\provider\fieldHandler;
 
 use hodphp\lib\model\BaseFieldHandler;
+use hodphp\lib\model\BaseModel;
 
 class DbToMany extends BaseFieldHandler
 {
@@ -117,7 +118,10 @@ class DbToMany extends BaseFieldHandler
     function delete()
     {
         if ($this->_cascadeDelete) {
-            $this->db->query("delete from `" . $this->_toTable . "` where `" . $this->_field . "` ='" . $this->_model->id . "'");
+            $data = $this->get(false);
+            foreach($data as $model) {
+               $this->db->deleteModel($model,$this->_toTable);
+            }
         }
     }
 
