@@ -2,7 +2,7 @@
 namespace hodphp\helper;
 use hodphp\lib\helper\BaseHelper;
 
-class Address extends BaseHelper
+class Dns extends BaseHelper
 {
     function gethostbyname($host){
         return \gethostbyname($host);
