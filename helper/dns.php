@@ -14,7 +14,7 @@ class Dns extends BaseHelper
 // the first match found is returned
 // otherwise returns false
 
-        $dns = gethostbynamel6($host, $try_a);
+        $dns = $this->gethostbynamel6($host, $try_a);
         if ($dns == false) { return false; }
         else { return $dns[0]; }
     }
