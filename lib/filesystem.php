@@ -9,7 +9,7 @@ use RecursiveIteratorIterator;
 class Filesystem extends \hodphp\core\Lib
 {
 
-    var $customExtensions = array("css" => "text/css");
+    var $customExtensions = array("css" => "text/css", "svg"=>"image/svg+xml");
 
     //generate a full path
     var $ignores = false;
