@@ -9,7 +9,7 @@ class _files extends Controller
         //load files
         ob_clean();
         $file = implode("/", func_get_args());
-        $content = $this->filesystem->getFile("content/" . $file);
+        $content = $this->template->parse($this->filesystem->getFile("content/" . $file),[]);
 
         //set headers
         $contentType = $this->filesystem->getContentType("content/" . $file);
