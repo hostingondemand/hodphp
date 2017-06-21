@@ -351,7 +351,9 @@ class Filesystem extends \hodphp\core\Lib
     {
         $from = $this->calculatePath($from);
         $to = $this->calculatePath($to);
-        copy($from,$to);
+        if($this->exists($from)) {
+            copy($from, $to);
+        }
     }
 }
 
