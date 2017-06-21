@@ -310,7 +310,9 @@ class Mysql extends BaseDbProvider
             $table = $this->provider->mapping->default->getTableForClass($model->_getType());
         }
         $this->query("delete from `" . $table . "` where id='" . $model->id . "'");
-        $model->_deleted();
+        try {
+            $model->_deleted();
+        }catch(Exception $ex){}
     }
 
     function execute($queryString, $connection = "default", $params)

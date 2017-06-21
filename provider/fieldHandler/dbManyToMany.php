@@ -191,6 +191,15 @@ class DbManyToMany extends BaseFieldHandler
         }
     }
 
+    function delete()
+    {
+        //There is no support for cascade deleting because its potentially too dangerous.
+        if($this->_saveReset){
+            $this->db->query("delete from ". $this->_glueTable ." where `" . $this->_fromField . "` = '" . $this->_model->id . "'");
+        }
+
+    }
+
     private function toIdMap($array)
     {
         $result = array();
