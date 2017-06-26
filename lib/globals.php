@@ -19,5 +19,13 @@ class Globals extends \hodphp\core\Lib
         $this->data[$name] = $value;
     }
 
+    function getAll(){
+        return $data;
+    }
+
+    function initialize($data){
+        $this->data=$data;
+    }
+
 }
 
