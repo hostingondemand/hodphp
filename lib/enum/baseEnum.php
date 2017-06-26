@@ -1,9 +1,11 @@
 <?php
 namespace hodphp\lib\enum;
+
 abstract class BaseEnum extends \hodphp\core\Lib
 {
     var $__values;
     var $__names;
+    static $__translations;
     var $__current = -1;
 
     function __construct($current = -1)
@@ -25,7 +27,6 @@ abstract class BaseEnum extends \hodphp\core\Lib
 
         if ($current >= 0) {
             $this->__current = $current;
-
         }
     }
 
@@ -34,6 +35,7 @@ abstract class BaseEnum extends \hodphp\core\Lib
         if (($this->__current) >= 0) {
             return $this->__get("name");
         }
+
         return "";
     }
 
@@ -46,17 +48,32 @@ abstract class BaseEnum extends \hodphp\core\Lib
             if ($name == "name") {
                 return $this->__names[$this->__current];
             }
+            if ($name == "translation") {
+                return $this->getTranslation(get_class($this), $this->__current);
+            }
         } else {
             $className = get_class($this);
             $instance = new $className($this->__values[$name]);
+
             return $instance;
         }
+    }
+
+    function getTranslation($class, $key)
+    {
+        $class = lcfirst(array_pop(explode('\\', $class)));
+        if (!self::$__translations[$class]) {
+            self::$__translations[$class] = \hodphp\core\core()->language->get($class, 'enum');
+        }
+
+        return self::$__translations[$class][$key];
     }
 
     function byValue($value)
     {
         $className = get_class($this);
         $instance = new $className($value);
+
         return $instance;
     }
 }
