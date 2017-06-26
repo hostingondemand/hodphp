@@ -27,7 +27,7 @@ class Http extends \hodphp\core\Lib
 
     //do a post request
 
-    function requestWithInputData($type, $url, $data, $format, $headers = array(),$raw=false)
+    function requestWithInputData($method, $url, $data, $format, $headers = array(),$raw=false)
     {
         $dataString = $this->serialization->serialize($format, $data);
 
@@ -43,7 +43,12 @@ class Http extends \hodphp\core\Lib
         curl_setopt($ch, CURLOPT_HEADER, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, ($type === 'put') ? CURLOPT_PUT : CURLOPT_POST, 1);
+        if ($method == 'put') {
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+	}
+        else {
+                curl_setopt($ch, CURLOPT_POST, 1);
+        }
         curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -51,6 +56,14 @@ class Http extends \hodphp\core\Lib
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
         $header = substr($server_output, 0, $header_size);
         $body = substr($server_output, $header_size);
+
+        $this->debug->info("http." . $method , [
+           'url' => $url,
+           'requestHeaders' => $headers,
+           'requestBody' => $dataString,
+           'responseHeaders' => $header,
+           'responseBody' => $body
+        ]);        
 
         curl_close($ch);
         if($raw){
@@ -136,6 +149,13 @@ class Http extends \hodphp\core\Lib
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
         $header = substr($server_output, 0, $header_size);
         $body = substr($server_output, $header_size);
+
+        $this->debug->debug("http.get", [
+           'url' => $url,
+           'requestHeaders' => $headers,
+           'responseHeaders' => $header,
+           'responseBody' => $body
+        ]); 
 
         //close the request
         curl_close($ch);
