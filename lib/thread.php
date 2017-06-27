@@ -57,7 +57,7 @@ class Thread extends Lib
 
     function generateProcessNumber(){
         $currenttime = round(microtime(true)*1000,0);
-        return $currenttime.rand(1000000,9999999);
+        return $currenttime.mt_rand(1000000,9999999);
     }
 
 
