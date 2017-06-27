@@ -17,7 +17,7 @@ class executionCode extends \hodphp\core\Base
 {
         function execute(){
 
-                //runt he code in the right context
+                //Run the code in the right context
                 $paramData=$this->prepare();
 
                 //simulate the parameters given in the function
