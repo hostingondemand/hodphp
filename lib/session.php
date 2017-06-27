@@ -5,6 +5,7 @@ class Session extends \hodphp\core\Lib
 {
     function __get($name)
     {
+        global $_SESSION;
         if (isset($_SESSION[$name])) {
             return $_SESSION[$name];
         }
@@ -14,12 +15,26 @@ class Session extends \hodphp\core\Lib
 
     function __set($name, $value)
     {
+        global $_SESSION;
         $_SESSION[$name] = $value;
+    }
+
+
+    function getAll(){
+        global $_SESSION;
+        return $_SESSION;
+    }
+
+    function simulateFakeSession($data){
+        global $_SESSION;
+        $_SESSION=$data;
     }
 
     function __destruct()
     {
-        session_write_close();
+        try {
+            @session_write_close();
+        }catch(\Exception $ex){}
     }
 }
 

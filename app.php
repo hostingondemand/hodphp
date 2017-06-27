@@ -32,7 +32,7 @@ class App
         \hodphp\core\Loader::loadAction($this->_route);
     }
 
-    private function includeCore()
+    public function includeCore()
     {
         include(__DIR__ . "/core/base.php");
         include(__DIR__ . "/core/setup.php");

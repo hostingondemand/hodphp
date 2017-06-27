@@ -28,5 +28,18 @@ class Shell extends Lib
         chdir($cwd);
         return rtrim($result);
     }
+
+
+    function runInBackground($command)
+    {
+        $proc = proc_open($command . "> /dev/null &",
+            array(
+                array('pipe', 'r'),
+                array('pipe', 'w')),
+            $pipes);
+         fread($pipes[1],100);
+        array_map('fclose',$pipes);
+        proc_close($proc);
+    }
 }
 
