@@ -197,7 +197,7 @@ class Mysql extends BaseDbProvider
 
     function escape($string, $con = "default")
     {
-        return $this->connections[$con]->real_escape_string($string);
+        return str_replace("'","\\'",$string);
     }
 
 
