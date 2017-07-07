@@ -132,7 +132,8 @@ class Debug extends Lib
             }
 
             if ($result) {
-                $result = "\n==============" . date("d-m-Y H:i:s") . "==============\n" . $result;
+                $route=implode("/",$this->route->getRoute());
+                $result = "\n==============" . date("d-m-Y H:i:s") . "(". $route .")==============\n" . $result;
                 $this->filesystem->mkdir($folder);
                 $this->filesystem->append($folder.date("Y-W").".log",$result);
             }
