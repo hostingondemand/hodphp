@@ -249,7 +249,7 @@ class Mysql extends BaseDbProvider
                     $input=$data[$fieldName];
                     if(!$input ){
                     }
-                    $query .= "`" . $fieldName . "`='" . $data[$fieldName] . "' ";
+                    $query .= "`" . $fieldName . "`='" . $this->escape($data[$fieldName]) . "' ";
                     $i++;
                 }
             }
@@ -289,7 +289,7 @@ class Mysql extends BaseDbProvider
             $fieldName = $field["Field"];
             if (isset($data[$fieldName]) && $fieldName != "id") {
                 $query .= " , ";
-                $query .= "`" . $fieldName . "`='" . $data[$fieldName] . "' ";
+                $query .= "`" . $fieldName . "`='" . $this->escape($data[$fieldName]) . "' ";
             }
         }
 
