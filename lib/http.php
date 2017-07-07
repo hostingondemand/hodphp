@@ -52,9 +52,6 @@ class Http extends \hodphp\core\Lib
         curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
-        curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,0);
-        curl_setopt($ch,CURLOPT_TIMEOUT,1800);
-
         $server_output = curl_exec($ch);
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
         $header = substr($server_output, 0, $header_size);
@@ -66,7 +63,7 @@ class Http extends \hodphp\core\Lib
            'requestBody' => $dataString,
            'responseHeaders' => $header,
            'responseBody' => $body
-        ]);        
+        ]);
 
         curl_close($ch);
         if($raw){
@@ -155,7 +152,7 @@ class Http extends \hodphp\core\Lib
         $header = substr($server_output, 0, $header_size);
         $body = substr($server_output, $header_size);
 
-        $this->debug->debug("http.get", [
+        $this->debug->info("http.get", [
            'url' => $url,
            'requestHeaders' => $headers,
            'responseHeaders' => $header,
