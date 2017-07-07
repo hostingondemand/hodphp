@@ -112,13 +112,13 @@ class DbReference extends BaseFieldHandler
                 $this->fromTable($mapping->getTableForClass($this->_model->_getType()));
             }
 
-            if ($this->_updateReference) {
+            if ($this->_updateReference && is_object($this->obj)) {
                 $this->db->query(
                     "update `" . $this->_fromTable . "` set `" . $this->_field . "`='" . $this->obj->id . "' where id='" . $this->_model->id . "'"
                 );
             }
 
-            if ($this->_cascadeSave) {
+            if ($this->_cascadeSave && is_object($this->obj)) {
                 $thisGet = $this->get(false);
                 $this->db->saveModel($thisGet, $this->_toTable);
                 $this->db->query(

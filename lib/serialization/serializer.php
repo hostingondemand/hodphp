@@ -60,12 +60,14 @@ abstract class Serializer extends \hodphp\core\Lib
                             if ($annotation->function == "dynamic") {
                                 $dynamicData = $this->dynamicGet($data, $dkey);
                                 $classAnnotations = array();
-                                if (!$dynamicData["isNotArray"]) {
+                                if (!@$dynamicData["isNotArray"]) {
                                     $dynamicArray = true;
-                                    foreach ($dynamicData as $_key => $_value) {
-                                        $newData[$key][$_key] = $_value["data"];
-                                        $valueAnnotated[$key][$_key] = $_value["annotated"];
-                                        $classAnnotations[$_key] = $_value["classAnnotations"];
+                                    if(is_array($dynamicData)) {
+                                        foreach ($dynamicData as $_key => $_value) {
+                                            $newData[$key][$_key] = $_value["data"];
+                                            $valueAnnotated[$key][$_key] = $_value["annotated"];
+                                            $classAnnotations[$_key] = $_value["classAnnotations"];
+                                        }
                                     }
                                 } else {
                                     $newData[$key] = $dynamicData["data"];
@@ -85,14 +87,16 @@ abstract class Serializer extends \hodphp\core\Lib
                     }
                     if ($dynamicArray) {
                         $newDataAnnotated[$key]["_annotations"] = $translatedAnnotations;
-                        foreach ($newData[$key] as $_key => $_value) {
-                            $newDataAnnotated[$key][$_key] = array("_classAnnotations" => $classAnnotations[$_key], "_value" => $newData[$key][$_key]);
-                            if (isset($valueAnnotated[$key][$_key])) {
-                                $newDataAnnotated[$key][$_key]["_annotated"] = $valueAnnotated[$key][$_key];
+                        if(is_array($newData[$key])) {
+                            foreach ($newData[$key] as $_key => $_value) {
+                                $newDataAnnotated[$key][$_key] = array("_classAnnotations" => $classAnnotations[$_key], "_value" => $newData[$key][$_key]);
+                                if (isset($valueAnnotated[$key][$_key])) {
+                                    $newDataAnnotated[$key][$_key]["_annotated"] = $valueAnnotated[$key][$_key];
+                                }
                             }
                         }
                     } else {
-                        $newDataAnnotated[$key] = array("_classAnnotations" => $classAnnotations, "_annotations" => $translatedAnnotations, "_value" => $newData[$key]);
+                        $newDataAnnotated[$key] = array("_classAnnotations" => @$classAnnotations?:array(), "_annotations" => $translatedAnnotations, "_value" => $newData[$key]);
                         if (isset($valueAnnotated[$key])) {
                             $newDataAnnotated[$key]["_annotated"] = $valueAnnotated[$key];
                         }
