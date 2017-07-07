@@ -287,7 +287,7 @@ class Mysql extends BaseDbProvider
         $data = $model->toArray();
         foreach ($this->fields[$table] as $field) {
             $fieldName = $field["Field"];
-            if (isset($data[$fieldName]) && $fieldName != "id") {
+            if (isset($data[$fieldName]) && !is_array($data[$fieldName]) && !is_array($fieldName) && $fieldName != "id") {
                 $query .= " , ";
                 $query .= "`" . $fieldName . "`='" . $this->escape($data[$fieldName]) . "' ";
             }
