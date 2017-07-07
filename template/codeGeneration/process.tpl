@@ -13,7 +13,7 @@ $app->setConfig($config);
 $app->includeCore();
 
 //create a class to execute the function
-class executionCode extends \hodphp\core\Base
+class ExecutionCode extends \hodphp\core\Base
 {
         function execute(){
 
@@ -26,7 +26,11 @@ class executionCode extends \hodphp\core\Base
                 }
 
                 //run the code
-                {{code}}
+                try{
+                         {{code}}
+                }catch(Exception $ex){
+                        $this->debug->error("Process fails", $ex->getMessage());
+                }
 
                 //and remove this file
                 $this->finish();
@@ -48,5 +52,5 @@ class executionCode extends \hodphp\core\Base
 
 
 //and run the code
-$instance=new executionCode();
+$instance=new ExecutionCode();
 $instance->execute();
