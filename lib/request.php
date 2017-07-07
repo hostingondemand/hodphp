@@ -61,7 +61,7 @@ class Request extends \hodphp\core\Lib
 
     public function getIp()
     {
-        return @$_SERVER['HTTP_CLIENT_IP'] ? $_SERVER['HTTP_CLIENT_IP'] : (@$_SERVER['HTTP_X_FORWARDE‌​D_FOR'] ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']);
+        return @$_SERVER['HTTP_CLIENT_IP'] ? $_SERVER['HTTP_CLIENT_IP'] : (@$_SERVER['HTTP_X_FORWARDE‌​D_FOR'] ? $_SERVER['HTTP_X_FORWARDED_FOR'] : (@$_SERVER['REMOTE_ADDR']?$_SERVER['REMOTE_ADDR']:"127.0.0.1"));
     }
 
     public function getReferer()

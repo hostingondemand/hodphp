@@ -20,7 +20,7 @@ class Globals extends \hodphp\core\Lib
     }
 
     function getAll(){
-        return $data;
+        return $this->data;
     }
 
     function initialize($data){
