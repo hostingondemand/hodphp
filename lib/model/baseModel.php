@@ -192,6 +192,7 @@ abstract class BaseModel extends Base
 
     }
 
+
     function _saved()
     {
         foreach ($this->_fieldHandlers as $handler) {
@@ -264,6 +265,14 @@ abstract class BaseModel extends Base
         }
 
         return $this->__requiredFieldsCache;
+    }
+
+    function __hash(){
+        return md5(print_r($this->_data,true));
+    }
+
+    function __equals($obj){
+        return $this->__hash()==$obj->__hash();
     }
 }
 

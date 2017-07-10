@@ -114,7 +114,7 @@ class DbReference extends BaseFieldHandler
 
             if ($this->_updateReference && is_object($this->obj)) {
                 $this->db->query(
-                    "update `" . $this->_fromTable . "` set `" . $this->_field . "`='" . $this->obj->id?:"0" . "' where id='" . $this->_model->id . "'"
+                    "update `" . $this->_fromTable . "` set `" . $this->_field . "`='" . ($this->obj->id?:"0") . "' where id='" . $this->_model->id . "'"
                 );
             }elseif(!is_object($this->obj)){
                 $this->db->query(
@@ -126,7 +126,7 @@ class DbReference extends BaseFieldHandler
                 $thisGet = $this->get(false);
                 $this->db->saveModel($thisGet, $this->_toTable);
                 $this->db->query(
-                    "update `" . $this->_fromTable . "` set `" . $this->_field . "`='" . $this->obj->id?:"0" . "' where id='" . $this->_model->id . "'"
+                    "update `" . $this->_fromTable . "` set `" . $this->_field . "`='" . ($this->obj->id?:"0") . "' where id='" . $this->_model->id . "'"
                 );
             }elseif(!is_object($this->obj)){
                 $this->db->query(
@@ -160,7 +160,7 @@ class DbReference extends BaseFieldHandler
 
     function set($obj)
     {
-        if(!$obj){
+        if($obj===false){
             $this->loaded=true;
         }
         elseif(is_numeric($obj)){
