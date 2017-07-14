@@ -126,9 +126,7 @@ abstract class BaseModel extends Base
     {
         if (is_array($data)) {
             foreach ($data as $key => $val) {
-                if ($val !== null) {
-                    $this->__set($key, $val);
-                }
+                $this->__set($key, $val);
             }
         }
 
