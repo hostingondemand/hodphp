@@ -178,12 +178,12 @@ class DbReference extends BaseFieldHandler
                     }
                 }
                 $this->obj->fromArray($obj);
+                $this->loaded = true;
             }
             if (is_object($obj)) {
                 $this->obj = $obj;
+                $this->loaded = true;
             }
-
-            $this->loaded = true;
         }
     }
 

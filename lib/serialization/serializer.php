@@ -12,7 +12,9 @@ abstract class Serializer extends \hodphp\core\Lib
     {
         $original=$data;
         try {
-            $data = $this->getArrayData($data);
+            if(!(is_array($data) && isset($data["data"]) && isset($data["type"]) && isset($data["original"]))) {
+                $data = $this->getArrayData($data);
+            }
             $newData = $data["data"];
             if (is_array($data["type"])) {
                 foreach ($data["data"] as $key => $val) {
@@ -108,7 +110,8 @@ abstract class Serializer extends \hodphp\core\Lib
                 $data["data"] = $newData;
                 $data["annotated"] = $newDataAnnotated;
             }
-            return $data;
+
+                return $data;
         }catch (\Exception $ex){
             return $original;
         }
@@ -144,7 +147,11 @@ abstract class Serializer extends \hodphp\core\Lib
 
         $translatedAnnotations = array();
         if ($type != "array" && $type != "value") {
-            $annotations = $this->annotation->getAnnotationsForClass($type, "serialize");
+            if($type) {
+                $annotations = $this->annotation->getAnnotationsForClass($type, "serialize");
+            }else{
+                $annotations=[];
+            }
             foreach ($annotations as $annotation) {
                 $annotation = $this->annotation->translate($annotation);
                 $translatedAnnotations[$annotation->function] = $annotation;

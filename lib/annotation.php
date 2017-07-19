@@ -19,6 +19,9 @@ class Annotation extends \hodphp\core\Lib
 
     function getAnnotationsForClass($class, $prefix = "", $uncached = false)
     {
+        if(!$class){
+            return [];
+        }
         if (!$uncached) {
             if (substr($class, 0, 1) != "\\") {
                 $class = "\\" . $class;
