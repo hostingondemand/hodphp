@@ -64,7 +64,7 @@ class Annotation extends \hodphp\core\Lib
                     Loader::loadClass("baseModel", "lib/model");
                     Loader::loadClass("baseService", "lib/service");
                     $result = array();
-                    $files = $this->filesystem->getFilesRecursiveWithInfo(array("project/controller", "project/service", "project/model", "project/modules", "modules"), "php");
+                    $files = $this->filesystem->getFilesRecursiveWithInfo(array("project/controller", "project/service", "project/model", "project/modules", "modules/"), "php");
                     foreach ($files as $fileWithInfo) {
                         $file = $fileWithInfo["absolutePath"];
 
