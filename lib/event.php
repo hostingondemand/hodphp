@@ -30,7 +30,7 @@ class Event extends \hodphp\core\Lib
         }
 
         if ($this->debugLevel <= 2) {
-            $this->debug->info("Raised event:", array("name"=>$name,"data"=>$data),"event");
+            $this->debug->info("Raised event:", array("name"=>$name),"event");
         }
 
         return $data;

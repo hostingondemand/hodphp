@@ -280,7 +280,7 @@ class Mysql extends BaseDbProvider
                 "query" => $queryString
             ),"database");
         }elseif($this->debugLevel<=2){
-            $this->debug->info("success:",array("query"=>$queryString),"");
+            $this->debug->info("success:",array("query"=>$queryString),"database");
         }
         $result = Loader::createInstance("queryResult", "lib\db");
         $result->result = $query;
@@ -342,7 +342,7 @@ class Mysql extends BaseDbProvider
                     "query" => $queryString
                 ),"database");
             }elseif($this->debugLevel<=2){
-                $this->debug->info("success:",array("query"=>$queryString),"");
+                $this->debug->info("success:",array("query"=>$queryString),"database");
             }
 
             return $result;

@@ -64,7 +64,9 @@ class Debug extends Lib
     function message($title, $detail, $level,$category="general")
     {
         $trace = array_slice($this->trace, -5, 5, true);
-        $this->messages[$category][] = array("title" => $title, "detail" => $detail, "stackTrace" => $trace, "level" => $level, "levelName" => $this->levels[$level]);
+        $message=array("category"=>$category,"title" => $title, "detail" => $detail, "stackTrace" => $trace, "level" => $level, "levelName" => $this->levels[$level]);
+        $this->messages[$category][] = $message ;
+        $this->messages["all"][] = $message ;
     }
 
     function fatal($title, $detail,$category="general")
@@ -135,9 +137,12 @@ class Debug extends Lib
 
     function __destruct()
     {
+        $data=date("d-m-Y H:i:s");
         $level=$this->getLevel();
+
+        $user=$this->auth->getUserName();
+
         if ($this->logStatus) {
-            $result = [];
             $folder = $this->config->get("debug.folder", "server") ?: "data/log/";
             $folder.=date("Y-W")."/";
             $this->filesystem->mkdir($folder);
@@ -147,9 +152,9 @@ class Debug extends Lib
                 foreach($category as $message) {
                     if ($message["level"] >= $level) {
                         if(!$result){
-                            $result="\n==============" . date("d-m-Y H:i:s") . "(". $route .")==============\n";
+                            $result="\n==============" . $data . " (".$user." : ". $route .")==============\n";
                         }
-                        $result .= "--------------" . $message["title"]."(". $message["levelName"].")" . "---------------\n";
+                        $result .= "--------------".$message["category"]. "->" . $message["title"]."(". $message["levelName"].")" . "---------------\n";
                         $result .= print_r($message["detail"], true) . "\n";
                     }
                 }
