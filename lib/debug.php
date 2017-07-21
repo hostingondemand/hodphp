@@ -30,14 +30,9 @@ class Debug extends Lib
 
     function getInitArray()
     {
-        $msg=[];
-        foreach($this->messages as $category){
-            $msg=array_merge($msg,$category);
-        }
-
-        if ($this->session->_debugMode) {
+       if ($this->session->_debugMode) {
             return array(
-                "messages" => $msg,
+                "messages" => @$this->messages["all"],
                 "profiles" => $this->removeKeys($this->profiles)
             );
         }
