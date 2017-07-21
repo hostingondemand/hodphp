@@ -27,6 +27,11 @@ class Cache extends Lib
                 return $data["content"];
             }
         }
+
+        if ($this->debug->getLevel() <= 2) {
+            $this->debug->info("Rebuilt cache for", array("key"=>$key,"data"=>$input), "cache");
+        }
+
         $result = $function($input);
         $data["projectSize"] = $this->projectSize;
         $data["content"] = $result;
@@ -40,6 +45,7 @@ class Cache extends Lib
         if ($this->filesystem->exists($filename) && $this->filesystem->getModified($filename) > $minDate) {
             return $this->filesystem->getArray($filename);
         } else {
+            $this->debug->info("Rebuilt cache for", array("key"=>$key,"data"=>$data), "cache");
             $result = $function($data);
             $this->filesystem->writeArray($filename, $result);
             return $result;
@@ -49,6 +55,8 @@ class Cache extends Lib
 
     function destroy()
     {
+        $this->debug->info("Destroyed cache", array("files"=>"All"), "cache");
+
         $this->filesystem->rm("data/cache");
         $this->filesystem->mkdir("data/cache");
     }

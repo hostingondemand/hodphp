@@ -51,6 +51,7 @@ class Patch extends BaseService
 
                     $patchModel = $this->model->patch->initialize($patchName, $success, time());
                     $this->provider->patchlog->default->save($patchModel);
+                    $this->debug->info(":", array("file"=>$file),"developer");
                 }
             }
         }

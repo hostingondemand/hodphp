@@ -13,12 +13,31 @@ class Debug extends Lib
     var $profiles = array();
 
     var $levels = ["debug", "info", "error", "fatal"];
+    var $level=-1;
+    var $logStatus=-1;
+
+
+    function getLevel(){
+
+        if($this->level==-1||$this->logStatus==-1) {
+            $this->level = $this->config->get("debug.level", "server") ?: 0;
+            $this->logStatus = $this->config->get("debug.status", "server") ?: false;
+        }
+
+        //for the use outside of this class.. There is no log level 5, so 5 means disabled.
+        return $this->logStatus?$this->level:5;
+    }
 
     function getInitArray()
     {
+        $msg=[];
+        foreach($this->messages as $category){
+            $msg=array_merge($msg,$category);
+        }
+
         if ($this->session->_debugMode) {
             return array(
-                "messages" => $this->messages,
+                "messages" => $msg,
                 "profiles" => $this->removeKeys($this->profiles)
             );
         }
@@ -38,41 +57,41 @@ class Debug extends Lib
     {
         $reporting = \error_reporting();
         if ($reporting) {
-            $this->error("PHP:" . @$errstr, array("file" => @$errfile, "line" => @$errline, "errno" => @$errno));
+            $this->error("PHP:" . @$errstr, array("file" => @$errfile, "line" => @$errline, "errno" => @$errno),"php");
         }
     }
 
-    function message($title, $detail, $level)
+    function message($title, $detail, $level,$category="general")
     {
         $trace = array_slice($this->trace, -5, 5, true);
-        $this->messages[] = array("title" => $title, "detail" => $detail, "stackTrace" => $trace, "level" => $level, "levelName" => $this->levels[$level]);
+        $this->messages[$category][] = array("title" => $title, "detail" => $detail, "stackTrace" => $trace, "level" => $level, "levelName" => $this->levels[$level]);
     }
 
-    function fatal($title, $detail)
+    function fatal($title, $detail,$category="general")
     {
-        $this->message($title, $detail, 3);
+        $this->message($title, $detail, 3,$category);
     }
 
-    function error($title, $detail)
+    function error($title, $detail,$category="general")
     {
-        $this->message($title, $detail, 2);
+        $this->message($title, $detail, 2,$category);
     }
 
-    function info($title, $detail)
+    function info($title, $detail,$category="general")
     {
-        $this->message($title, $detail, 1);
+        $this->message($title, $detail, 1,$category);
     }
 
-    function debug($title, $detail)
+    function debug($title, $detail,$category="general")
     {
-        $this->message($title, $detail, 0);
+        $this->message($title, $detail, 0,$category);
     }
 
     function handleShutdown()
     {
         $error = error_get_last();
         if ($error['type'] === E_ERROR || $error['type'] == E_PARSE) {
-            $this->fatal("PHP:" . $error["message"], $error);
+            $this->fatal("PHP:" . $error["message"], $error,"php");
             $this->response->setPartialMode(false);
             Loader::loadAction(array("fatalError", "home"));
             $this->__destruct();
@@ -116,26 +135,27 @@ class Debug extends Lib
 
     function __destruct()
     {
-        $status = $this->config->get("debug.status", "server") ?: false;
-        if ($status) {
-            $result = "";
-            $level = $this->config->get("debug.level", "server") ?: 0;
+        $level=$this->getLevel();
+        if ($this->logStatus) {
+            $result = [];
             $folder = $this->config->get("debug.folder", "server") ?: "data/log/";
-
-            foreach ($this->messages as $message) {
-                if ($message["level"] >= $level) {
-                    $result .= "--------------" . $message["title"] . "---------------\n";
-                    $result .= "Level:" . $message["levelName"] . " \n";
-                    $result .= "detail:" . print_r($message["detail"],true)."\n";
-
+            $folder.=date("Y-W")."/";
+            $this->filesystem->mkdir($folder);
+            $route=implode("/",$this->route->getRoute());
+            foreach ($this->messages as $categoryName=>$category) {
+                $result= false;
+                foreach($category as $message) {
+                    if ($message["level"] >= $level) {
+                        if(!$result){
+                            $result="\n==============" . date("d-m-Y H:i:s") . "(". $route .")==============\n";
+                        }
+                        $result .= "--------------" . $message["title"]."(". $message["levelName"].")" . "---------------\n";
+                        $result .= print_r($message["detail"], true) . "\n";
+                    }
                 }
-            }
-
-            if ($result) {
-                $route=implode("/",$this->route->getRoute());
-                $result = "\n==============" . date("d-m-Y H:i:s") . "(". $route .")==============\n" . $result;
-                $this->filesystem->mkdir($folder);
-                $this->filesystem->append($folder.date("Y-W").".log",$result);
+                if($result) {
+                    $this->filesystem->append($folder . $categoryName . ".log", $result);
+                }
             }
 
         }

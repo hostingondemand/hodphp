@@ -36,6 +36,8 @@ class test extends Lib
             }
         }
 
+        $this->debug->info("Run tests",array(),"developer");
+
         return $results;
     }
 }

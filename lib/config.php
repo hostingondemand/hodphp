@@ -20,7 +20,9 @@ class Config extends Lib
         }
 
         if (!isset($this->data[$section])) {
-            $this->data[$section] = $this->filesystem->getArray("config/" . $section . ".php");
+            if($this->filesystem) { //this is needed to avoid problems with early loading
+                $this->data[$section] = $this->filesystem->getArray("config/" . $section . ".php",true);
+            }
         }
 
         if (isset($this->data[$section][$key])) {
@@ -48,6 +50,7 @@ class Config extends Lib
         $this->setConfigProvider();
 
         if ($this->configProvider) {
+            $this->debug->info("Changed config item", array("files"=>"All"),"config");
             $this->configProvider->set($key, $section, $val);
         } else {
             $this->data[$section][$key] = $val;

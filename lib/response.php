@@ -21,6 +21,8 @@ class Response extends \hodphp\core\Lib
             $parameters = func_get_args();
         }
 
+        $this->debug->info("Run action", array("parameters"=>$parameters),"response");
+
         Loader::loadAction($parameters);
     }
 
@@ -39,6 +41,8 @@ class Response extends \hodphp\core\Lib
             $path = \hodphp\core\Loader::$controller . "/" . (\hodphp\core\Loader::$action);
         }
 
+        $this->debug->info("Render view", array("view"=>$path),"response");
+
         $content = $this->template->parseFile($path, $data);
         $this->write($this->template->parseFile($this->masterView, Array("content" => $content)));
     }
@@ -54,6 +58,8 @@ class Response extends \hodphp\core\Lib
             $path = \hodphp\core\Loader::$controller . "/" . \hodphp\core\Loader::$action;
         }
 
+        $this->debug->info("Render partial view", array("view"=>$path),"response");
+
         $this->write($this->template->parseFile($path, $data));
     }
 
@@ -65,6 +71,7 @@ class Response extends \hodphp\core\Lib
 
     function renderContent($content)
     {
+        $this->debug->info("Render content", array("view"=>$content),"response");
         $this->write($this->template->parseFile($this->masterView, Array("content" => $content)));
     }
 
@@ -87,24 +94,35 @@ class Response extends \hodphp\core\Lib
 
     function renderJson($data)
     {
+
+        $this->debug->info("Render json",array(),"response");
+
         $this->contentType("application/json");
         $this->write($this->serialization->serialize("json", $data));
     }
 
     function redirect()
     {
-        $this->header("location", $this->route->createRoute(func_get_args()));
+        $args=func_get_args();
+        $route=$this->route->createRoute($args);
+        $this->debug->info("Redirected",array("arguments"=>$args,"route"=>$route),"response");
+        $this->header("location", $route);
 
         die();
     }
 
     function redirectBack()
     {
-        $this->header("location", $this->request->getReferer());
+        $referer=$this->request->getReferer();
+        $this->debug->info("Redirected back",array("url"=>$referer),"response");
+        $this->header("location", $referer);
     }
 
     function fakeResponse($data, $function)
     {
+
+        $this->debug->info("Started fake response",array("input",$data),"response");
+
         ob_start();
         $function($data);
         $content = ob_get_contents();
@@ -121,6 +139,8 @@ class Response extends \hodphp\core\Lib
     function cache($sec)
     {
         if (!$this->session->_debugClientCache) {
+
+            $this->debug->info("Changed cache time",array("seconds",$sec),"response");
 
             if ($sec > 0) {
                 header('Cache-Control: must-revalidate, max-age=' . (int)$sec);
@@ -141,6 +161,9 @@ class Response extends \hodphp\core\Lib
 
     function renderData($data, $type)
     {
+
+        $this->debug->info("render file",array("type",$type),"response");
+
         $this->contentType($this->contentTypes[$type]);
         $this->write($this->serialization->serialize($type, $data));
     }
