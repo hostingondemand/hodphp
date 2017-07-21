@@ -57,13 +57,15 @@ class Http extends \hodphp\core\Lib
         $header = substr($server_output, 0, $header_size);
         $body = substr($server_output, $header_size);
 
+
+
         $this->debug->info("http." . $method , [
            'url' => $url,
            'requestHeaders' => $headers,
            'requestBody' => $dataString,
            'responseHeaders' => $header,
            'responseBody' => $body
-        ]);
+        ],"http");
 
         curl_close($ch);
         if($raw){
@@ -157,7 +159,7 @@ class Http extends \hodphp\core\Lib
            'requestHeaders' => $headers,
            'responseHeaders' => $header,
            'responseBody' => $body
-        ]); 
+        ],"http");
 
         //close the request
         curl_close($ch);

@@ -31,6 +31,8 @@ class Thread extends Lib
         $resultCode=$this->generateCode($code,$input);
         $this->filesystem->clearWrite($fileName,$resultCode);
         $this->execute($fileName);
+
+        $this->debug->info("Started parallel process",array("file"=>$fileName),"thread");
     }
 
     function getParamNames($funct){

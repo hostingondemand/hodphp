@@ -35,25 +35,7 @@ class Console extends \hodphp\core\Lib
     //execute a console command
     function execute($command, $path = null)
     {
-        //first set the path to theproject if no path is given
-        if (!$path) {
-            $path = $this->path->current;
-        } else if (substr($path, 0, 1) != "/") {
-            $path = $this->filesystem->path($path);
-        }
-
-        //first get the working directory of php
-        $cwd = getcwd();
-
-        //temporarely change the working directory
-        chdir($this->path->current);
-
-        //execute the command
-        $result = shell_exec($command);
-
-        //change the working directory back
-        chdir($cwd);
-        return rtrim($result);
+        return $this->shell->execute($command,$path);
     }
 
 

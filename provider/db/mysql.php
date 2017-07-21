@@ -8,6 +8,12 @@ class Mysql extends BaseDbProvider
 {
     private $connections;
     private $fields = array();
+    var $debugLevel; //filter logging to avoid big overhead when logging is turned off.
+
+    function __construct()
+    {
+        $this->debugLevel=$this->debug->getLevel();
+    }
 
 
     function createSelectQuery($from){
@@ -272,7 +278,9 @@ class Mysql extends BaseDbProvider
                 "error" => $error,
                 "connection" => $connection,
                 "query" => $queryString
-            ));
+            ),"database");
+        }elseif($this->debugLevel<=2){
+            $this->debug->info("success:",array("query"=>$queryString),"database");
         }
         $result = Loader::createInstance("queryResult", "lib\db");
         $result->result = $query;
@@ -332,7 +340,9 @@ class Mysql extends BaseDbProvider
                     "error" => $query->error,
                     "connection" => $connection,
                     "query" => $queryString
-                ));
+                ),"database");
+            }elseif($this->debugLevel<=2){
+                $this->debug->info("success:",array("query"=>$queryString),"database");
             }
 
             return $result;

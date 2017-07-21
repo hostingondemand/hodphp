@@ -16,4 +16,8 @@ class Auth extends Lib
         return true;
     }
 
+    function  getUserName(){
+        return "guest";
+    }
+
 }

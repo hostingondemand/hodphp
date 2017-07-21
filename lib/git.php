@@ -18,6 +18,7 @@ class Git extends \hodphp\core\Lib
             $error_level = $this->enum->messageType->warning;
         } elseif (strpos($resultToLower, "error") !== false) {
             $error_level = $this->enum->messageType->danger;
+            $this->debug->error("Failed to run git command", array("message" => $result));
         }
         return (object)array(
             "message" => $result,

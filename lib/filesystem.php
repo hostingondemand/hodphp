@@ -9,14 +9,27 @@ use RecursiveIteratorIterator;
 class Filesystem extends \hodphp\core\Lib
 {
 
-    var $customExtensions = array("css" => "text/css", "svg"=>"image/svg+xml");
+    var $customExtensions = array("css" => "text/css", "svg" => "image/svg+xml");
 
     //generate a full path
     var $ignores = false;
 
+    var $debugLevel=-1;//filter logging to avoid big overhead when logging is turned off.
+
+
+    function getDebugLevel(){
+        if($this->debugLevel==-1){
+            $this->debugLevel= $this->debug->getLevel();
+        }
+        return $this->debugLevel;
+    }
+
     function getFile($file)
     {
         if ($fullPath = $this->findRightPath($file)) {
+            if ($this->getDebugLevel() <= 2) {
+                $this->debug->info("read file", array("file" => $fullPath, "relativePath" => $file), "file");
+            }
             return file_get_contents($fullPath);
         }
         return false;
@@ -48,6 +61,9 @@ class Filesystem extends \hodphp\core\Lib
         if (file_exists($fullPath)) {
             return $fullPath;
         }
+
+
+        $this->debug->error("File not found:", array("file" => $file),"file");
 
         return false;
     }
@@ -103,8 +119,12 @@ class Filesystem extends \hodphp\core\Lib
 
     function mkDir($folder)
     {
-        if (!$this->exists($this->calculatePath($folder))) {
-            return mkdir($this->calculatePath($folder), 0744, true);
+        $path = $this->calculatePath($folder);
+        if (!$this->exists($path)) {
+            if ($this->getDebugLevel() <= 2) {
+                $this->debug->info("Directory created", array("folder" => $path, "relativePath" => $folder), "file");
+            }
+            return mkdir($path, 0744, true);
         }
     }
 
@@ -140,6 +160,11 @@ class Filesystem extends \hodphp\core\Lib
             }
             $dirResults[$path] = $dirs;
         }
+
+        if ($this->getDebugLevel() <= 2) {
+            $this->debug->info("Search for directories", array("folder" => $dir, "resultCount" => count($dirResults["path"])), "file");
+        }
+
         return $dirResults[$path];
     }
 
@@ -178,6 +203,11 @@ class Filesystem extends \hodphp\core\Lib
                 }
             }
         }
+
+        if ($this->getDebugLevel() <= 2) {
+            $this->debug->info("Search for files recursively", array("folder" => $dir, "resultCount" => count($files), "filter" => $type ?: "no"), "file");
+        }
+
         return $files;
     }
 
@@ -203,6 +233,12 @@ class Filesystem extends \hodphp\core\Lib
                 }
             }
         }
+
+
+        if ($this->getDebugLevel() <= 2) {
+            $this->debug->info("Search for files recursively", array("folder" => $dir, "resultCount" => count($files), "filter" => $type ?: "no"), "file");
+        }
+
         return $files;
     }
 
@@ -226,15 +262,23 @@ class Filesystem extends \hodphp\core\Lib
             }
         }
 
+        if ($this->getDebugLevel() <= 2) {
+            $this->debug->info("Search for files", array("folder" => $dir, "resultCount" => count($files), "filter" => $type ?: "no"), "file");
+        }
+
         return $files;
     }
 
     //write to content file if file exists clear it first
 
-    function getArray($file)
+    function getArray($file,$noDebug=false)
     {
-
         if ($path = $this->findRightPath($file)) {
+
+            if (!$noDebug&&$this->getDebugLevel() <= 2) { //to avoid infinite loop with config.
+                $this->debug->info("Read array from file", array("file" => $path, "relativePath" => $file), "file");
+            }
+
             return include $path;
         }
         return array();
@@ -243,23 +287,40 @@ class Filesystem extends \hodphp\core\Lib
 
     function writeArray($file, $data)
     {
+        if ($this->getDebugLevel() <= 2) {
+            $this->debug->info("Write array to file", array("relativePath" => $file), "file");
+        }
+
         $serialized = "<?php return " . var_export($data, true) . ";";
         $this->clearWrite($file, $serialized);
     }
 
     function clearWrite($path, $content)
     {
-        $path = $this->calculatePath($path);
-        $handle = fopen($path, "w+");
-        fwrite($handle, $content);
+
+        $fullPath = $this->calculatePath($path);
+        $handle = fopen($fullPath, "w+");
+        if (fwrite($handle, $content)) {
+            if ($this->getDebugLevel() <= 2) {
+                $this->debug->info("Write to file", array("file" => $fullPath, "relativePath" => $path), "file");
+            }
+        } else {
+            $this->debug->error("Writing to file failed", array("file" => $fullPath, "relativePath" => $path), "file");
+        }
         fclose($handle);
     }
 
     function append($path, $content)
     {
-        $path = $this->calculatePath($path);
-        $handle = fopen($path, "a");
-        fwrite($handle, $content);
+        $fullPath = $this->calculatePath($path);
+        $handle = fopen($fullPath, "a");
+        if (fwrite($handle, $content)) {
+            if ($this->getDebugLevel() <= 2) {
+                $this->debug->info("Append to file", array("file" => $fullPath, "relativePath" => $path), "file");
+            }
+        } else {
+            $this->debug->error("Appending to file failed", array("file" => $fullPath, "relativePath" => $path), "file");
+        }
         fclose($handle);
     }
 
@@ -274,6 +335,7 @@ class Filesystem extends \hodphp\core\Lib
 
     function rm($file)
     {
+        $relativePath = $file;
         $file = $this->calculatePath($file);
         if ($this->exists($file)) {
             if (is_dir($file)) {
@@ -289,9 +351,19 @@ class Filesystem extends \hodphp\core\Lib
                     }
                 }
                 rmdir($dir);
+
+                if ($this->getDebugLevel() <= 2) {
+                    $this->debug->info("Removed folder", array("file" => $file, "relativePath" => $relativePath), "file");
+                }
             } else {
                 unlink($file);
+                if ($this->getDebugLevel() <= 2) {
+                    $this->debug->info("Removed file", array("file" => $file, "relativePath" => $relativePath), "file");
+                }
             }
+
+        } else {
+            $this->debug->error("Failed to remove file", array("file" => $file, "relativePath" => $relativePath), "file");
         }
     }
 
@@ -299,7 +371,7 @@ class Filesystem extends \hodphp\core\Lib
     {
         $path = $this->calculatePath($file);
         if ($this->exists($path)) {
-           return md5_file($path);
+            return md5_file($path);
         }
         return false;
     }
@@ -351,8 +423,14 @@ class Filesystem extends \hodphp\core\Lib
     {
         $from = $this->calculatePath($from);
         $to = $this->calculatePath($to);
-        if($this->exists($from)) {
-            copy($from, $to);
+        if ($this->exists($from)) {
+            if (copy($from, $to)) {
+                if ($this->getDebugLevel() <= 2) {
+                    $this->debug->info("Copied file", array("from" => $from, "to" => $to), "file");
+                }
+            } else {
+                $this->debug->error("Failed to copy file", array("from" => $from, "to" => $to), "file");
+            }
         }
     }
 }

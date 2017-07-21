@@ -61,6 +61,7 @@ class template extends Lib
                 //get the parser
                 $parser = Loader::getSingleton("globalParser", "lib\\template");
                 $parsed = $parser->parse($content);
+                $this->debug->info("Parsed file",array("file",$data["file"]),"template");
                 return $parsed;
             }
         );

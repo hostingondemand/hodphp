@@ -9,6 +9,13 @@ class Event extends \hodphp\core\Lib
     var $eventListeners = array();
     var $_noCache;
 
+    var $debugLevel; //filter logging to avoid big overhead when logging is turned off.
+
+    function __construct()
+    {
+        $this->debugLevel = $this->debug->getLevel();
+    }
+
     function raise($name, $data)
     {
         Loader::loadClass("baseListener", "lib\\event");
@@ -20,6 +27,10 @@ class Event extends \hodphp\core\Lib
                 $data = $result;
             }
             $this->goBackModule();
+        }
+
+        if ($this->debugLevel <= 2) {
+            $this->debug->info("Raised event:", array("name"=>$name),"event");
         }
 
         return $data;

@@ -256,7 +256,8 @@ abstract class BaseModel extends Base
                 $annotations = $this->annotation->getAnnotationsForField($type, $var, "validate");
                 foreach ($annotations as $annotation) {
                     $annotation = $this->annotation->translate($annotation);
-                    $required[$var] = $this->validation->validator($annotation->function)->isRequired();
+                    $validator=$this->validation->validator($annotation->function);
+                    $required[$var] = $validator?$validator->isRequired():false;
                 }
             }
             $this->__requiredFieldsCache = $required;

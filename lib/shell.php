@@ -26,6 +26,9 @@ class Shell extends Lib
 
         //change the working directory back
         chdir($cwd);
+
+        $this->debug->info("Ran shell command", array("input"=>$command,"path"=>$path?:"no","result"=>rtrim($result)),"shell");
+
         return rtrim($result);
     }
 
@@ -40,6 +43,7 @@ class Shell extends Lib
          fread($pipes[1],100);
         array_map('fclose',$pipes);
         proc_close($proc);
+        $this->debug->info("Ran shell command in background", array("input"=>$command),"shell");
     }
 }
 
