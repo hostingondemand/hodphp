@@ -45,5 +45,26 @@ class Shell extends Lib
         proc_close($proc);
         $this->debug->info("Ran shell command in background", array("input"=>$command),"shell");
     }
+
+    function commandExists($command){
+        $result=shell_exec(sprintf("which %s", escapeshellarg($command)));
+        return !empty($result);
+    }
+
+    function executeWithInput($command,$input){
+        $proc = proc_open($command,
+            array(
+                array('pipe', 'r'),
+                array('pipe', 'w')),
+            $pipes);
+        fwrite($pipes[0],$input);
+        fclose($pipes[0]);
+        unset($pipes[0]);
+        $output=fread($pipes[1],255);
+        array_map('fclose',$pipes);
+        proc_close($proc);
+        $this->debug->info("Ran shell command with file input", array("input"=>$command),"shell");
+        return $output;
+    }
 }
 
