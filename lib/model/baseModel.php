@@ -122,11 +122,13 @@ abstract class BaseModel extends Base
         return $result;
     }
 
-    function fromArray($data)
+    function fromArray($data,$skipNull=false)
     {
         if (is_array($data)) {
             foreach ($data as $key => $val) {
-                $this->__set($key, $val);
+                if(!($skipNull&&$val===null)) {
+                    $this->__set($key, $val);
+                }
             }
         }
 
