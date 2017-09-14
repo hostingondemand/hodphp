@@ -21,7 +21,7 @@ abstract class BaseModel extends Base
             }
         }
         $this->setupFieldHandlers();
-        $this->_validationResult = $this->validation->validator("model")->validate($this);
+        $this->_validationResult = $this->validation->validator("model")->validate($this)->toArray();
     }
 
     function setupFieldHandlers()
