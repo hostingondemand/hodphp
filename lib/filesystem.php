@@ -122,6 +122,8 @@ class Filesystem extends \hodphp\core\Lib
 
     function mimeContentTypeFallback($ext){
         //1 day cache refresh
+
+        //time()-86400 means a cache refresh every 24 hours.
         $mimeTypes=$this->cache->runCached("mimeTypes",[],time()-86400,function($data) {
             $url="http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types";
             $mimeTypes=[];
