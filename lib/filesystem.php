@@ -14,12 +14,13 @@ class Filesystem extends \hodphp\core\Lib
     //generate a full path
     var $ignores = false;
 
-    var $debugLevel=-1;//filter logging to avoid big overhead when logging is turned off.
+    var $debugLevel = -1;//filter logging to avoid big overhead when logging is turned off.
 
 
-    function getDebugLevel(){
-        if($this->debugLevel==-1){
-            $this->debugLevel= $this->debug->getLevel();
+    function getDebugLevel()
+    {
+        if ($this->debugLevel == -1) {
+            $this->debugLevel = $this->debug->getLevel();
         }
         return $this->debugLevel;
     }
@@ -63,7 +64,7 @@ class Filesystem extends \hodphp\core\Lib
         }
 
 
-        $this->debug->error("File not found:", array("file" => $file),"file");
+        $this->debug->error("File not found:", array("file" => $file), "file");
 
         return false;
     }
@@ -102,21 +103,42 @@ class Filesystem extends \hodphp\core\Lib
         return $file;
     }
 
-    //check if folder or file exists
-
+    //getContentType
     function getContentType($file)
     {
         $exp = explode(".", $file);
-        if (isset($this->customExtensions[$exp[count($exp) - 1]])) {
+        $ext = $exp[count($exp) - 1];
+        if (isset($this->customExtensions[$ext])) {
             return $this->customExtensions[$exp[count($exp) - 1]];
         } elseif ($fullPath = $this->findRightPath($file)) {
-            return mime_content_type($fullPath);
+            if (function_exists("mime_content_type")) {
+                return mime_content_type($fullPath);
+            } else {
+                $this->mimeContentTypeFallback($ext);
+            }
         }
         return false;
     }
 
-    //create a directory
+    function mimeContentTypeFallback($ext){
+        //1 day cache refresh
 
+        //time()-86400 means a cache refresh every 24 hours.
+        $mimeTypes=$this->cache->runCached("mimeTypes",[],time()-86400,function($data) {
+            $url="http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types";
+            $mimeTypes=[];
+            foreach (@explode("\n", @file_get_contents($url)) as $x)
+                if (isset($x[0]) && $x[0] !== '#' && preg_match_all('#([^\s]+)#', $x, $out) && isset($out[1]) && ($c = count($out[1])) > 1)
+                    for ($i = 1; $i < $c; $i++)
+                        $mimeTypes[$out[1][$i]] = $out[1][0] ;
+
+               return $mimeTypes;
+        });
+
+        return @$mimeTypes[$ext];
+    }
+
+    //create a directory
     function mkDir($folder)
     {
         $path = $this->calculatePath($folder);
@@ -271,11 +293,11 @@ class Filesystem extends \hodphp\core\Lib
 
     //write to content file if file exists clear it first
 
-    function getArray($file,$noDebug=false)
+    function getArray($file, $noDebug = false)
     {
         if ($path = $this->findRightPath($file)) {
 
-            if (!$noDebug&&$this->getDebugLevel() <= 2) { //to avoid infinite loop with config.
+            if (!$noDebug && $this->getDebugLevel() <= 2) { //to avoid infinite loop with config.
                 $this->debug->info("Read array from file", array("file" => $path, "relativePath" => $file), "file");
             }
 

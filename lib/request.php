@@ -41,7 +41,24 @@ class Request extends \hodphp\core\Lib
 
     public function getHeaders()
     {
-        return array(array_change_key_case(getallheaders(), CASE_LOWER));
+        if(function_exists("getallheaders")) {
+            return array(array_change_key_case(getallheaders(), CASE_LOWER));
+        }else{
+            return array(array_change_key_case( $this->getallheadersFallback(), CASE_LOWER));
+        }
+    }
+
+    function getallheadersFallback(){
+        static $headers = false;
+        if(!$headers) {
+            $headers = [];
+            foreach ($_SERVER as $name => $value) {
+                if (substr($name, 0, 5) == 'HTTP_') {
+                    $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+                }
+            }
+        }
+        return $headers;
     }
 
     public function getHeaderByName($name)
