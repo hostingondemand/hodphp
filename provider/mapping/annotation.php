@@ -57,9 +57,11 @@ class Annotation extends BaseMappingProvider
             }
             return $result;
         });
-        foreach ($mappings as $mapping) {
-            $this->modelToTable[$mapping["modelToLower"]] = $mapping["table"];
-            $this->tableToModel[$mapping["table"]] = $mapping["model"];
+        if($mappings) {
+            foreach ($mappings as $mapping) {
+                $this->modelToTable[$mapping["modelToLower"]] = $mapping["table"];
+                $this->tableToModel[$mapping["table"]] = $mapping["model"];
+            }
         }
     }
 
