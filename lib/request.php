@@ -30,10 +30,10 @@ class Request extends \hodphp\core\Lib
         $data = $this->getRawData();
         if($data) {
             return $this->http->parse($this->getHeaders(), $data, $assoc, $type);
-        }elseif(count($_POST)>0){
-            return $_POST;
+        }elseif(count($this->post)>0){
+            return $this->post;
         }
-        return $_GET;
+        return $this->get;
     }
 
     public function getRawData()
@@ -55,7 +55,7 @@ class Request extends \hodphp\core\Lib
         if(!$headers) {
             $headers = [];
             foreach ($_SERVER as $name => $value) {
-                if (substr($name, 0, 5) == 'HTTP_') {
+                if (substr($name, 0, 5) == 'HTTP_' ||  $name=="CONTENT_TYPE") {
                     $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
                 }
             }
