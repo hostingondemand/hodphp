@@ -63,7 +63,7 @@ class Request extends \hodphp\core\Lib
         if(isset($_SERVER["CONTENT_TYPE"])){
             $headers["content-type"]=$_SERVER["CONTENT_TYPE"];
         }
-        return [$headers];
+        return $headers;
     }
 
     public function getHeaderByName($name)
