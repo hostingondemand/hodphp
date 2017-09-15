@@ -55,10 +55,13 @@ class Request extends \hodphp\core\Lib
         if(!$headers) {
             $headers = [];
             foreach ($_SERVER as $name => $value) {
-                if (substr($name, 0, 5) == 'HTTP_' ||  $name=="CONTENT_TYPE") {
+                if (substr($name, 0, 5) == 'HTTP_') {
                     $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
                 }
             }
+        }
+        if(isset($_SERVER["CONTENT_TYPE"])){
+            $headers["content-type"]=$_SERVER["CONTENT_TYPE"];
         }
         return [$headers];
     }
