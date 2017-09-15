@@ -59,8 +59,8 @@ class Request extends \hodphp\core\Lib
                     $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
                 }
             }
-        }
-        return $headers;
+        }``
+        return [$headers];
     }
 
     public function getHeaderByName($name)
