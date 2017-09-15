@@ -30,6 +30,8 @@ class Request extends \hodphp\core\Lib
         $data = $this->getRawData();
         if($data) {
             return $this->http->parse($this->getHeaders(), $data, $assoc, $type);
+        }elseif(count($_POST)>0){
+            return $_POST;
         }
         return $_GET;
     }
