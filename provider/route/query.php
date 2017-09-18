@@ -31,7 +31,7 @@ class Query extends BaseRouteProvider
                 }
             }
 
-            if (is_array($this->route->getRenames()) && isset($renames[$parameters[0]])) {
+            if (is_array($this->route->getRenames()) && isset($renames[@$parameters[0]])) {
                 $parameters[0] = $renames[$parameters[0]];
             }
 
