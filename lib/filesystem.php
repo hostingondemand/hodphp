@@ -184,7 +184,7 @@ class Filesystem extends \hodphp\core\Lib
         }
 
         if ($this->getDebugLevel() <= 2) {
-            $this->debug->info("Search for directories", array("folder" => $dir, "resultCount" => count($dirResults["path"])), "file");
+            $this->debug->info("Search for directories", array("folder" => $dir, "resultCount" => count(@$dirResults["path"])), "file");
         }
 
         return $dirResults[$path];
