@@ -16,7 +16,7 @@ class Event extends \hodphp\core\Lib
         $this->debugLevel = $this->debug->getLevel();
     }
 
-    function raise($name, $data)
+    function raise($name, $data=[])
     {
         Loader::loadClass("baseListener", "lib\\event");
         $listeners = $this->getListenersForEvent($name);
