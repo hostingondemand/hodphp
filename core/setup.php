@@ -51,5 +51,6 @@ class setup extends Base
         $this->session->_debugClientCache = false;
         $this->session->_debugStacktrace = false;
         $this->session->_debugProfile = false;
+        $this->event->raise("sessionStart");
     }
 }
