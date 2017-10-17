@@ -139,7 +139,6 @@ class Http extends \hodphp\core\Lib
         curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,0);
         curl_setopt($ch,CURLOPT_TIMEOUT,1800);
         curl_setopt($ch,CURLOPT_USERAGENT,"	Mozilla/5.0");
-        
         //set url
         curl_setopt($ch, CURLOPT_URL, $url);
 
