@@ -1,10 +1,10 @@
 <?php return array(
     "column.name" => "Name",
-    "column.actions" => "actions",
+    "column.actions" => "Actions",
 
     "action.install" => "Install",
     "action.update" => "Update",
-    "action.all" => "Install and update all moduless",
+    "action.all" => "Install and update all modules",
 
 );
 
