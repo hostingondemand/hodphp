@@ -16,7 +16,6 @@ class Str extends BaseHelper
 
     function dummyText($minWords, $maxWords)
     {
-
         $noInterpunction = 0;
 
         $wordCount = rand($minWords, $maxWords);
@@ -43,7 +42,7 @@ class Str extends BaseHelper
         $length = 9 - sqrt(rand(1, 91)) + 2;
         $noVowel=0;
         for ($i = 0; $i < $length; $i++) {
-            if($noVowel==1 && rand(1,2)==2 || $noVowel==2 || $i==0){
+            if($noVowel==1 && rand(1,2)==2 || $noVowel==2){
                 if (rand(1, 4) == 1) {
                     $result .= $uncommonVowels[rand(0, count($uncommonVowels) - 1)];
                 }else{
@@ -66,18 +65,19 @@ class Str extends BaseHelper
         return $result;
     }
 
-
     private function chooseInterpunction()
     {
-        static $interpunction = array(".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ",", ".", ",", ",", ",", ",", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ",", ".", ",", ",", ",", ",", "?", "?", "!");
+        static $interpunction = [".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ",", ".", ",", ",", ",", ",", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ",", ".", ",", ",", ",", ",", "?", "?", "!"];
         static $count = 0;
+
         $iCount = count($interpunction);
         $result = "";
-
         $key = 8 - $count;
+
         if ($key < 2) {
             $key = 2;
         }
+
         if (rand(1, $key) == $key) {
             $result = $interpunction[rand(0, $iCount - 1)];
             $count = 0;
@@ -85,7 +85,25 @@ class Str extends BaseHelper
         } else {
             $count++;
         }
-        $result;
+
+        return $result;
+    }
+
+    /* Remove all HTML from supplied string, replace breaks with newlines */
+    function removeHTML($string, $exclude = '', $br2nl = false)
+    {
+        if (strpos($exclude, '<br>') === false) {
+            $exclude .= '<br>';
+        }
+
+        $string = html_entity_decode($string);
+        $string = strip_tags($string, $exclude);
+
+        if ($br2nl) {
+            $string = str_replace(['<br>', '<br/>', '<br />'], "\\n", $string);
+        }
+
+        return $string;
     }
 }
 
