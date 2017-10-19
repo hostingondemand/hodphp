@@ -180,7 +180,7 @@ class ExpressionParser extends Lib
                     //if we find an or part just higher some values to add the comparison into the right part of the result array
                 } elseif ($doubleChar == "||") {
                     //decide operands
-                    $result[$currentOr][$currentAnd][] = $this->buildSubComparison($expression, $startleft, $lengthLeft, $startright, $currentOperator, $i);
+                    $result[$currentOr][$currentAnd][] = $this->buildSubComparison($expression, $startleft, $lengthLeft, $startright, $currentOperator, $i-1);
 
                     //some variables set for next run
                     $i++;//skip next one its useless to check
@@ -192,7 +192,7 @@ class ExpressionParser extends Lib
                     //if we find an and part just higher some values to add the comparison into the right part of the result array
                 } elseif ($doubleChar == "&&") {
                     //decide operands
-                    $result[$currentOr][$currentAnd][] = $this->buildSubComparison($expression, $startleft, $lengthLeft, $startright, $currentOperator, $i);
+                    $result[$currentOr][$currentAnd][] = $this->buildSubComparison($expression, $startleft, $lengthLeft, $startright, $currentOperator, $i-1);
 
                     //some variables set for next run
                     $i++;//skip next one its useless to check

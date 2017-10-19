@@ -126,11 +126,12 @@ class Interpreter extends Lib
     function handleMainComparison($expression, $data)
     {
         //loop through all parameters to get all or sections
-        foreach ($expression["parameters"][0] as $or) {
+        foreach ($expression["parameters"]as $or) {
             $result = true;
 
             // loop through all sub parameters to get all and sections
             foreach ($or as $and) {
+                $and=$and[0];
                 //compare those elements. if comparison fails.. return false
                 if (!$this->interpretElement($and, $data)) {
                     $result = false;
