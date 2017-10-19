@@ -30,17 +30,33 @@ class Table extends Lib
         return $this->db->numRows($query);
     }
 
+    function fieldExists($field)
+    {
+        $prefix = $this->db->getPrefix();
+        $query = $this->db->query("SHOW COLUMNS FROM `" . $prefix . $this->name . "` LIKE '" . $field . "';");
+        return $this->db->numRows($query);
+    }
+
     function update()
     {
         $prefix = $this->db->getPrefix();
         $query = "alter table `" . $prefix . $this->name . "` ";
+        $i = 0;
         if (isset($this->actions["addField"])) {
-            $i = 0;
             foreach ($this->actions["addField"] as $action) {
                 if ($i > 0) {
                     $query .= ",";
                 }
                 $query .= "ADD `" . $action["name"] . "` " . $action["type"];
+                $i++;
+            }
+        }
+        if (isset($this->actions["removeField"])) {
+            foreach ($this->actions["removeField"] as $action) {
+                if ($i > 0) {
+                    $query .= ",";
+                }
+                $query .= "DROP `" . $action["name"] . "`";
                 $i++;
             }
         }
@@ -91,6 +107,19 @@ class Table extends Lib
         $this->actions["addField"][] = array(
             "name" => $field,
             "type" => $type
+        );
+
+        return $this;
+    }
+
+    function removeField($field)
+    {
+        if (!$this->fieldExists($field)) {
+            return $this;
+        }
+
+        $this->actions["removeField"][] = array(
+            "name" => $field,
         );
 
         return $this;
