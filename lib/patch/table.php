@@ -40,7 +40,7 @@ class Table extends Lib
     function update()
     {
         $prefix = $this->db->getPrefix();
-        $query = "alter table `" . $prefix . $this->name . "` ";
+        $query = "ALTER TABLE `" . $prefix . $this->name . "` ";
         $i = 0;
         if (isset($this->actions["addField"])) {
             foreach ($this->actions["addField"] as $action) {
@@ -48,6 +48,15 @@ class Table extends Lib
                     $query .= ",";
                 }
                 $query .= "ADD `" . $action["name"] . "` " . $action["type"];
+                $i++;
+            }
+        }
+        if (isset($this->actions["editField"])) {
+            foreach ($this->actions["editField"] as $action) {
+                if ($i > 0) {
+                    $query .= ",";
+                }
+                $query .= "MODIFY `" . $action["name"] . "` " . $action["type"];
                 $i++;
             }
         }
@@ -103,6 +112,16 @@ class Table extends Lib
     }
 
     function addField($field, $type)
+    {
+        $this->actions["addField"][] = array(
+            "name" => $field,
+            "type" => $type
+        );
+
+        return $this;
+    }
+
+    function editField($field, $type)
     {
         $this->actions["addField"][] = array(
             "name" => $field,
