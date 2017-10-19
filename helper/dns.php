@@ -58,4 +58,8 @@ class Dns extends BaseHelper
             return $ip6;
         }
     }
+
+    function gethostbyaddr($ipaddress) {
+        return \gethostbyaddr($ipaddress);
+    }
 }
