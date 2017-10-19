@@ -123,7 +123,11 @@ class Table extends Lib
 
     function editField($field, $type)
     {
-        $this->actions["addField"][] = array(
+        if (!$this->fieldExists($field)) {
+            return $this;
+        }
+
+        $this->actions["editField"][] = array(
             "name" => $field,
             "type" => $type
         );
