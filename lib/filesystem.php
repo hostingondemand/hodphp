@@ -86,6 +86,12 @@ class Filesystem extends \hodphp\core\Lib
             } elseif ($exp[0] == "data") {
                 $path = DIR_DATA;
                 unset($exp[0]);
+            } elseif ($exp[0] == "framework") {
+                $path = DIR_FRAMEWORK;
+                unset($exp[0]);
+            } elseif ($exp[0] == "temp") {
+                $path = sys_get_temp_dir()."/";
+                unset($exp[0]);
             } else {
                 $path = DIR_FRAMEWORK;
             }
@@ -120,19 +126,20 @@ class Filesystem extends \hodphp\core\Lib
         return false;
     }
 
-    function mimeContentTypeFallback($ext){
+    function mimeContentTypeFallback($ext)
+    {
         //1 day cache refresh
 
         //time()-86400 means a cache refresh every 24 hours.
-        $mimeTypes=$this->cache->runCached("mimeTypes",[],time()-86400,function($data) {
-            $url="http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types";
-            $mimeTypes=[];
+        $mimeTypes = $this->cache->runCached("mimeTypes", [], time() - 86400, function ($data) {
+            $url = "http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types";
+            $mimeTypes = [];
             foreach (@explode("\n", @file_get_contents($url)) as $x)
                 if (isset($x[0]) && $x[0] !== '#' && preg_match_all('#([^\s]+)#', $x, $out) && isset($out[1]) && ($c = count($out[1])) > 1)
                     for ($i = 1; $i < $c; $i++)
-                        $mimeTypes[$out[1][$i]] = $out[1][0] ;
+                        $mimeTypes[$out[1][$i]] = $out[1][0];
 
-               return $mimeTypes;
+            return $mimeTypes;
         });
 
         return @$mimeTypes[$ext];
@@ -444,17 +451,35 @@ class Filesystem extends \hodphp\core\Lib
     function cp($from, $to)
     {
         $from = $this->calculatePath($from);
-        $to = $this->calculatePath($to);
         if ($this->exists($from)) {
-            if (copy($from, $to)) {
-                if ($this->getDebugLevel() <= 2) {
-                    $this->debug->info("Copied file", array("from" => $from, "to" => $to), "file");
+
+            $to = $this->calculatePath($to);
+            if (is_dir($from)) {
+                $dir_handle=opendir($from);
+                while($file=readdir($dir_handle)) {
+                    if ($file != "." && $file != "..") {
+                        if (is_dir($from . "/" . $file)) {
+                            if (!is_dir($to . "/" . $file)) {
+                                $this->mkDir($to . "/" . $file);
+                            }
+                        }
+                        $this->cp($from . "/" . $file, $to . "/" . $file);
+                    }
                 }
             } else {
-                $this->debug->error("Failed to copy file", array("from" => $from, "to" => $to), "file");
+
+                if (copy($from, $to)) {
+                    if ($this->getDebugLevel() <= 2) {
+                        $this->debug->info("Copied file", array("from" => $from, "to" => $to), "file");
+                    }
+                } else {
+                    $this->debug->error("Failed to copy file", array("from" => $from, "to" => $to), "file");
+                }
             }
+
         }
     }
+
 }
 
 

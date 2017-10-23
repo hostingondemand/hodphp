@@ -31,23 +31,11 @@ class Project extends BaseService
         ));
     }
 
+
+
     function updateFramework()
     {
-        $framework = $this->config->get("framework", "_repository");
-        $localFramework = $this->config->get("framework.local", "repository");
-        if ($localFramework) {
-            $this->git->removeRemote(".", "upstream");
-            $this->git->addRemote(".", "upstream", $framework);
-            $this->git->removeRemote(".", "origin");
-            $this->git->addRemote(".", "origin", $localFramework);
-            $this->git->pull(".", "master", "upstream");
-            $this->git->pull(".", "master", "origin");
-
-        } else {
-            $this->git->removeRemote(".", "origin");
-            $this->git->addRemote(".", "origin", $framework);
-            $this->git->pull(".", "master", "origin");
-        }
+        $this->service->module->update("framework");
     }
 
     function updateProject()

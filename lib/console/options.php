@@ -2,7 +2,7 @@
 namespace hodphp\lib\console;
 
 //this class is made to handle optional parameters
-class Options extends \core\Lib
+class Options extends \hodphp\core\Lib
 {
     private $options;
     private $registeredOptions;

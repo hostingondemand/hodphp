@@ -33,8 +33,40 @@ class Module extends BaseService
         return $result;
     }
 
+    function getFramework(){
+        $moduleType = $this->config->get("moduleManagement.type", "server");
+        $framework = $this->config->get("framework", "_repository");
+        $localModule = $this->config->get("framework.local", "repository");
+
+        if($moduleType&&isset($framework[$moduleType])){
+            $module=$framework[$moduleType];
+        }else{
+            $module=reset($framework);
+        }
+
+;
+        if(is_string($localModule)) {
+            $module["upstream"] = $module["source"];
+            $module["source"]=$localModule; //backwards compatibility
+        }elseif(is_array($localModule)){
+            $module["upstream"] = $module["source"];
+            $module["source"] = $localModule["source"];
+        }else{
+            $module["source"]=$module;
+        }
+        $module["name"]="framework";
+
+        $module["folder"]="framework";
+        return $module;
+    }
+
     function getModuleByName($name, $repositoryOnly = false)
     {
+
+        if($name=="framework"){
+            return $this->getFramework();
+        }
+
         if (!$repositoryOnly) {
             $modules = $this->config->get("requirements.modules", "components");
             if (is_array($modules)) {
@@ -52,6 +84,14 @@ class Module extends BaseService
             $modules = $this->config->get("modules", "_repository");
             if (isset($modules[$name])) {
                 $module = $modules[$name];
+                if(!isset($module["name"])){
+                    $moduleType = $this->config->get("moduleManagement.type", "server");
+                    if($moduleType&&isset($module[$moduleType])){
+                        $module=$module[$moduleType];
+                    }else{
+                        $module=reset($module);
+                    }
+                }
             } else {
                 $module = array(
                     "name" => $name,

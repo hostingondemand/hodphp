@@ -118,6 +118,11 @@ class Http extends \hodphp\core\Lib
         return $this->requestWithInputData('put', $url, $data, $format, $headers,$raw);
     }
 
+    function download($from,$to){
+        $data=$this->get($from,[],[],true);
+        $this->filesystem->clearWrite($to,$data->body);
+    }
+
     function get($url, $headers = array(), $data = null,$raw=false)
     {
         if (!empty($data)) {
@@ -141,6 +146,7 @@ class Http extends \hodphp\core\Lib
         curl_setopt($ch,CURLOPT_USERAGENT,"	Mozilla/5.0");
         //set url
         curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch,CURLOPT_FOLLOWLOCATION,true);
 
         if (count($headers)) {
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
