@@ -214,7 +214,7 @@ class Filesystem extends \hodphp\core\Lib
 
     }
 
-    function getFilesRecursive($dir, $type = false)
+    function getFilesRecursive($dir, $type = false,$filter=false)
     {
         if (!is_array($dir)) {
             $dir = array($dir);
@@ -226,7 +226,10 @@ class Filesystem extends \hodphp\core\Lib
                 $path = $this->calculatePath($currentDir);
                 $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS));
                 foreach ($it as $path) {
-                    if ((!is_array($ignores) || !in_array($path, $ignores)) && (!$type || substr($path, -strlen($type)) == $type)) {
+                    if (
+                        (!is_array($ignores) || !in_array($path, $ignores)) && (!$type || substr($path, -strlen($type)) == $type) &&
+                        (!$filter || strpos($path->getFilename(), $filter) !== false)
+                    ) {
                         $files[] = $path->getRealPath();
                     }
                 }

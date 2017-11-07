@@ -196,4 +196,3 @@ class Http extends \hodphp\core\Lib
         return $this->parse($header, $body);
     }
 }
-

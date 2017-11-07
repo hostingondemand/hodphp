@@ -28,7 +28,9 @@ class Select extends Lib
         $this->_ignoreParent = true;
         return $this;
     }
-
+    /**
+     * @return \hodphp\lib\db\Select
+     */
     function byModel($model, $namespace, $alias = false,$con = "default")
     {
         $this->model = $namespace . "\\" . $model;
@@ -36,7 +38,9 @@ class Select extends Lib
         $this->table($table, $alias,$con);
         return $this;
     }
-
+    /**
+     * @return \hodphp\lib\db\Select
+     */
     function table($table, $alias = false, $ignoreModel = false,$con = "default")
     {
         if (!$ignoreModel) {
@@ -54,7 +58,9 @@ class Select extends Lib
         return $this;
 
     }
-
+    /**
+     * @return \hodphp\lib\db\Select
+     */
     function field($fields)
     {
         if (is_array($fields)) {
@@ -70,14 +76,18 @@ class Select extends Lib
 
         return $this;
     }
-
+    /**
+     * @return \hodphp\lib\db\Select
+     */
     function joinModel($model, $namespace, $onLeft, $onRight, $alias)
     {
         $table = $this->db->tableForModel($model, $namespace);
         $this->join($table, $onLeft, $onRight, $alias);
         return $this;
     }
-
+    /**
+     * @return \hodphp\lib\db\Select
+     */
     function join($table, $onLeft, $onRight = false, $alias = false)
     {
 
@@ -96,7 +106,9 @@ class Select extends Lib
 
         return $this;
     }
-
+    /**
+     * @return \hodphp\lib\db\Select
+     */
     function orderBy($fields)
     {
         if (is_array($fields)) {
@@ -113,7 +125,9 @@ class Select extends Lib
 
         return $this;
     }
-
+    /**
+     * @return \hodphp\lib\db\Select
+     */
     function group($fields)
     {
         if (is_array($fields)) {
@@ -130,7 +144,9 @@ class Select extends Lib
 
         return $this;
     }
-
+    /**
+     * @return \hodphp\lib\db\Select
+     */
     function limit($max, $offset = 0)
     {
         $this->_limit = $max;
@@ -138,7 +154,9 @@ class Select extends Lib
 
         return $this;
     }
-
+    /**
+     * @return \hodphp\lib\db\QueryResult[]
+     */
     function fetchAll()
     {
         if ($this->executed === null) {
@@ -158,7 +176,9 @@ class Select extends Lib
     {
        return $this->db->_provider->createSelectQuery($this);
     }
-
+    /**
+     * @return \hodphp\lib\db\Select
+     */
     function where($condition)
     {
         $this->_where[] = $condition;
@@ -180,7 +200,9 @@ class Select extends Lib
         $name = implode(".", $corrected);
         return $name;
     }
-
+    /**
+     * @return \hodphp\lib\db\QueryResult
+     */
     function fetch()
     {
         if ($this->executed === null) {
