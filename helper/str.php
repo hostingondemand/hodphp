@@ -100,7 +100,8 @@ class Str extends BaseHelper
         $string = strip_tags($string, $exclude);
 
         if ($br2nl) {
-            $string = str_replace(['<br>', '<br/>', '<br />'], "\\n", $string);
+            $replace = is_string($br2nl) ? $br2nl : "\n";
+            $string = str_replace(['<br>', '<br/>', '<br />'], $replace, $string);
         }
 
         return $string;
