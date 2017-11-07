@@ -233,6 +233,11 @@ abstract class BaseModel extends Base
         return false;
     }
 
+    function _dataHas($key)
+    {
+        return isset($this->_data[$key]);
+    }
+
     function _getData()
     {
         return $this->_data;
