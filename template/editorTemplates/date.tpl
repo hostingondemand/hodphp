@@ -1,0 +1,1 @@
+<input type="date" value="{{htmlDate(value)}}" name="{{name}}" {{attributes}}>

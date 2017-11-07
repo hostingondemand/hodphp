@@ -1,0 +1,1 @@
+<input type="number" value="{{if(value)}}{{value}}{{else}}0{{/if}}" step="1" name="{{name}}" {{attributes}}>
