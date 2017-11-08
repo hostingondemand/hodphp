@@ -66,7 +66,7 @@ class UpdateDummy extends BaseModel
             unset($explode[count($explode)-1]);
             $namespace=implode("\\",$explode);
             $path=str_replace("hodphp","framework",$namespace);
-            $this->getClassForFile($path,$file,$namespace);
+            $this->getClassForFile($path,$file,$namespace,false,"\\hodphp\\core\\Base");
         }
     }
 
@@ -133,7 +133,7 @@ class UpdateDummy extends BaseModel
         self::$classes[$toClass]["properties"]=$properties;
     }
 
-    function getClassForFile($dir,$file,$classPath,$fakePath=false){
+    function getClassForFile($dir,$file,$classPath,$fakePath=false,$extends=false){
         $cls=str_replace(".php","",$file);
         if(!isset( self::$classes[$classPath."\\".$cls])) {
             self::$classes[$classPath."\\".$cls]=true;
@@ -145,6 +145,10 @@ class UpdateDummy extends BaseModel
                 "file"=>$file,
                 "folder"=>$dir,
             ];
+            if($extends){
+                self::$classes[$classPath . "\\" . $cls]["extends"]=$extends;
+            }
+
             if($fakePath) {
                 if (!self::$classes[$fakePath . "\\" . $cls]) {
                     self::$classes[$fakePath . "\\" . $cls] = self::$classes[$classPath . "\\" . $cls];
