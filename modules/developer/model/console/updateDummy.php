@@ -54,6 +54,7 @@ class UpdateDummy extends BaseModel
         $this->addFolderToClass("service","service","merge\\service","hodphp\\lib\\service",true,false);
         $this->addFolderToClass("helper","helper","merge\\helper","hodphp\\lib\\helper",true,false);
         $this->addFolderToClass("model","model","merge\\model","hodphp\\lib\\model",true,true);
+        $this->addFolderToClass("enum","enum","merge\\enum","hodphp\\lib\\enum",true,false);
     }
 
     function getBaseClasses(){
