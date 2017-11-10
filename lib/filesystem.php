@@ -153,7 +153,11 @@ class Filesystem extends \hodphp\core\Lib
             if ($this->getDebugLevel() <= 2) {
                 $this->debug->info("Directory created", array("folder" => $path, "relativePath" => $folder), "file");
             }
-            return mkdir($path, 0744, true);
+            if (mkdir($path, 0744, true)) {
+                $this->changeOwner($path);
+                return true;
+            }
+            return false;
         }
     }
 
@@ -329,7 +333,6 @@ class Filesystem extends \hodphp\core\Lib
 
     function clearWrite($path, $content)
     {
-
         $fullPath = $this->calculatePath($path);
         $handle = fopen($fullPath, "w+");
         if (fwrite($handle, $content)) {
@@ -338,8 +341,13 @@ class Filesystem extends \hodphp\core\Lib
             }
         } else {
             $this->debug->error("Writing to file failed", array("file" => $fullPath, "relativePath" => $path), "file");
+
+            return false;
         }
         fclose($handle);
+
+        $this->changeOwner($fullPath);
+        return true;
     }
 
     function append($path, $content)
@@ -483,6 +491,44 @@ class Filesystem extends \hodphp\core\Lib
         }
     }
 
+    function changeOwner($file, $owner = false, $group = false)
+    {
+        if (!$owner) {
+            if(!($owner = $this->config->get('filesystem.owner','server'))) {
+                return false;
+            }
+        }
+        if (!$group) {
+            $group = $this->config->get('filesystem.group','server') ?: $owner;
+        }
+
+        $filePath = $this->calculatePath($file);
+
+        return $this->chown($filePath, $owner, $group);
+    }
+
+    function chown($filePath, $owner, $group)
+    {
+        if (!is_dir($filePath)) {
+            return chown($filePath, $owner) && chgrp($filePath, $group);
+        } else {
+            chown($filePath, $owner);
+            chgrp($filePath, $group);
+        }
+
+        $directory = new \DirectoryIterator($filePath);
+        $success = true;
+
+        foreach ($directory as $item) {
+            if (!$item->isDot()) {
+                if (!$this->chown($item->getPathname(), $owner, $group)) {
+                    $success = false;
+                }
+            }
+        }
+
+        return $success;
+    }
 }
 
 
