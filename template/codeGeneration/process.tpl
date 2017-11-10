@@ -31,9 +31,6 @@ class ExecutionCode extends \hodphp\core\Base
                 }catch(Exception $ex){
                         $this->debug->error("Process fails", $ex->getMessage());
                 }
-
-                //and remove this file
-                $this->finish();
         }
 
         function prepare(){
@@ -41,6 +38,10 @@ class ExecutionCode extends \hodphp\core\Base
                 $this->globals->initialize($data["globals"]);
                 $this->db->parent=$data["dbParent"];
                 $this->session->simulateFakeSession($data["session"]);
+
+                \hodphp\core\Loader::setup();
+                $this->event->registerGarbageCollector([$this, 'finish']);
+
                 return ["data"=>$data["data"],"paramNames"=>$data["paramNames"]];
         }
 

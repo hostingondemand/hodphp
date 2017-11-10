@@ -15,7 +15,7 @@ class Request extends \hodphp\core\Lib
         $this->session = $this->initialize($_SESSION);
         $this->get = $this->initialize($_GET);
         $this->post = $this->initialize($_POST);
-        $this->method = $_SERVER['REQUEST_METHOD'];
+        $this->method = @$_SERVER['REQUEST_METHOD'] ?: 'GET';
     }
 
     private function initialize(&$var)
