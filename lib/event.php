@@ -96,7 +96,6 @@ class Event extends \hodphp\core\Lib
     function registerGarbageCollector($function)
     {
         $this->garbageCollectors[] = $function;
-        $alne = 'test';
     }
 
     function handleShutdown()
