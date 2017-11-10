@@ -5,7 +5,7 @@ use hodphp\core\Loader;
 
 class Event extends \hodphp\core\Lib
 {
-
+    var $garbageCollectors = array();
     var $eventListeners = array();
     var $_noCache;
 
@@ -91,6 +91,20 @@ class Event extends \hodphp\core\Lib
     function noCache()
     {
         $this->_noCache = true;
+    }
+
+    function registerGarbageCollector($function)
+    {
+        $this->garbageCollectors[] = $function;
+        $alne = 'test';
+    }
+
+    function handleShutdown()
+    {
+        $this->debug->handleShutdown();
+        foreach ($this->garbageCollectors as $garbageCollector) {
+            $garbageCollector();
+        }
     }
 }
 

@@ -59,7 +59,7 @@ abstract class BaseModel extends Base
     function __get($name)
     {
 
-        $backtrace = debug_backtrace();
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 3);
         $class = get_class($this);
         if (!($backtrace[1]["class"] == $class && $backtrace[1]["function"] == "get" . ucfirst($name)) && method_exists($this, "get" . ucfirst($name))) {
             $this->goMyModule();
@@ -88,7 +88,7 @@ abstract class BaseModel extends Base
     function __set($name, $value)
     {
 
-        $backtrace = debug_backtrace();
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 3);
         $class = get_class($this);
         if ($backtrace[1]["class"] != $class && method_exists($this, "set" . ucfirst($name))) {
             $funcName = "set" . ucfirst($name);

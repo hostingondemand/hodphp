@@ -22,13 +22,18 @@ class Loader
     //load the class if needed. and create an instance of the class
     static $currentClass = null;
 
-    static function loadAction($params)
+    static function setup()
     {
         if (!self::$setup) {
             $setupInstance = new Setup();
             $setupInstance->setup();
             self::$setup = true;
         }
+    }
+
+    static function loadAction($params)
+    {
+        self::setup();
 
         $paramsFrom = 0;
         $oldController = self::$controller;
