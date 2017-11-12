@@ -106,7 +106,7 @@ abstract class Serializer extends \hodphp\core\Lib
                                 }
                             }
                         } else {
-                            $newDataAnnotated[$key] = array("_classAnnotations" => @$classAnnotations ?: array(), "_annotations" => $translatedAnnotations, "_value" => $newData[$key]);
+                            $newDataAnnotated[$key] = array("_classAnnotations" => @$classAnnotations ?: array(), "_annotations" => $translatedAnnotations, "_value" => @$newData[$key]?:"");
                             if (isset($valueAnnotated[$key])) {
                                 $newDataAnnotated[$key]["_annotated"] = $valueAnnotated[$key];
                             }
