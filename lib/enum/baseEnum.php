@@ -52,6 +52,9 @@ abstract class BaseEnum extends \hodphp\core\Lib
                 return $this->getTranslation(get_class($this), $this->__current);
             }
         } else {
+            if(!isset($this->__values[$name])){
+                return false;
+            }
             $className = get_class($this);
             $instance = new $className($this->__values[$name]);
 
