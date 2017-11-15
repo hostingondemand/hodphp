@@ -56,7 +56,7 @@ class Table extends Lib
                 if ($i > 0) {
                     $query .= ",";
                 }
-                $query .= "MODIFY `" . $action["name"] . "` " . $action["type"];
+                $query .= (!empty($action["newName"]) ? "CHANGE" : "MODIFY") . " `" . $action["name"] . "` " . (!empty($action["newName"]) ? "`". $action["newName"] . "` " : "") . $action["type"];
                 $i++;
             }
         }
@@ -121,7 +121,7 @@ class Table extends Lib
         return $this;
     }
 
-    function editField($field, $type)
+    function editField($field, $type, $newName = false)
     {
         if (!$this->fieldExists($field)) {
             return $this;
@@ -129,7 +129,8 @@ class Table extends Lib
 
         $this->actions["editField"][] = array(
             "name" => $field,
-            "type" => $type
+            "type" => $type,
+            "newName" => $newName
         );
 
         return $this;
