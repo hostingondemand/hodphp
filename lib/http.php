@@ -43,13 +43,11 @@ class Http extends \hodphp\core\Lib
         curl_setopt($ch, CURLOPT_HEADER, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_URL, $url);
-
         if ($method == 'put') {
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
         } else {
             curl_setopt($ch, CURLOPT_POST, 1);
         }
-
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -58,8 +56,6 @@ class Http extends \hodphp\core\Lib
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
         $header = substr($server_output, 0, $header_size);
         $body = substr($server_output, $header_size);
-
-
 
         $this->debug->info("http." . $method , [
            'url' => $url,
