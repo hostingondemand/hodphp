@@ -223,6 +223,17 @@ class Annotation extends \hodphp\core\Lib
         return $this->getAnnotationsForClass($class, $prefix, $uncached);
     }
 
+    function getFieldsWithAnnotation($class,$annotation){
+        $vars = get_class_vars($class);
+        foreach ($vars as $key => $var) {
+            if ($this->fieldHasAnnotations($class, $key, $annotation)) {
+                $result[]=$key;
+            }
+        }
+        return $result;
+    }
+
+
     function methodHasAnnotations($class, $method, $prefix = "")
     {
         return count($this->getAnnotationsForMethod($class, $method, $prefix));
