@@ -34,10 +34,10 @@ class ModelList extends BaseFieldHandler
         if (is_array($values)) {
             $result = array();
             foreach ($values as $value) {
-                if(isset($value[0])){
+                if(is_array($value) && isset($value[0])){
                     $this->set($value);
                     return false;
-                }else {
+                } else {
                     if (!$this->_namespace) {
                         $model = $this->model->{$this->_class};
                     } else {
