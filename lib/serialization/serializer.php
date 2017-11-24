@@ -56,6 +56,11 @@ abstract class Serializer extends \hodphp\core\Lib
                                     unset($newData[$key]);
                                     unset($newDataAnnotated[$key]);
                                 }
+                            } elseif ($annotation->function=="ignoreNull") {
+                                if(is_null($newData[$key])){
+                                    unset($newData[$key]);
+                                    unset($newDataAnnotated[$key]);
+                                }
                             } else {
                                 if ($annotation->function == "rename") {
                                     $tmp = $newData[$key];
