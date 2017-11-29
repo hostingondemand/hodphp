@@ -51,7 +51,7 @@ class Http extends \hodphp\core\Lib
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
+        
         $server_output = curl_exec($ch);
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
         $header = substr($server_output, 0, $header_size);

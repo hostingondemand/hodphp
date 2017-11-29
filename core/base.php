@@ -176,5 +176,9 @@ class Base
         return method_exists($this, $name);
     }
 
+    public function hasField($name){
+        return property_exists($this,$name);
+    }
+
 }
 
