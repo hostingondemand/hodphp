@@ -61,10 +61,15 @@ abstract class Serializer extends \hodphp\core\Lib
                                     unset($newData[$key]);
                                     unset($newDataAnnotated[$key]);
                                 }
+                            } elseif ($annotation->function=="ignoreNull") {
+                                if(is_null($newData[$key])){
+                                    unset($newData[$key]);
+                                    unset($newDataAnnotated[$key]);
+                                }
                             } else {
                                 if ($annotation->function == "rename") {
                                     $tmp = $newData[$key];
-                                    $tmpValueAnnotated = $valueAnnotated[$key];
+                                    $tmpValueAnnotated = @$valueAnnotated[$key]?:null;
                                     unset($newData[$key]);
                                     unset($newDataAnnotated[$key]);
                                     unset($valueAnnotated[$key]);
@@ -111,7 +116,7 @@ abstract class Serializer extends \hodphp\core\Lib
                                 }
                             }
                         } else {
-                            $newDataAnnotated[$key] = array("_classAnnotations" => @$classAnnotations ?: array(), "_annotations" => $translatedAnnotations, "_value" => $newData[$key]);
+                            $newDataAnnotated[$key] = array("_classAnnotations" => @$classAnnotations ?: array(), "_annotations" => $translatedAnnotations, "_value" => @$newData[$key]?:"");
                             if (isset($valueAnnotated[$key])) {
                                 $newDataAnnotated[$key]["_annotated"] = $valueAnnotated[$key];
                             }

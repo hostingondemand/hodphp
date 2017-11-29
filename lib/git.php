@@ -34,7 +34,22 @@ class Git extends \hodphp\core\Lib
 
     function pull($folder, $branch = "master", $remote = "origin")
     {
+        // Get changed files
+        $changedFiles = $this->shell->execute("git fetch; git diff origin/" . $branch . " --name-only", $folder);
+
+        // Pull changed files
         $result = $this->shell->execute("git pull " . $remote . " " . $branch, $folder);
+
+        // Change ownership
+        if (!empty($changedFiles)) {
+            foreach (explode(PHP_EOL, $changedFiles) as $file) {
+                $this->filesystem->changeOwner($folder . '/' . $file);
+            }
+        }
+
+        // Change ownership of .git/
+        $this->filesystem->changeOwnerR('./git');
+
         return $this->result($result);
     }
 
@@ -45,4 +60,3 @@ class Git extends \hodphp\core\Lib
     }
 
 }
-

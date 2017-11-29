@@ -37,6 +37,17 @@ class Table extends Lib
         return $this->db->numRows($query);
     }
 
+    function indexExists($field)
+    {
+        if (!$this->fieldExists($field)) {
+            return false;
+        }
+
+        $prefix = $this->db->getPrefix();
+        $query = $this->db->query("SHOW INDEX FROM `" . $prefix . $this->name . "` WHERE `column_name` = '" . $field . "';");
+        return $this->db->numRows($query);
+    }
+
     function update()
     {
         $prefix = $this->db->getPrefix();
@@ -74,7 +85,9 @@ class Table extends Lib
 
         if (isset($this->actions["addIndex"])) {
             foreach ($this->actions["addIndex"] as $action) {
-                $this->db->query("CREATE INDEX `" . $action["name"] . "` ON `" . $prefix . $this->name . "` (`" . $action["name"] . "`);");
+                if (!$this->indexExists($action['name'])) {
+                    $this->db->query("CREATE INDEX `" . $action["name"] . "` ON `" . $prefix . $this->name . "` (`" . $action["name"] . "`);");
+                }
             }
         }
     }
@@ -82,12 +95,7 @@ class Table extends Lib
     function create()
     {
         $prefix = $this->db->getPrefix();
-        $query = "create table `" . $prefix . $this->name . "` (
-               `id` INT NOT NULL AUTO_INCREMENT,
-               `parent_id` int,
-               `parent_module` varchar(50)
-
-            ";
+        $query = "CREATE TABLE `" . $prefix . $this->name . "` (`id` INT NOT NULL AUTO_INCREMENT, `parent_id` int, `parent_module` varchar(50)";
 
         if (isset($this->actions["addField"])) {
             foreach ($this->actions["addField"] as $action) {
@@ -99,6 +107,9 @@ class Table extends Lib
             $query .= " ENGINE = MEMORY;";
         }
         $this->db->query($query);
+
+        $this->actions['addIndex'][] = ['name' => 'parent_id'];
+        $this->actions['addIndex'][] = ['name' => 'parent_module'];
 
         if (isset($this->actions["addIndex"])) {
             foreach ($this->actions["addIndex"] as $action) {
@@ -113,6 +124,10 @@ class Table extends Lib
 
     function addField($field, $type)
     {
+        if ($this->fieldExists($field)) {
+            return $this;
+        }
+
         $this->actions["addField"][] = array(
             "name" => $field,
             "type" => $type
@@ -151,6 +166,10 @@ class Table extends Lib
 
     function addIndex($field)
     {
+        if (!$this->fieldExists($field)) {
+            return $this;
+        }
+
         $this->actions["addIndex"][] = array(
             "name" => $field,
         );

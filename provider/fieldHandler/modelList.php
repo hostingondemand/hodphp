@@ -34,18 +34,23 @@ class ModelList extends BaseFieldHandler
         if (is_array($values)) {
             $result = array();
             foreach ($values as $value) {
-                if (!$this->_namespace) {
-                    $model = $this->model->{$this->_class};
+                if(is_array($value) && isset($value[0])){
+                    $this->set($value);
+                    return false;
                 } else {
-                    $model = $this->model->{$this->_namespace}->{$this->_class};
-                }
+                    if (!$this->_namespace) {
+                        $model = $this->model->{$this->_class};
+                    } else {
+                        $model = $this->model->{$this->_namespace}->{$this->_class};
+                    }
 
-                if (is_object($value)) {
-                    $result[] = $value;
-                } else if (is_array($value)) {
-                    $result[] = $model->fromArray($value);
-                } else if (method_exists($model, 'initialize')) {
-                    $result[] = $model->initialize($value);
+                    if (is_object($value)) {
+                        $result[] = $value;
+                    } else if (is_array($value)) {
+                        $result[] = $model->fromArray($value);
+                    } else if (method_exists($model, 'initialize')) {
+                        $result[] = $model->initialize($value);
+                    }
                 }
             }
             $this->_data = $result;
