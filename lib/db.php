@@ -210,8 +210,9 @@ class Db extends \hodphp\core\Lib
         $type = $model->_getType();
         $exp = explode('\\', $type);
         $class = array_pop($exp);
+        $namespace = array_pop($exp);
 
-        if ($namespace = array_pop($exp) == 'model') {
+        if ($namespace == 'model') {
             $namespace = false;
         }
 
