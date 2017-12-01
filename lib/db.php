@@ -199,6 +199,36 @@ class Db extends \hodphp\core\Lib
         return (object)$result;
 
     }
+
+    function findMatch($model, $fields = false, $table = false)
+    {
+        return @$this->findMatches($model, $fields, $table)[0] ?: false;
+    }
+
+    function findMatches($model, $fields = false, $table = false)
+    {
+        $type = $model->_getType();
+        $exp = explode('\\', $type);
+        $class = array_pop($exp);
+
+        if ($namespace = array_pop($exp) == 'model') {
+            $namespace = false;
+        }
+
+        $select = (!$table) ? $this->selectModel($class, $namespace) : $this->select($table);
+
+        if (!$fields) {
+            $fields = $this->annotation->getFieldsWithAnnotation($type, 'matchable');
+        }
+
+        foreach ($fields as $field) {
+            if ($model->$field !== null && $model->$field !== '') {
+                $select->where("`" . $field . "` = '" . $model->$field . "'");
+            }
+        }
+
+        return $select->fetchAllModel($class, $namespace);
+    }
 }
 
 
