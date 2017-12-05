@@ -29,7 +29,7 @@ class Cache extends Lib
         }
 
         if ($this->debug->getLevel() <= 2) {
-            $this->debug->info("Rebuilt cache for", array("key"=>$key,"data"=>$input), "cache");
+            $this->debug->info("Rebuilt cache for", array("key" => $key, "data" => $input), "cache");
         }
 
         $result = $function($input);
@@ -45,7 +45,7 @@ class Cache extends Lib
         if ($this->filesystem->exists($filename) && $this->filesystem->getModified($filename) > $minDate) {
             return $this->filesystem->getArray($filename);
         } else {
-            $this->debug->info("Rebuilt cache for", array("key"=>$key,"data"=>$data), "cache");
+            $this->debug->info("Rebuilt cache for", array("key" => $key, "data" => $data), "cache");
             $result = $function($data);
             $this->filesystem->writeArray($filename, $result);
             return $result;
@@ -55,9 +55,48 @@ class Cache extends Lib
 
     function destroy()
     {
-        $this->debug->info("Destroyed cache", array("files"=>"All"), "cache");
+        $this->debug->info("Destroyed cache", array("files" => "All"), "cache");
 
         $this->filesystem->rm("data/cache");
         $this->filesystem->mkdir("data/cache");
+    }
+
+    function pageCacheRecordStart()
+    {
+        ob_start();
+    }
+
+    function pageCacheRecordSave($route, $ttl = false, $cron = false)
+    {
+        $result = ob_get_contents();
+
+        $data = [
+            'output' => $result,
+            'route' => $route,
+            'cron' => $cron,
+            'validUntil' => time() + $ttl * 60
+        ];
+
+        $this->filesystem->writeArray('data/cache/pageCache_' . md5(print_r($route, true)) . '.php', $data);
+    }
+
+    function pageCacheGetPage($route)
+    {
+        $file = 'data/cache/pageCache_' . md5(print_r($route, true)) . '.php';
+        $result = $this->filesystem->getArray($file);
+
+        echo $result['output'];
+    }
+
+    function pageCacheNeedRefresh($route, $ttl = false)
+    {
+        $file = 'data/cache/pageCache_' . md5(print_r($route, true)) . '.php';
+        $result = $this->filesystem->getArray($file);
+
+        if ($result['validUntil'] < time() || !$this->filesystem->exists($file)) {
+            return true;
+        }
+
+        return false;
     }
 }

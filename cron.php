@@ -1,5 +1,5 @@
 <?php
-ob_start();  
+ob_start();
 session_start();
 include_once("app.php");
 
@@ -21,12 +21,7 @@ $app->prepare(
 
         $route = $console->getRoute();
         unset($route[0]);
-        if ($route[1] == 'cron') {
-            unset($route[1]);
-            $route = array_merge(["_cron"], $route);
-        } else {
-            $route = array_merge(["developer", "console"], $route);
-        }
+        $route=array_merge(["developer","console"],$route);
         $app->setRoute($route);
     }
 );

@@ -86,8 +86,10 @@ class Loader
 
         if ($controller->__authorize()) {
             $controller->__initialize();
-            $controller->__preActionCall($method);
-            call_user_func_array(Array($controller, $method), $params);
+            if ($controller->__preActionCall($method)) {
+                call_user_func_array(Array($controller, $method), $params);
+                $controller->__postActionCall($method);
+            }
         } else {
             $controller->__onAuthorizationFail();
         }

@@ -33,7 +33,19 @@ class Controller extends Base
 
     function __preActionCall($method)
     {
+        $cacheAnnotation = $this->annotation->getAnnotationsForMethod($this->_getType(), $method, "runCached");
+        if (!empty($cacheAnnotation)) {
+            $annotation = $this->annotation->translate($cacheAnnotation[0]);
+            if ($this->cache->pageCacheNeedRefresh($this->route->getRoute(), $annotation->parameters["ttl"])) {
+                $this->cache->pageCacheRecordStart();
+            } else {
+                echo $this->cache->pageCacheGetPage($this->route->getRoute());
+                return false;
+            }
+        }
+
         $this->event->raise("controllerPreAction", array("controller" => $this));
+
         $inModuleAnnotation = $this->annotation->getAnnotationsForMethod($this->_getType(), $method, "inModule");
         if (!empty($inModuleAnnotation)) {
             $annotation = $this->annotation->translate($inModuleAnnotation[0]);
@@ -63,6 +75,15 @@ class Controller extends Base
             $this->response->masterView = $annotation->parameters[0];
         }
 
+        return true;
     }
 
+    function __postActionCall($method)
+    {
+        $cacheAnnotation = $this->annotation->getAnnotationsForMethod($this->_getType(), $method, "runCached");
+        if (!empty($cacheAnnotation)) {
+            $annotation = $this->annotation->translate($cacheAnnotation[0]);
+            $this->cache->pageCacheRecordSave($this->route->getRoute(),$annotation->parameters["ttl"],$annotation->parameters["cron"]);
+        }
+    }
 }

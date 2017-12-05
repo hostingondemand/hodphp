@@ -247,6 +247,34 @@ class Filesystem extends \hodphp\core\Lib
         return $files;
     }
 
+
+    function getProjectFiles($dir, $recursive = false, $prefix = true)
+    {
+        $projectDir = 'project/' . $dir;
+        $modulesDir = 'project/modules/';
+
+        $files = $this->getFiles($projectDir, false, false, $prefix);
+        foreach ($this->getDirs($projectDir) as $folder) {
+            $folderFiles = $this->getFiles($projectDir . $folder . "/", false ,false,true);
+            $files = array_merge($files, $folderFiles);
+        }
+
+        foreach ($this->getDirs($modulesDir) as $moduleFolder) {
+            $projectDir = $modulesDir . $moduleFolder . "/" . $dir;
+            $moduleFiles = $this->getFiles($projectDir, false, false, true);
+            $files = array_merge($files, $moduleFiles);
+
+            if ($recursive) {
+                foreach ($this->getDirs($projectDir) as $folder) {
+                    $folderFiles = $this->getFiles($projectDir . $folder . "/", false, false, true);
+                    $files = array_merge($files, $folderFiles);
+                }
+            }
+        }
+
+        return $files;
+    }
+
     function getFilesRecursiveWithInfo($dir, $type = false)
     {
         if (!is_array($dir)) {
@@ -279,17 +307,20 @@ class Filesystem extends \hodphp\core\Lib
     }
 
     //create an array of all files
-    function getFiles($dir, $type = false, $useIgnores = false)
+    function getFiles($dir, $type = false, $useIgnores = false, $prefix = false)
     {
+        if ($prefix === true) {
+            $prefix = substr($dir, -1) == '/' ? $dir : $dir . '/';
+        }
         $ignores = $this->getIgnores();
         $path = $this->calculatePath($dir);
         $files = array();
         if ($this->exists($path)) {
             if ($handle = opendir($path)) {
                 while (false !== ($entry = readdir($handle))) {
-                    if ($entry != "." && $entry != ".." && !is_dir($dir . "/" . $entry) && (!$type || substr($entry, -strlen($type)) == $type)) {
-                        if (!is_array($ignores) || !in_array($entry, $ignores)) {
-                            $files[] = $entry;
+                    if ($entry != "." && $entry != ".." && !is_dir($path . "/" . $entry) && (!$type || substr($entry, -strlen($type)) == $type)) {
+                        if ((!is_array($ignores) || !in_array($entry, $ignores))) {
+                            $files[] = $prefix ? $prefix . $entry : $entry;
                         }
                     }
                 }
@@ -530,5 +561,3 @@ class Filesystem extends \hodphp\core\Lib
         return $success;
     }
 }
-
-
