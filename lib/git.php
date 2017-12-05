@@ -48,7 +48,7 @@ class Git extends \hodphp\core\Lib
         }
 
         // Change ownership of .git/
-        $this->filesystem->changeOwnerR('./git');
+        $this->filesystem->changeOwner('./git');
 
         return $this->result($result);
     }

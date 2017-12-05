@@ -69,6 +69,13 @@ class Controller extends Base
             throw new \Exception("This is an internal method.");
         }
 
+        $annotations = $this->annotation->getAnnotationsForMethod($this->_getType(), $method, "timeout");
+        foreach ($annotations as $annotation) {
+            $annotation = $this->annotation->translate($annotation);
+            $time = @$annotation->parameters[0] ?: 0;
+            set_time_limit($time);
+        }
+
         $viewAnnotation = $this->annotation->getAnnotationsForMethod($this->_getType(), $method, "masterView");
         foreach ($viewAnnotation as $annotation) {
             $annotation = $this->annotation->translate($annotation);
