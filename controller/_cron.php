@@ -25,7 +25,9 @@ class _cron extends Controller
 
             foreach ($crons as $cron) {
                 $cron = str_replace('.php', '', $cron);
-                $this->cron->run($cron);
+                try {
+                    $this->cron->run($cron);
+                }catch(\Exception $ex){}
             }
         }
     }
@@ -39,8 +41,12 @@ class _cron extends Controller
         foreach ($crons as $cron) {
             $data = $this->filesystem->getArray($cron);
 
-            if($this->cache->pageCacheNeedRefresh($data['route'], $data['ttl']) && $data['cron']) {
-                Loader::loadAction($data['route']);
+            if($this->cache->pageCacheNeedRefresh($data['route'], $data['ttl'],$data['user']) && $data['cron']) {
+                $this->auth->setup($data["user"]);
+                try {
+                    Loader::loadAction($data['route']);
+                }catch(\Exception $ex){}
+                $this->auth->setup();
             }
         }
 

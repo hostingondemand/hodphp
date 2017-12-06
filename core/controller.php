@@ -31,15 +31,15 @@ class Controller extends Base
         throw new \Exception("Authorization failed");
     }
 
-    function __preActionCall($method)
+    function __preActionCall($method,$params,$originalParams)
     {
         $cacheAnnotation = $this->annotation->getAnnotationsForMethod($this->_getType(), $method, "runCached");
         if (!empty($cacheAnnotation)) {
             $annotation = $this->annotation->translate($cacheAnnotation[0]);
-            if ($this->cache->pageCacheNeedRefresh($this->route->getRoute(), $annotation->parameters["ttl"])) {
+            if ($this->cache->pageCacheNeedRefresh($originalParams, $annotation->parameters["ttl"],$this->auth->getUserId())) {
                 $this->cache->pageCacheRecordStart();
             } else {
-                echo $this->cache->pageCacheGetPage($this->route->getRoute());
+                echo $this->cache->pageCacheGetPage($originalParams,$this->auth->getUserId());
                 return false;
             }
         }
@@ -85,12 +85,12 @@ class Controller extends Base
         return true;
     }
 
-    function __postActionCall($method)
+    function __postActionCall($method,$params,$originalParams)
     {
         $cacheAnnotation = $this->annotation->getAnnotationsForMethod($this->_getType(), $method, "runCached");
         if (!empty($cacheAnnotation)) {
             $annotation = $this->annotation->translate($cacheAnnotation[0]);
-            $this->cache->pageCacheRecordSave($this->route->getRoute(),$annotation->parameters["ttl"],$annotation->parameters["cron"]);
+            $this->cache->pageCacheRecordSave($originalParams,$annotation->parameters["ttl"],$annotation->parameters["cron"],$this->auth->getUserId());
         }
     }
 }

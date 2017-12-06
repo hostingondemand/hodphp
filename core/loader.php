@@ -35,6 +35,7 @@ class Loader
     {
         self::setup();
 
+        $originalParams=$params;
         $paramsFrom = 0;
         $oldController = self::$controller;
         $oldAction = self::$action;
@@ -86,9 +87,9 @@ class Loader
 
         if ($controller->__authorize()) {
             $controller->__initialize();
-            if ($controller->__preActionCall($method)) {
+            if ($controller->__preActionCall($method,$params,$originalParams)) {
                 call_user_func_array(Array($controller, $method), $params);
-                $controller->__postActionCall($method);
+                $controller->__postActionCall($method,$params,$originalParams);
             }
         } else {
             $controller->__onAuthorizationFail();

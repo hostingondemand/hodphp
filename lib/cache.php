@@ -1,5 +1,7 @@
 <?php
+
 namespace hodphp\lib;
+
 use hodphp\core\Lib;
 
 class Cache extends Lib
@@ -66,7 +68,7 @@ class Cache extends Lib
         ob_start();
     }
 
-    function pageCacheRecordSave($route, $ttl = false, $cron = false)
+    function pageCacheRecordSave($route, $ttl = false, $cron = false, $user = false)
     {
         $result = ob_get_contents();
 
@@ -74,23 +76,24 @@ class Cache extends Lib
             'output' => $result,
             'route' => $route,
             'cron' => $cron,
-            'validUntil' => time() + $ttl * 60
+            'user'=>$user,
+            'validUntil' => time() + $ttl * 60,
         ];
 
-        $this->filesystem->writeArray('data/cache/pageCache_' . md5(print_r($route, true)) . '.php', $data);
+        $this->filesystem->writeArray('data/cache/pageCache_' . md5($user."_".print_r($route, true)) . '.php', $data);
     }
 
-    function pageCacheGetPage($route)
+    function pageCacheGetPage($route,$user)
     {
-        $file = 'data/cache/pageCache_' . md5(print_r($route, true)) . '.php';
+        $file = 'data/cache/pageCache_' . md5($user."_".print_r($route, true)) . '.php';
         $result = $this->filesystem->getArray($file);
 
         echo $result['output'];
     }
 
-    function pageCacheNeedRefresh($route, $ttl = false)
+    function pageCacheNeedRefresh($route, $ttl = false,$user=false)
     {
-        $file = 'data/cache/pageCache_' . md5(print_r($route, true)) . '.php';
+        $file = 'data/cache/pageCache_' . md5($user."_".print_r($route, true)) . '.php';
         $result = $this->filesystem->getArray($file);
 
         if ($result['validUntil'] < time() || !$this->filesystem->exists($file)) {
