@@ -36,10 +36,10 @@ class Controller extends Base
         $cacheAnnotation = $this->annotation->getAnnotationsForMethod($this->_getType(), $method, "runCached");
         if (!empty($cacheAnnotation)) {
             $annotation = $this->annotation->translate($cacheAnnotation[0]);
-            if ($this->cache->pageCacheNeedRefresh($originalParams, $annotation->parameters["ttl"],$this->auth->getUserId())) {
+            if ($this->cache->pageCacheNeedRefresh($originalParams, $annotation->parameters,$this->auth->getUserId())) {
                 $this->cache->pageCacheRecordStart();
             } else {
-                echo $this->cache->pageCacheGetPage($originalParams,$this->auth->getUserId());
+                echo $this->cache->pageCacheGetPage($originalParams,$annotation->parameters,$this->auth->getUserId());
                 return false;
             }
         }
@@ -90,7 +90,7 @@ class Controller extends Base
         $cacheAnnotation = $this->annotation->getAnnotationsForMethod($this->_getType(), $method, "runCached");
         if (!empty($cacheAnnotation)) {
             $annotation = $this->annotation->translate($cacheAnnotation[0]);
-            $this->cache->pageCacheRecordSave($originalParams,$annotation->parameters["ttl"],$annotation->parameters["cron"],$this->auth->getUserId());
+            $this->cache->pageCacheRecordSave($originalParams,$annotation->parameters,$this->auth->getUserId());
         }
     }
 }
