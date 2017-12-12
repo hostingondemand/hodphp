@@ -15,7 +15,12 @@ class Debug extends Lib
     var $levels = ["debug", "info", "error", "fatal"];
     var $level=-1;
     var $logStatus=-1;
+    var $logPrefix="";
 
+
+    function setLogPrefix($logPrefix){
+        $this->logPrefix=$logPrefix;
+    }
 
     function getLevel(){
 
@@ -154,7 +159,7 @@ class Debug extends Lib
                     }
                 }
                 if($result) {
-                    $this->filesystem->append($folder . $categoryName . ".log", $result);
+                    $this->filesystem->append($folder.$this->logPrefix.$categoryName . ".log", $result);
                 }
             }
 
