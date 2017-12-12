@@ -21,6 +21,8 @@ class setup extends Base
         $event = $this->event;
         set_error_handler(array($debug, "handlePHPError"));
         register_shutdown_function(array($event, "handleShutdown"));
+        pcntl_signal(SIGTERM,array($event, "handleShutdown"));
+
         ini_set('display_errors', 0);
         ini_set('xdebug.max_nesting_level', 500);
         if (!$this->session->__started) {
