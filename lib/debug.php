@@ -18,12 +18,30 @@ class Debug extends Lib
     var $logStatus = -1;
     var $logPrefix = "";
 
+    var $directLogging=-1;
+
 
     function setLogPrefix($logPrefix)
     {
         $this->logPrefix = $logPrefix;
     }
 
+
+    function directLog($message){
+        if ($this->directLogging == -1) {
+            $this->directLogging = $this->config->get("debug.directLogging", "server") ?: false;
+        }
+
+        if($this->directLogging && $message["category"]!="file"){
+            $route = implode("/", $this->route->getRoute());
+            $folder = $this->config->get("debug.folder", "server") ?: "data/log/";
+            $folder .= date("Y-W") . "/";
+
+            $line= date("d-m-Y H:i:s",  $message["time"]) .  " (" . $route . ") [" . $message["levelName"] . "] " .$message["category"]."->". $message["title"] ."\n";
+            $this->filesystem->append($folder . $this->logPrefix . "direct.log", $line);
+        }
+
+    }
     function getLevel()
     {
 
@@ -76,6 +94,7 @@ class Debug extends Lib
             "levelName" => $this->levels[$level],
             "time" => time()
         );
+        $this->directLog($message);
         $this->messages[$category][] = $message;
         $this->messages["all"][] = $message;
     }
