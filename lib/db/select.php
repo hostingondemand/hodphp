@@ -252,5 +252,10 @@ class Select extends Lib
         return $this->executed->numRows();
     }
 
+    function getValue()
+    {
+        $result = $this->fetch();
+        return @array_values($result)[0] ?: false;
+    }
 }
 
