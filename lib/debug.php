@@ -48,6 +48,10 @@ class Debug extends Lib
             $folder .= date("Y-W") . "/";
 
             $line= date("d-m-Y H:i:s",  $message["time"]) ." (".$details.")  [" . $message["levelName"] . "] " .$message["category"]."->". $message["title"] . "\n";
+            if (!empty($message["detail"])) {
+                $result .= print_r($message["detail"], true) . "\n";
+            }
+
             $this->filesystem->append($folder . $this->logPrefix . "direct.log", $line);
         }
 
