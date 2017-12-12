@@ -32,12 +32,22 @@ class Debug extends Lib
             $this->directLogging = $this->config->get("debug.directLogging", "server") ?: false;
         }
 
-        if($this->directLogging && $message["category"]!="file"){
-            $route = implode("/", $this->route->getRoute());
+        if($this->directLogging &&  $message["category"]!="file"){
+            try {
+                if($this->auth && $this->auth->getUserName()){
+                    $details.="user: ".$this->auth->getUserName();
+                }
+                if($this->route){
+                    $details.=" route: ".implode("/", $this->route->getRoute());
+                }
+
+            }catch(\Exception $exception){
+
+            }
             $folder = $this->config->get("debug.folder", "server") ?: "data/log/";
             $folder .= date("Y-W") . "/";
 
-            $line= date("d-m-Y H:i:s",  $message["time"]) .  " (" . $route . ") [" . $message["levelName"] . "] " .$message["category"]."->". $message["title"] ."\n";
+            $line= date("d-m-Y H:i:s",  $message["time"]) ." (".$details.")  [" . $message["levelName"] . "] " .$message["category"]."->". $message["title"] . "\n";
             $this->filesystem->append($folder . $this->logPrefix . "direct.log", $line);
         }
 
