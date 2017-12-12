@@ -1,4 +1,6 @@
 <?php
+set_time_limit(0);
+
 //set data
 $data={{data}};
 
@@ -16,7 +18,6 @@ $app->includeCore();
 class ExecutionCode extends \hodphp\core\Base
 {
         function execute(){
-
                 //Run the code in the right context
                 $paramData=$this->prepare();
 
