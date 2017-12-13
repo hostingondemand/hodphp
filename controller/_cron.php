@@ -41,11 +41,17 @@ class _cron extends Controller
         foreach ($crons as $cron) {
             $data = $this->filesystem->getArray($cron);
 
-            if($this->cache->pageCacheNeedRefresh($data['route'], $data['ttl'],$data['user']) && $data['cron']) {
+            if($this->cache->pageCacheNeedRefresh($data['route'], $data['settings'],$data['user']) && @$data['settings']['cron']) {
+
+                //start a fake user session
                 $this->auth->setup($data["user"]);
+
+                //run the cache
                 try {
                     Loader::loadAction($data['route']);
                 }catch(\Exception $ex){}
+
+                //undo the user fake user session
                 $this->auth->setup();
             }
         }

@@ -68,22 +68,57 @@ class Cache extends Lib
         ob_start();
     }
 
-    function pageCacheRecordSave($route, $ttl = false, $cron = false, $user = false)
+    function pageCacheRecordSave($route,$settings, $user = false)
     {
         $result = ob_get_contents();
+
+
+        $validUntil=0;
+        if($settings["ttl"]) {
+            $validUntil = time() + ($settings["ttl"] * 60);
+        }
+
+        if($settings["schedule"]){
+            $times=explode(" ",$settings["schedule"]);
+            $now=time();
+
+            $lowestTime=0;
+            $bestTime=0;
+            foreach($times as $time){
+                $time=trim($time);
+                $exp=explode(":",$time);
+                $hour = $exp[0];
+                $minutes=$exp[1];
+                $timeToday=mktime($hour,$minutes,0,date("m"),date("d"),date("Y"));
+                if($timeToday<$now && ($timeToday<$lowestTime||$lowestTime==0)){
+                    $lowestTime=$timeToday;
+                }
+
+                if($timeToday>$now && ($timeToday<$bestTime||$bestTime==0)){
+                    $bestTime=$timeToday;
+                }
+            }
+
+            if(!$bestTime){
+                $bestTime=$lowestTime+86400;
+            }
+            if($bestTime<$validUntil ||$validUntil==0){
+                $validUntil=$bestTime;
+            }
+        }
 
         $data = [
             'output' => $result,
             'route' => $route,
-            'cron' => $cron,
             'user'=>$user,
-            'validUntil' => time() + $ttl * 60,
+            'settings'=>$settings,
+            'validUntil' => $validUntil,
         ];
 
         $this->filesystem->writeArray('data/cache/pageCache_' . md5($user."_".print_r($route, true)) . '.php', $data);
     }
 
-    function pageCacheGetPage($route,$user)
+    function pageCacheGetPage($route,$settings,$user)
     {
         $file = 'data/cache/pageCache_' . md5($user."_".print_r($route, true)) . '.php';
         $result = $this->filesystem->getArray($file);
@@ -91,11 +126,10 @@ class Cache extends Lib
         echo $result['output'];
     }
 
-    function pageCacheNeedRefresh($route, $ttl = false,$user=false)
+    function pageCacheNeedRefresh($route, $settings, $user=false)
     {
         $file = 'data/cache/pageCache_' . md5($user."_".print_r($route, true)) . '.php';
         $result = $this->filesystem->getArray($file);
-
         if ($result['validUntil'] < time() || !$this->filesystem->exists($file)) {
             return true;
         }
