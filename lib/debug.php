@@ -34,11 +34,12 @@ class Debug extends Lib
 
         if($this->directLogging &&  $message["category"]!="file"){
             try {
-                if($this->auth && $this->auth->getUserName()){
-                    $details.="user: ".$this->auth->getUserName();
+                $details="";
+                if(@$this->auth && @$this->auth->getUserName()){
+                    $details.="user: ".@$this->auth->getUserName();
                 }
                 if($this->route){
-                    $details.=" route: ".implode("/", $this->route->getRoute());
+                    $details.=" route: ".implode("/", @$this->route->getRoute()?:[]);
                 }
 
             }catch(\Exception $exception){
