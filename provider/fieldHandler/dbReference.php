@@ -158,6 +158,15 @@ class DbReference extends BaseFieldHandler
         return $this->obj;
     }
 
+    function unload(){
+        $this->loaded=false;
+        if($this->obj) {
+            $this->obj->__unload();
+        }
+
+        $this->obj=null;
+    }
+
     function set($obj)
     {
         if($obj===false){

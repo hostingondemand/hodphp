@@ -244,6 +244,18 @@ class DbManyToMany extends BaseFieldHandler
         return $this->obj;
     }
 
+    function unload(){
+        $this->loaded=false;
+        if($this->obj) {
+            foreach($this->obj as $obj) {
+                $obj->__unload();
+            }
+        }
+
+        $this->obj=null;
+
+    }
+
     function cascadeAll()
     {
         $this->_cascadeSave = true;

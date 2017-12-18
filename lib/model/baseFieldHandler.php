@@ -36,6 +36,10 @@ abstract class BaseFieldHandler extends Lib
     function delete()
     {
     }
+
+    function unload(){
+
+    }
 }
 
 

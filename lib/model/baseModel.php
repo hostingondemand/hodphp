@@ -275,6 +275,18 @@ abstract class BaseModel extends Base
     function __equals($obj){
         return $this->__hash()==$obj->__hash();
     }
+
+    function __unload($handler=false){
+        if($handler){
+            $handlers=[$this->_fieldHandlers[$handler]];
+        }else{
+            $handlers=$this->_fieldHandlers;
+        }
+
+        foreach($handlers as $handler){
+            $handler->unload();
+        }
+    }
 }
 
 

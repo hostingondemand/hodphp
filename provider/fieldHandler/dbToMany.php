@@ -179,6 +179,18 @@ class DbToMany extends BaseFieldHandler
         return $result;
     }
 
+    function unload(){
+        $this->loaded=false;
+        if($this->obj) {
+            foreach($this->obj as $obj) {
+                $obj->__unload();
+            }
+        }
+
+        $this->obj=null;
+    }
+
+
     function get($inModel)
     {
         if (!$this->loaded) {
