@@ -52,6 +52,10 @@ class Address extends BaseHelper
             }
         }
 
+        if (strpos($suffix, '-') === 0) {
+            $suffix = substr($suffix, 1);
+        }
+
         return (object)array(
             "suffix"=>$suffix,
             "number" => $number,
