@@ -17,10 +17,16 @@ class Select extends Lib
     var $executed = null;
     var $model = null;
     var $_con;
+    var $_distinct;
 
     function __construct()
     {
 
+    }
+
+    function distinct(){
+        $this->_distinct=true;
+        return $this;
     }
 
     function ignoreParent()
