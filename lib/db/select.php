@@ -263,5 +263,16 @@ class Select extends Lib
         $result = $this->fetch();
         return @array_values($result)[0] ?: false;
     }
+
+    function getAllValues(){
+        $result=[];
+        $fetched=$this->fetchAll();
+        if(is_array($fetched)) {
+            foreach ($fetched as $fetch) {
+                $result[] = @array_values($fetch)[0] ?: false;
+            }
+        }
+        return $result;
+    }
 }
 
