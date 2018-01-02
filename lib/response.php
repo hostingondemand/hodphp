@@ -65,7 +65,7 @@ class Response extends \hodphp\core\Lib
 
     function write($string, $options = Array())
     {
-        ob_clean();
+        @ob_clean();
         echo $string;
     }
 
