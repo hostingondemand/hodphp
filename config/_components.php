@@ -4,5 +4,6 @@ return array(
     "provider.cronlog" => "file",
     "provider.mapping" => "annotation",
     "provider.route" => "query",
-    "provider.db" => "mysql"
+    "provider.db" => "mysql",
+    "provider.search"=>"db"
 );

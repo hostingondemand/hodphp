@@ -8,6 +8,7 @@ class Pagination extends Lib
     var $status=false;
     var $perPage;
     var $page;
+    var $pageCount;
 
     var $query;
 
@@ -33,6 +34,11 @@ class Pagination extends Lib
         $this->pageCount=false;
         $this->status=false;
         $this->query="";
+    }
+
+
+    function setResultCount($count){
+        $this->pageCount=ceil($count/$this->perPage);
     }
 
     function getPageCount(){

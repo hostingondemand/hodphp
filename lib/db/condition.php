@@ -17,6 +17,26 @@ class Condition extends Lib
         return $this;
     }
 
+
+
+    function isNull($field){
+        $this->parts[] = $this->connector . " " . $this->parse($field)." IS NULL";
+        $this->connector = " and ";
+        return $this;
+    }
+    function like($left, $right)
+    {
+        $this->parts[] = $this->connector . " " . $this->parse($left) . " LIKE " . $this->parse($right);
+        $this->connector = " and ";
+        return $this;
+    }
+
+    function notLike($left,$right){
+        $this->parts[] = $this->connector . " " . $this->parse($left) . " NOT LIKE " . $this->parse($right);
+        $this->connector = " and ";
+        return $this;
+    }
+
     //because or is reserved in php
 
     function parse($text)

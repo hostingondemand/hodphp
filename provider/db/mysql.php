@@ -1,6 +1,7 @@
 <?php
 namespace hodphp\provider\db;
 
+use hodphp\core\Base;
 use hodphp\core\Loader;
 use hodphp\lib\provider\baseprovider\BaseDbProvider;
 
@@ -17,7 +18,12 @@ class Mysql extends BaseDbProvider
 
 
     function createSelectQuery($from){
-        $pagination = $this->db->paginationInfo();
+        if($from->_noPagination){
+            $pagination=Loader::createInstance("pagination","lib/db")->instance;
+            $pagination->turnOff();
+        }else {
+            $pagination = $this->db->paginationInfo();
+        }
         $table = array_values($from->_table)[0];
         $alias = array_keys($from->_table)[0];
 

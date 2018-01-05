@@ -55,7 +55,7 @@ class Query extends BaseRouteProvider
             } else {
                 $url .= "?";
             }
-            $url .= $key . "=" . $val;
+            $url .= $key . "=" . urlencode($val);
             $i++;
         }
         return $url;
