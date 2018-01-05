@@ -32,8 +32,29 @@ class Mysql extends BaseDbProvider
             $from->where($alias . ".parent_id='" . $from->db->parent["id"] . "' && " . $alias . ".parent_module='" . $from->db->parent["module"] . "'");
         }
 
-        $queryString = "select ";
-        $pagination->query = "select count(*) as amount";
+
+        if($from->_distinct){
+            $queryString = "select distinct";
+            $pagination->query = "select count(distinct ";
+            if (count($from->_fields)) {
+                $i = 0;
+                foreach ($from->_fields as $falias => $field) {
+                    if ($i) {
+                        $pagination->query .= " , ";
+                    }
+                    $pagination->query .= "" . $from->handleFieldName($field) . "";
+                    $i++;
+                }
+            } else {
+                $pagination->query .= " * ";
+            }
+            $pagination->query.= ") as amount";
+        }else{
+            $queryString = "select ";
+            $pagination->query = "select count(*) as amount";
+        }
+
+
 
         //fields
         if (count($from->_fields)) {

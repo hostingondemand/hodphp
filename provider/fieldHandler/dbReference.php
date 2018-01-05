@@ -18,7 +18,10 @@ class DbReference extends BaseFieldHandler
     function fromAnnotation($parameters, $type, $field)
     {
         $mapping = $this->provider->mapping->default;
-        if (isset($parameters["model"])) {
+        if (isset($parameters["model"]) && $parameters["toTable"] ) {
+            $this->toModel($parameters["model"])
+                ->toTable($parameters["toTable"]);
+        }elseif(isset($parameters["model"])){
             $this->toTable($mapping->getTableForClass($parameters["model"]))
                 ->toModel($parameters["model"]);
         } else if (isset($parameters["toTable"])) {
@@ -29,7 +32,7 @@ class DbReference extends BaseFieldHandler
         if (isset($parameters["key"])) {
             $this->field($parameters["key"]);
         } else if (isset($parameters["model"])) {
-            $this->field($mapping->getTableForClass($parameters["model"]) . "_id");
+            $this->field($this->_toTable . "_id");
         }
 
         if (isset($parameters["cascade"])) {
@@ -152,7 +155,7 @@ class DbReference extends BaseFieldHandler
             } else {
                 $id = $inModel;
             }
-            $this->obj = $this->db->query("select * from " . $this->_toTable . " where id ='" . $id . "'")->fetchModel($this->_toModel, $this->_toModelNamespace);
+            $this->obj = $this->db->query("select * from `" . $this->_toTable . "` where id ='" . $id . "'")->fetchModel($this->_toModel, $this->_toModelNamespace);
             $this->loaded = true;
         }
         return $this->obj;

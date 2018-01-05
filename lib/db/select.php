@@ -19,10 +19,17 @@ class Select extends Lib
     var $model = null;
     var $_con;
     var $_noPagination;
+    var $_distinct;
+
 
     function __construct()
     {
 
+    }
+
+    function distinct(){
+        $this->_distinct=true;
+        return $this;
     }
 
     function ignoreParent()
@@ -273,6 +280,16 @@ class Select extends Lib
         $class = $exp[1];
         $namespace = $exp[0];
         return array("class"=>$class, "namespace"=>$namespace);
+    }
+    function getAllValues(){
+        $result=[];
+        $fetched=$this->fetchAll();
+        if(is_array($fetched)) {
+            foreach ($fetched as $fetch) {
+                $result[] = @array_values($fetch)[0] ?: false;
+            }
+        }
+        return $result;
     }
 }
 
