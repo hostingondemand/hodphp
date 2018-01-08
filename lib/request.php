@@ -16,6 +16,7 @@ class Request extends \hodphp\core\Lib
         $this->get = $this->initialize($_GET);
         $this->post = $this->initialize($_POST);
         $this->method = @$_SERVER['REQUEST_METHOD'] ?: 'GET';
+        $this->files=$this->initialize($_FILES);
     }
 
     private function initialize(&$var)
@@ -31,7 +32,7 @@ class Request extends \hodphp\core\Lib
         if($data) {
             return $this->http->parse($this->getHeaders(), $data, $assoc, $type);
         }elseif(count($this->post)>0){
-            return $this->post;
+            return array_merge($this->post,$this->files);
         }
         return $this->get;
     }
