@@ -13,7 +13,7 @@ class Condition extends Lib
     function eq($left, $right)
     {
         $this->parts[] = $this->connector . " " . $this->parse($left) . "=" . $this->parse($right);
-        $this->connector = " and ";
+        $this->connector = " AND ";
         return $this;
     }
 
@@ -21,19 +21,19 @@ class Condition extends Lib
 
     function isNull($field){
         $this->parts[] = $this->connector . " " . $this->parse($field)." IS NULL";
-        $this->connector = " and ";
+        $this->connector = " AND ";
         return $this;
     }
     function like($left, $right)
     {
         $this->parts[] = $this->connector . " " . $this->parse($left) . " LIKE " . $this->parse($right);
-        $this->connector = " and ";
+        $this->connector = " AND ";
         return $this;
     }
 
     function notLike($left,$right){
         $this->parts[] = $this->connector . " " . $this->parse($left) . " NOT LIKE " . $this->parse($right);
-        $this->connector = " and ";
+        $this->connector = " AND ";
         return $this;
     }
 
@@ -55,35 +55,35 @@ class Condition extends Lib
 
     function bOr()
     {
-        $this->connector = " or ";
+        $this->connector = " OR ";
         return $this;
     }
 
     function lteq($left, $right)
     {
         $this->parts[] = $this->connector . " " . $this->parse($left) . "<=" . $this->parse($right);
-        $this->connector = " and ";
+        $this->connector = " AND ";
         return $this;
     }
 
     function gteq($left, $right)
     {
         $this->parts[] = $this->connector . " " . $this->parse($left) . ">=" . $this->parse($right);
-        $this->connector = " and ";
+        $this->connector = " AND ";
         return $this;
     }
 
     function lt($left, $right)
     {
         $this->parts[] = $this->connector . " " . $this->parse($left) . "<" . $this->parse($right);
-        $this->connector = " and ";
+        $this->connector = " AND ";
         return $this;
     }
 
     function gt($left, $right)
     {
         $this->parts[] = $this->connector . " " . $this->parse($left) . ">" . $this->parse($right);
-        $this->connector = " and ";
+        $this->connector = " AND ";
         return $this;
     }
 
@@ -94,7 +94,7 @@ class Condition extends Lib
         foreach ($this->parts as $part) {
             if (is_object($part)) {
                 if ($i > 0) {
-                    $result .= " and ";
+                    $result .= " AND ";
                 }
                 $result .= " (" . $part->render() . ") ";
 
