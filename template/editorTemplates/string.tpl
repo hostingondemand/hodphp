@@ -1,1 +1,1 @@
-<input type="text" value="{{value}}" name="{{name}}" {{attributes}}>
+<input type="text" value="{{htmlEntities(value)}}" name="{{name}}" {{attributes}}>

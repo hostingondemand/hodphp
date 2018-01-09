@@ -2,6 +2,7 @@
 namespace hodphp\lib\db;
 
 use hodphp\core\Lib;
+use hodphp\core\Loader;
 
 class Select extends Lib
 {
@@ -17,7 +18,9 @@ class Select extends Lib
     var $executed = null;
     var $model = null;
     var $_con;
+    var $_noPagination;
     var $_distinct;
+
 
     function __construct()
     {
@@ -220,12 +223,9 @@ class Select extends Lib
     function fetchModel($class = false, $namespace = false)
     {
         if ($class == false) {
-            if (!$this->model) {
-                $this->provider->mapping->default->getModelForTable($this->_table);
-            }
-            $exp = explode("\\", $this->model);
-            $class = $exp[1];
-            $namespace = $exp[0];
+            $info=$this->getModelInfo();
+            $class=$info["class"];
+            $namespace=$info["namespace"];
         }
         if ($this->executed === null) {
             $this->execute();
@@ -236,12 +236,9 @@ class Select extends Lib
     function fetchAllModel($class = false, $namespace = false)
     {
         if ($class == false) {
-            if (!$this->model) {
-                $this->provider->mapping->default->getModelForTable($this->_table);
-            }
-            $exp = explode("\\", $this->model);
-            $class = $exp[1];
-            $namespace = $exp[0];
+            $info=$this->getModelInfo();
+            $class=$info["class"];
+            $namespace=$info["namespace"];
         }
 
         if ($this->executed === null) {
@@ -264,6 +261,26 @@ class Select extends Lib
         return @array_values($result)[0] ?: false;
     }
 
+    function ignorePagination(){
+        $this->_noPagination=true;
+    }
+
+    function search($keyword){
+        $instance=Loader::createInstance("search","lib/db");
+        $instance->initialize($keyword,$this);
+        return $instance;
+    }
+
+    public function getModelInfo()
+    {
+        if (!$this->model) {
+           $this->model=$this->provider->mapping->default->getModelForTable($this->_table);
+        }
+        $exp = explode("\\", $this->model);
+        $class = $exp[1];
+        $namespace = $exp[0];
+        return array("class"=>$class, "namespace"=>$namespace);
+    }
     function getAllValues(){
         $result=[];
         $fetched=$this->fetchAll();
