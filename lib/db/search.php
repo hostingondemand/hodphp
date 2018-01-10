@@ -17,7 +17,7 @@ class Search extends Lib
         $this->fields=$this->generateFieldsArray();
     }
 
-    function generateFieldsArray($fields){
+    function generateFieldsArray(){
         $modelInfo=$this->query->getModelInfo();
         $classInfo=Loader::getInfo($modelInfo["class"],"model".($modelInfo["namespace"]?"\\".$modelInfo["namespace"]:""));
         $class=$classInfo->type;
