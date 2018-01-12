@@ -18,7 +18,7 @@ class DbReference extends BaseFieldHandler
     function fromAnnotation($parameters, $type, $field)
     {
         $mapping = $this->provider->mapping->default;
-        if (isset($parameters["model"]) && $parameters["toTable"] ) {
+        if (isset($parameters["model"]) && isset($parameters["toTable"]) ) {
             $this->toModel($parameters["model"])
                 ->toTable($parameters["toTable"]);
         }elseif(isset($parameters["model"])){
