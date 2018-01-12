@@ -39,7 +39,8 @@ class Enum extends BaseFieldHandler
             $this->_data = $this->enum->{$this->_name}->{$value};
         }
 
-        $this->_model->_setInData($this->_inModelName, $this->_data->value);
+            $this->_model->_setInData($this->_inModelName, is_object($this->_data)?$this->_data->value:0);
+
     }
 
     function preSave()
