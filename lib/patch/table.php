@@ -67,7 +67,7 @@ class Table extends Lib
                 if ($i > 0) {
                     $query .= ",";
                 }
-                $query .= (!empty($action["newName"]) ? "CHANGE" : "MODIFY") . " `" . $action["name"] . "` " . (!empty($action["newName"]) ? "`". $action["newName"] . "` " : "") . $action["type"];
+                $query .= (!empty($action["newName"]) ? "CHANGE" : "MODIFY") . " `" . $action["name"] . "` " . (!empty($action["newName"]) ? "`" . $action["newName"] . "` " : "") . $action["type"];
                 $i++;
             }
         }
@@ -88,6 +88,12 @@ class Table extends Lib
                 if (!$this->indexExists($action['name'])) {
                     $this->db->query("CREATE INDEX `" . $action["name"] . "` ON `" . $prefix . $this->name . "` (`" . $action["name"] . "`);");
                 }
+            }
+        }
+
+        if (isset($this->actions["setEncoding"])) {
+            foreach ($this->actions["setEncoding"] as $action) {
+                $this->db->query("ALTER TABLE `" . $prefix . $this->name['table_name'] . "` CONVERT TO CHARACTER SET '" . $action["name"] ."'");
             }
         }
     }
@@ -114,6 +120,12 @@ class Table extends Lib
         if (isset($this->actions["addIndex"])) {
             foreach ($this->actions["addIndex"] as $action) {
                 $this->db->query("CREATE INDEX `" . $action["name"] . "` ON `" . $prefix . $this->name . "` (`" . $action["name"] . "`);");
+            }
+        }
+
+        if (isset($this->actions["setEncoding"])) {
+            foreach ($this->actions["setEncoding"] as $action) {
+                $this->db->query("ALTER TABLE `" . $prefix . $this->name['table_name'] . "` CONVERT TO CHARACTER SET '" . $action["name"] ."'");
             }
         }
 
@@ -172,6 +184,15 @@ class Table extends Lib
 
         $this->actions["addIndex"][] = array(
             "name" => $field,
+        );
+
+        return $this;
+    }
+
+    function setEncoding($encoding)
+    {
+        $this->actions["setEncoding"][] = array(
+            "name" => $encoding,
         );
 
         return $this;
