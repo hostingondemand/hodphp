@@ -67,7 +67,7 @@ class Table extends Lib
                 if ($i > 0) {
                     $query .= ",";
                 }
-                $query .= (!empty($action["newName"]) ? "CHANGE" : "MODIFY") . " `" . $action["name"] . "` " . (!empty($action["newName"]) ? "`". $action["newName"] . "` " : "") . $action["type"];
+                $query .= (!empty($action["newName"]) ? "CHANGE" : "MODIFY") . " `" . $action["name"] . "` " . (!empty($action["newName"]) ? "`" . $action["newName"] . "` " : "") . $action["type"];
                 $i++;
             }
         }
@@ -173,6 +173,15 @@ class Table extends Lib
         $this->actions["addIndex"][] = array(
             "name" => $field,
         );
+
+        return $this;
+    }
+
+    function setEncoding($encoding)
+    {
+        $prefix = $this->db->getPrefix();
+        $query = "ALTER TABLE `" . $prefix . $this->name['table_name'] . "` CONVERT TO CHARACTER SET '" . $encoding ."'";
+        $this->db->query($query);
 
         return $this;
     }
