@@ -90,6 +90,12 @@ class Table extends Lib
                 }
             }
         }
+
+        if (isset($this->actions["setEncoding"])) {
+            foreach ($this->actions["setEncoding"] as $action) {
+                $this->db->query("ALTER TABLE `" . $prefix . $this->name['table_name'] . "` CONVERT TO CHARACTER SET '" . $action["name"] ."'");
+            }
+        }
     }
 
     function create()
@@ -114,6 +120,12 @@ class Table extends Lib
         if (isset($this->actions["addIndex"])) {
             foreach ($this->actions["addIndex"] as $action) {
                 $this->db->query("CREATE INDEX `" . $action["name"] . "` ON `" . $prefix . $this->name . "` (`" . $action["name"] . "`);");
+            }
+        }
+
+        if (isset($this->actions["setEncoding"])) {
+            foreach ($this->actions["setEncoding"] as $action) {
+                $this->db->query("ALTER TABLE `" . $prefix . $this->name['table_name'] . "` CONVERT TO CHARACTER SET '" . $action["name"] ."'");
             }
         }
 
@@ -179,9 +191,9 @@ class Table extends Lib
 
     function setEncoding($encoding)
     {
-        $prefix = $this->db->getPrefix();
-        $query = "ALTER TABLE `" . $prefix . $this->name['table_name'] . "` CONVERT TO CHARACTER SET '" . $encoding ."'";
-        $this->db->query($query);
+        $this->actions["setEncoding"][] = array(
+            "name" => $encoding,
+        );
 
         return $this;
     }
