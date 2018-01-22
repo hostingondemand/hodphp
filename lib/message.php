@@ -6,6 +6,19 @@ use hodphp\core\Lib;
 class Message extends Lib
 {
 
+    function warning($message){
+        $this->send($message,"warning");
+    }
+
+
+    function success($message){
+        $this->send($message,"success");
+    }
+
+    function info($message){
+        $this->send($message,"info");
+    }
+
     function send($message, $type = "warning")
     {
         $messages = $this->getMessages();
