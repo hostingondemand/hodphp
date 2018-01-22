@@ -41,7 +41,7 @@ class FuncInputFor extends \hodphp\lib\template\AbstractFunction
 
         $attributes = "";
         if (isset($parameters[2])) {
-            $array = json_decode(str_replace("'", '"', $parameters[2]), true);
+            $array = json_decode(str_replace("'", '"', stripslashes($parameters[2])), true);
 
             if ($input["invalid"]) {
                 if (isset($array["class"])) {
