@@ -121,6 +121,7 @@ class Module extends BaseService
             $module["installed"] = $this->isInstalled($name);
         }
 
+
         if ($this->filesystem->exists("project/modules/" . $name)) {
             $module["parentFolder"] = "project/modules";
             $module["folder"] = "project/modules/" . $name;
@@ -128,6 +129,14 @@ class Module extends BaseService
             $module["parentFolder"] = "modules";
             $module["folder"] = "modules/" . $name;
         }
+
+        if($this->filesystem->exists("project/modules/" . $name) && $this->filesystem->exists("modules/" . $name) )
+        {
+            $module["installFolder"]= "modules/" . $name;
+        }else{
+            $module["installFolder"]=$module["folder"];
+        }
+
         $module["installed"] = $this->isInstalled($name);
 
         return $module;

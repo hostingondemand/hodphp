@@ -22,7 +22,7 @@ class MethodGit extends BaseModel
     function update($name)
     {
         $module = $this->service->module->getModuleByName($name);
-        $folder = $module["folder"];
+        $folder = $module["installFolder"];
         if (@$module["upstream"]) {
             $this->git->removeRemote($folder, "upstream");
             $this->git->addRemote($folder, "upstream", $module["upstream"]);
