@@ -14,8 +14,16 @@ class Serialization extends \hodphp\core\Lib
 
     function serialize($format, $data)
     {
-        $eventData["data"] = $this->LoadSerializer($format)->serialize($data);
-        return $eventData["data"];
+        $serializer=$this->LoadSerializer($format);
+
+        if($serializer) {
+            $eventData["data"] = $serializer->serialize($data);
+            return $eventData["data"];
+        }else{
+            $this->debug->error("Couldnt find serializer for format:". $format);
+            return false;
+        }
+
     }
 
     private function LoadSerializer($name)
@@ -25,7 +33,13 @@ class Serialization extends \hodphp\core\Lib
 
     function unserialize($format, $data, $assoc = false, $type = null)
     {
-        return $this->LoadSerializer($format)->unserialize($data, $assoc, $type);
+        $serializer=$this->LoadSerializer($format);
+        if($serializer) {
+            return $serializer->unserialize($data, $assoc, $type);
+        }else{
+            $this->debug->error("Couldnt find serializer for format:". $format);
+            return false;
+        }
     }
 
 }
