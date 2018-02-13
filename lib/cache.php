@@ -8,6 +8,7 @@ class Cache extends Lib
 {
 
     var $projectSize = 0;
+    var $cacheRoute;
 
     function __construct()
     {
@@ -78,6 +79,8 @@ class Cache extends Lib
             $validUntil = time() + ($settings["ttl"] * 60);
         }
 
+        $route=$this->getCorrectRoute($route,$settings);
+
         if($settings["schedule"]){
             $times=explode(" ",$settings["schedule"]);
             $now=time();
@@ -120,6 +123,8 @@ class Cache extends Lib
 
     function pageCacheGetPage($route,$settings,$user)
     {
+        $route=$this->getCorrectRoute($route,$settings);
+
         $file = 'data/cache/pageCache_' . md5($user."_".print_r($route, true)) . '.php';
         $result = $this->filesystem->getArray($file);
 
@@ -128,6 +133,8 @@ class Cache extends Lib
 
     function pageCacheNeedRefresh($route, $settings, $user=false)
     {
+        $route=$this->getCorrectRoute($route,$settings);
+
         $file = 'data/cache/pageCache_' . md5($user."_".print_r($route, true)) . '.php';
         $result = $this->filesystem->getArray($file);
         if ($result['validUntil'] < time() || !$this->filesystem->exists($file)) {
@@ -135,5 +142,17 @@ class Cache extends Lib
         }
 
         return false;
+    }
+
+    function getCorrectRoute($route,$settings){
+        if(@$settings["useFullRoute"]){
+            $fullRoute=$this->route->getRoute();
+            if(!empty($fullRoute)) {
+                $route = $fullRoute;
+            }elseif($this->cache->cacheRoute){
+                $route= $this->cache->cacheRoute;
+            }
+        }
+        return $route;
     }
 }
