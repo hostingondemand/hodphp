@@ -117,7 +117,7 @@ class Cache extends Lib
             'settings'=>$settings,
             'validUntil' => $validUntil,
         ];
-
+        $this->debug->info("saved cache" ,["route"=>$route,"settings"=>$settings,"user"=>$user], "cache");
         $this->filesystem->writeArray('data/cache/pageCache_' . md5($user."_".print_r($route, true)) . '.php', $data);
     }
 
