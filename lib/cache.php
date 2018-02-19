@@ -64,9 +64,18 @@ class Cache extends Lib
         $this->filesystem->mkdir("data/cache");
     }
 
-    function pageCacheRecordStart()
+    function pageCacheRecordStart($route,$settings,$user)
     {
         ob_start();
+        $route=$this->getCorrectRoute($route,$settings);
+
+        $file = 'data/cache/pageCache_' . md5($user."_".print_r($route, true)) . '.php';
+        if($this->filesystem->exists($file)) {
+            $result = $this->filesystem->getArray($file);
+            $result["locked"]=true;
+           $this->filesystem->writeArray($file,$result);
+        }
+
     }
 
     function pageCacheRecordSave($route,$settings, $user = false)
@@ -116,6 +125,7 @@ class Cache extends Lib
             'user'=>$user,
             'settings'=>$settings,
             'validUntil' => $validUntil,
+            'locked'=>false
         ];
         $this->debug->info("saved cache" ,["route"=>$route,"settings"=>$settings,"user"=>$user], "cache");
         $this->filesystem->writeArray('data/cache/pageCache_' . md5($user."_".print_r($route, true)) . '.php', $data);
@@ -137,7 +147,7 @@ class Cache extends Lib
 
         $file = 'data/cache/pageCache_' . md5($user."_".print_r($route, true)) . '.php';
         $result = $this->filesystem->getArray($file);
-        if ($result['validUntil'] < time() || !$this->filesystem->exists($file)) {
+        if (!$this->filesystem->exists($file) || ($result['validUntil'] < time() && !$result["locked"])) {
             return true;
         }
 
