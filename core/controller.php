@@ -37,7 +37,7 @@ class Controller extends Base
         if (!empty($cacheAnnotation)) {
             $annotation = $this->annotation->translate($cacheAnnotation[0]);
             if ($this->cache->pageCacheNeedRefresh($originalParams, $annotation->parameters,$this->auth->getUserId())) {
-                $this->cache->pageCacheRecordStart();
+                $this->cache->pageCacheRecordStart($originalParams, $annotation->parameters,$this->auth->getUserId());
             } else {
                 echo $this->cache->pageCacheGetPage($originalParams,$annotation->parameters,$this->auth->getUserId());
                 return false;
