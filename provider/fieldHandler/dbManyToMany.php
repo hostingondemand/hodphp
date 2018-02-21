@@ -1,4 +1,5 @@
 <?php
+
 namespace hodphp\provider\fieldHandler;
 
 use hodphp\lib\model\BaseFieldHandler;
@@ -17,48 +18,64 @@ class DbManyToMany extends BaseFieldHandler
     private $_updateList;
     private $_saveReset;
     private $_initArray;
+    static $settings;
 
     function fromAnnotation($parameters, $type, $field)
     {
-        $mapping = $this->provider->mapping->default;
-        if (isset($parameters["model"])) {
-            $this->toTable($mapping->getTableForClass($parameters["model"]))
-                ->toModel($parameters["model"]);
-        } else if (isset($parameters["toTable"])) {
-            $this->toModel($mapping->getModelForTable($parameters["toTable"]))
-                ->toTable($parameters["toTable"]);
-        }
-
-        if (isset($parameters["toKey"])) {
-            $this->toField($parameters["toKey"]);
-        } else if (isset($parameters["model"])) {
-            $this->toField($mapping->getTableForClass($parameters["model"]) . "_id");
-        }
-        if (isset($parameters["fromKey"])) {
-            $this->fromField($parameters["fromKey"]);
+        $key = md5(print_r([$parameters, $type, $field],true));
+        if (self::$settings[$key]) {
+            foreach (self::$settings[$key] as $name => $value) {
+                $this->name = $value;
+            }
         } else {
-            $this->fromField($mapping->getTableForClass($type) . "_id");
+            self::$settings[$key] = [];
+            $mapping = $this->provider->mapping->default;
+            if (isset($parameters["model"])) {
+                $this->toTable($mapping->getTableForClass($parameters["model"]))
+                    ->toModel($parameters["model"]);
+            } else if (isset($parameters["toTable"])) {
+                $this->toModel($mapping->getModelForTable($parameters["toTable"]))
+                    ->toTable($parameters["toTable"]);
+            }
+
+            if (isset($parameters["toKey"])) {
+                $this->toField($parameters["toKey"]);
+            } else if (isset($parameters["model"])) {
+                $this->toField($mapping->getTableForClass($parameters["model"]) . "_id");
+            }
+            if (isset($parameters["fromKey"])) {
+                $this->fromField($parameters["fromKey"]);
+            } else {
+                $this->fromField($mapping->getTableForClass($type) . "_id");
+            }
+
+            if (isset($parameters["glueTable"])) {
+                $this->glueTable($parameters["glueTable"]);
+            }
+
+            if (isset($parameters["updateList"])) {
+                if ($parameters["updateList"] == "all") {
+                    $this->updateList();
+                    $this->saveReset();
+                }
+                if ($parameters["updateList"] == "insert") {
+                    $this->updateList();
+                }
+            }
+
+            if (isset($parameters["cascade"])) {
+                if ($parameters["cascade"] == "all" || $parameters["cascade"] == "save") {
+                    $this->cascadeSave();
+                }
+            }
+
+
+            foreach (get_object_vars($this) as $name => $value) {
+                self::$settings[$key][$name] = $value;
+            }
+
         }
 
-        if (isset($parameters["glueTable"])) {
-            $this->glueTable($parameters["glueTable"]);
-        }
-
-        if (isset($parameters["updateList"])) {
-            if ($parameters["updateList"] == "all") {
-                $this->updateList();
-                $this->saveReset();
-            }
-            if ($parameters["updateList"] == "insert") {
-                $this->updateList();
-            }
-        }
-
-        if (isset($parameters["cascade"])) {
-            if ($parameters["cascade"] == "all" || $parameters["cascade"] == "save") {
-                $this->cascadeSave();
-            }
-        }
     }
 
     function toModel($model, $namespace = false)
@@ -194,8 +211,8 @@ class DbManyToMany extends BaseFieldHandler
     function delete()
     {
         //There is no support for cascade deleting because its potentially too dangerous.
-        if($this->_saveReset){
-            $this->db->query("delete from ". $this->_glueTable ." where `" . $this->_fromField . "` = '" . $this->_model->id . "'");
+        if ($this->_saveReset) {
+            $this->db->query("delete from " . $this->_glueTable . " where `" . $this->_fromField . "` = '" . $this->_model->id . "'");
         }
 
     }
@@ -244,15 +261,16 @@ class DbManyToMany extends BaseFieldHandler
         return $this->obj;
     }
 
-    function unload(){
-        $this->loaded=false;
-        if($this->obj) {
-            foreach($this->obj as $obj) {
+    function unload()
+    {
+        $this->loaded = false;
+        if ($this->obj) {
+            foreach ($this->obj as $obj) {
                 $obj->__unload();
             }
         }
 
-        $this->obj=null;
+        $this->obj = null;
 
     }
 
