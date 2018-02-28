@@ -20,8 +20,9 @@ abstract class BaseModel extends Base
                 $this->_data[$name] = $value;
             }
         }
+
         $this->setupFieldHandlers();
-        $this->_validationResult = $this->validation->validator("model")->validate($this)->toArray();
+        $this->_validationResult = ["success"=>true,"errors"=>[]];
     }
 
     function setupFieldHandlers()
@@ -36,23 +37,40 @@ abstract class BaseModel extends Base
         }
     }
 
+    static $annotatedFieldHandlers=[];
+
     function __fieldHandlers()
     {
-        $result = [];
-        $type = $this->_getType();
-        $vars = get_class_vars($type);
-        foreach ($vars as $var => $val) {
-            $annotations = $this->annotation->getAnnotationsForField($type, $var, "handle");
-            foreach ($annotations as $annotation) {
-                $annotation = $this->annotation->translate($annotation);
-                $handler = $this->model->fieldHandler($annotation->function);
-                if ($handler) {
-                    $handler->fromAnnotation($annotation->parameters, $this->_getType(), $var);
-                    $result[$var] = $handler;
+        static $modelLib=false;
+        static $annotationLib=false;
+        if(!$modelLib||!$annotationLib){
+            $modelLib=$this->model;
+            $annotationLib=$this->annotation;
+        }
+
+
+        $type=$this->_getType();
+        if(!isset(self::$annotatedFieldHandlers[$type])){
+            self::$annotatedFieldHandlers[$type]=array();
+            $type = $this->_getType();
+            $vars = get_class_vars($type);
+            foreach ($vars as $var => $val) {
+                $annotations = $annotationLib->getAnnotationsForField($type, $var, "handle");
+                foreach ($annotations as $annotation) {
+                    $annotation = $annotationLib->translate($annotation);
+                   self::$annotatedFieldHandlers[$type][]=["annotation"=>$annotation,"var"=>$var];
                 }
             }
         }
 
+        $result = [];
+        foreach(self::$annotatedFieldHandlers[$type] as $handlerInfo){
+            $handler = $modelLib->fieldHandler($handlerInfo["annotation"]->function);
+            if ($handler) {
+                $handler->fromAnnotation($handlerInfo["annotation"]->parameters, $type, $handlerInfo["var"]);
+                $result[$handlerInfo["var"]] = $handler;
+            }
+        }
         return $result;
     }
 

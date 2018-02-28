@@ -1,4 +1,5 @@
 <?php
+
 namespace hodphp\provider\fieldHandler;
 
 use hodphp\lib\model\BaseFieldHandler;
@@ -14,39 +15,51 @@ class DbReference extends BaseFieldHandler
     private $_fromTable;
     private $_cascadeDelete;
     private $_cascadeSave;
+    static $settings;
 
     function fromAnnotation($parameters, $type, $field)
     {
-        $mapping = $this->provider->mapping->default;
-        if (isset($parameters["model"]) && isset($parameters["toTable"]) ) {
-            $this->toModel($parameters["model"])
-                ->toTable($parameters["toTable"]);
-        }elseif(isset($parameters["model"])){
-            $this->toTable($mapping->getTableForClass($parameters["model"]))
-                ->toModel($parameters["model"]);
-        } else if (isset($parameters["toTable"])) {
-            $this->toModel($mapping->getModelForTable($parameters["toTable"]))
-                ->toTable($parameters["toTable"]);
-        }
+        $key = md5(print_r([$parameters, $type, $field],true));
+        if (self::$settings[$key]) {
+            foreach (self::$settings[$key] as $name => $value) {
+                $this->name = $value;
+            }
+        } else {
+            self::$settings[$key] = [];
+            $mapping = $this->provider->mapping->default;
+            if (isset($parameters["model"]) && isset($parameters["toTable"])) {
+                $this->toModel($parameters["model"])
+                    ->toTable($parameters["toTable"]);
+            } elseif (isset($parameters["model"])) {
+                $this->toTable($mapping->getTableForClass($parameters["model"]))
+                    ->toModel($parameters["model"]);
+            } else if (isset($parameters["toTable"])) {
+                $this->toModel($mapping->getModelForTable($parameters["toTable"]))
+                    ->toTable($parameters["toTable"]);
+            }
 
-        if (isset($parameters["key"])) {
-            $this->field($parameters["key"]);
-        } else if (isset($parameters["model"])) {
-            $this->field($this->_toTable . "_id");
-        }
+            if (isset($parameters["key"])) {
+                $this->field($parameters["key"]);
+            } else if (isset($parameters["model"])) {
+                $this->field($this->_toTable . "_id");
+            }
 
-        if (isset($parameters["cascade"])) {
-            if ($parameters["cascade"] == "all") {
-                $this->cascadeAll();
+            if (isset($parameters["cascade"])) {
+                if ($parameters["cascade"] == "all") {
+                    $this->cascadeAll();
+                }
+                if ($parameters["cascade"] == "delete") {
+                    $this->cascadeDelete();
+                }
+                if ($parameters["cascade"] == "save") {
+                    $this->cascadeSave();
+                }
+                if ($parameters["cascade"] == "reference") {
+                    $this->updateReference();
+                }
             }
-            if ($parameters["cascade"] == "delete") {
-                $this->cascadeDelete();
-            }
-            if ($parameters["cascade"] == "save") {
-                $this->cascadeSave();
-            }
-            if ($parameters["cascade"] == "reference") {
-                $this->updateReference();
+            foreach (get_object_vars($this) as $name => $value) {
+                self::$settings[$key][$name]=$value;
             }
         }
 
@@ -117,9 +130,9 @@ class DbReference extends BaseFieldHandler
 
             if ($this->_updateReference && is_object($this->obj)) {
                 $this->db->query(
-                    "update `" . $this->_fromTable . "` set `" . $this->_field . "`='" . ($this->obj->id?:"0") . "' where id='" . $this->_model->id . "'"
+                    "update `" . $this->_fromTable . "` set `" . $this->_field . "`='" . ($this->obj->id ?: "0") . "' where id='" . $this->_model->id . "'"
                 );
-            }elseif(!is_object($this->obj)){
+            } elseif (!is_object($this->obj)) {
                 $this->db->query(
                     "update `" . $this->_fromTable . "` set `" . $this->_field . "`='0' where id='" . $this->_model->id . "'"
                 );
@@ -129,9 +142,9 @@ class DbReference extends BaseFieldHandler
                 $thisGet = $this->get(false);
                 $this->db->saveModel($thisGet, $this->_toTable);
                 $this->db->query(
-                    "update `" . $this->_fromTable . "` set `" . $this->_field . "`='" . ($this->obj->id?:"0") . "' where id='" . $this->_model->id . "'"
+                    "update `" . $this->_fromTable . "` set `" . $this->_field . "`='" . ($this->obj->id ?: "0") . "' where id='" . $this->_model->id . "'"
                 );
-            }elseif(!is_object($this->obj)){
+            } elseif (!is_object($this->obj)) {
                 $this->db->query(
                     "update `" . $this->_fromTable . "` set `" . $this->_field . "`='0' where id='" . $this->_model->id . "'"
                 );
@@ -161,25 +174,25 @@ class DbReference extends BaseFieldHandler
         return $this->obj;
     }
 
-    function unload(){
-        $this->loaded=false;
-        if($this->obj) {
+    function unload()
+    {
+        $this->loaded = false;
+        if ($this->obj) {
             $this->obj->__unload();
         }
 
-        $this->obj=null;
+        $this->obj = null;
     }
 
     function set($obj)
     {
-        if($obj===false){
-            $this->loaded=true;
-        }
-        elseif(is_numeric($obj)){
+        if ($obj === false) {
+            $this->loaded = true;
+        } elseif (is_numeric($obj)) {
             $field = $this->_field;
-            $this->_model->$field=$obj;
-            $this->loaded=false;
-        }else {
+            $this->_model->$field = $obj;
+            $this->loaded = false;
+        } else {
             if (is_array($obj)) {
                 $this->obj = $this->get(false);
                 if (!$this->obj) {

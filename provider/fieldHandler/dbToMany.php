@@ -17,37 +17,52 @@ class DbToMany extends BaseFieldHandler
     private $_saveReset;
     private $_initArray;
 
+    static $settings;
+
     function fromAnnotation($parameters, $type, $field)
     {
-        $mapping = $this->provider->mapping->default;
-        if (isset($parameters["model"])) {
-            $this->toTable($mapping->getTableForClass($parameters["model"]))
-                ->toModel($parameters["model"]);
-        } else if (isset($parameters["toTable"])) {
-            $this->toModel($mapping->getModelForTable($parameters["toTable"]))
-                ->toTable($parameters["toTable"]);
-        }
-
-        if (isset($parameters["key"])) {
-            $this->field($parameters["key"]);
-        } else {
-            $this->field($mapping->getTableForClass($type). "_id");
-        }
-
-        if (isset($parameters["saveReset"]) && $parameters["saveReset"] == "true") {
-            $this->saveReset();
-        }
-
-        if (isset($parameters["cascade"])) {
-            if ($parameters["cascade"] == "all") {
-                $this->cascadeAll();
+        $key=md5(print_r([$parameters,$type,$field],true));
+        if(self::$settings[$key]){
+            foreach(self::$settings[$key] as $name=>$value){
+                $this->name=$value;
             }
-            if ($parameters["cascade"] == "delete") {
-                $this->cascadeDelete();
+        }else {
+            self::$settings[$key]=[];
+            $mapping = $this->provider->mapping->default;
+            if (isset($parameters["model"])) {
+                $this->toTable($mapping->getTableForClass($parameters["model"]))
+                    ->toModel($parameters["model"]);
+            } else if (isset($parameters["toTable"])) {
+                $this->toModel($mapping->getModelForTable($parameters["toTable"]))
+                    ->toTable($parameters["toTable"]);
             }
-            if ($parameters["cascade"] == "save") {
-                $this->cascadeSave();
+
+            if (isset($parameters["key"])) {
+                $this->field($parameters["key"]);
+            } else {
+                $this->field($mapping->getTableForClass($type) . "_id");
             }
+
+            if (isset($parameters["saveReset"]) && $parameters["saveReset"] == "true") {
+                $this->saveReset();
+            }
+
+            if (isset($parameters["cascade"])) {
+                if ($parameters["cascade"] == "all") {
+                    $this->cascadeAll();
+                }
+                if ($parameters["cascade"] == "delete") {
+                    $this->cascadeDelete();
+                }
+                if ($parameters["cascade"] == "save") {
+                    $this->cascadeSave();
+                }
+            }
+
+            foreach (get_object_vars($this) as $name => $value) {
+                self::$settings[$key][$name]=$value;
+            }
+
         }
 
     }

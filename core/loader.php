@@ -1,4 +1,5 @@
 <?php
+
 namespace hodphp\core;
 class Loader
 {
@@ -35,7 +36,7 @@ class Loader
     {
         self::setup();
 
-        $originalParams=$params;
+        $originalParams = $params;
         $paramsFrom = 0;
         $oldController = self::$controller;
         $oldAction = self::$action;
@@ -87,9 +88,9 @@ class Loader
 
         if ($controller->__authorize()) {
             $controller->__initialize();
-            if ($controller->__preActionCall($method,$params,$originalParams)) {
+            if ($controller->__preActionCall($method, $params, $originalParams)) {
                 call_user_func_array(Array($controller, $method), $params);
-                $controller->__postActionCall($method,$params,$originalParams);
+                $controller->__postActionCall($method, $params, $originalParams);
             }
         } else {
             $controller->__onAuthorizationFail();
@@ -132,10 +133,10 @@ class Loader
     {
         static $infoCache = array();
         $module = self::$module;
+        $infoKey = md5(print_r([$module, $class, $namespace], true));
         $info = false;
-        if (!isset($infoCache[$module][$class][$namespace])) {
+        if (!isset($infoCache[$infoKey])) {
             $namespace = str_replace("/", "\\", $namespace);
-
             if ($loadResult = self::loadClass($class, $namespace, $loadHard)) {
                 if (is_array($loadResult)) {
                     $prefix = $loadResult["prefix"];
@@ -151,24 +152,25 @@ class Loader
                     $className = $exp[1];
                 }
 
-                if(strpos("\\" . $namespace, $prefix) !== false) {
+                if (strpos("\\" . $namespace, $prefix) !== false) {
                     $fullclass = "\\" . $namespace . "\\" . ucfirst($classPrefix) . ucfirst($className);
                 } else {
                     $fullclass = $prefix . $namespace . "\\" . ucfirst($classPrefix) . ucfirst($className);
                 }
                 $info = (object)array("type" => $fullclass, "module" => $module);
             }
-            $infoCache[$module][$class][$namespace] = $info;
+            $infoCache[$infoKey] = $info;
         } else {
-            $info = $infoCache[$module][$class][$namespace];
+            return $infoCache[$infoKey];
         }
         return $info;
     }
 
     static function loadClass($class, $namespace, $loadHard = false)
     {
+        $namespaceFs = str_replace("\\", "/", $namespace);
         if ($loadHard) {
-            $exp = explode("/", str_replace("\\", "/", $namespace));
+            $exp = explode("/", $namespaceFs);
             if ($exp[0] == "project") {
                 $path = DIR_PROJECT;
                 unset($exp[0]);
@@ -178,8 +180,8 @@ class Loader
                 unset($exp[0]);
                 $namespacePath = implode("/", $exp);
             } else {
-                $path=DIR_FRAMEWORK;
-                $namespacePath = DIR_FRAMEWORK . str_replace("\\", "/", $namespace);
+                $path = DIR_FRAMEWORK;
+                $namespacePath = DIR_FRAMEWORK . $namespaceFs;
             }
 
             $path .= $namespacePath . "/" . lcfirst($class) . ".php";
@@ -192,7 +194,7 @@ class Loader
             }
         } else {
             if ($map = self::getClassmapFor($class, $namespace)) {
-                $path = DIR_MODULES . $map . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+                $path = DIR_MODULES . $map . "/" . $namespaceFs . "/" . lcfirst($class) . ".php";
                 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                     $path = str_replace("/", "\\", $path);
                 }
@@ -203,7 +205,7 @@ class Loader
             }
 
             if ($map = self::getNamespaceFor($namespace)) {
-                $path = DIR_MODULES . $map . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+                $path = DIR_MODULES . $map . "/" . $namespaceFs . "/" . lcfirst($class) . ".php";
                 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                     $path = str_replace("/", "\\", $path);
                 }
@@ -213,9 +215,9 @@ class Loader
                 }
             }
 
-            $expNamespace = explode("/", str_replace("\\", "/", $namespace));
+            $expNamespace = explode("/", $namespaceFs);
 
-            $path = DIR_PROJECT . "modules/" . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            $path = DIR_PROJECT . "modules/" . self::$module . "/" . $namespaceFs . "/" . lcfirst($class) . ".php";
             if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                 $path = str_replace("/", "\\", $path);
             }
@@ -229,7 +231,7 @@ class Loader
                 unset($expNamespace[0]);
                 $path .= implode("/", $expNamespace) . "/" . lcfirst($class) . ".php";
             } else {
-                $path = DIR_MODULES . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+                $path = DIR_MODULES . self::$module . "/" . $namespaceFs . "/" . lcfirst($class) . ".php";
             }
 
             if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
@@ -238,12 +240,12 @@ class Loader
             if (file_exists($path)) {
                 include_once($path);
 
-                if(strpos($path, 'developer') !== false) {
+                if (strpos($path, 'developer') !== false) {
                     return "\\hodphp\\modules\\" . self::$module . "\\";
                 } else {
-                    if(substr($namespace,0,7)=="modules"){
+                    if (substr($namespace, 0, 7) == "modules") {
 
-                        return array("prefix"=>"\\","module"=>$expNamespace[1]);
+                        return array("prefix" => "\\", "module" => $expNamespace[1]);
                     }
                     return "\\modules\\" . self::$module . "\\";
                 }
@@ -262,7 +264,7 @@ class Loader
                 }
 
             } else {
-                $path = DIR_FRAMEWORK . "/modules/" . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+                $path = DIR_FRAMEWORK . "/modules/" . self::$module . "/" . $namespaceFs . "/" . lcfirst($class) . ".php";
 
                 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                     $path = str_replace("/", "\\", $path);
@@ -275,7 +277,7 @@ class Loader
             }
 
 
-            $path = DIR_PROJECT . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            $path = DIR_PROJECT . $namespaceFs . "/" . lcfirst($class) . ".php";
             if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                 $path = str_replace("/", "\\", $path);
             }
@@ -289,7 +291,7 @@ class Loader
                 unset($expNamespace[0]);
                 $path .= implode("/", $expNamespace) . "/" . lcfirst($class) . ".php";;
             } else {
-                $path = DIR_PROJECT . self::$module . "/" . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+                $path = DIR_PROJECT . self::$module . "/" . $namespaceFs . "/" . lcfirst($class) . ".php";
             }
             if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                 $path = str_replace("/", "\\", $path);
@@ -299,7 +301,7 @@ class Loader
                 return "\\";
             }
 
-            $path = DIR_FRAMEWORK . str_replace("\\", "/", $namespace) . "/" . lcfirst($class) . ".php";
+            $path = DIR_FRAMEWORK . $namespaceFs . "/" . lcfirst($class) . ".php";
             if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                 $path = str_replace("/", "\\", $path);
             }
@@ -313,8 +315,8 @@ class Loader
 
     private static function getClassmapFor($class, $namespace)
     {
-        if (isset(self::$classMaps[str_replace("\\", "/", $namespace) . "/" . lcfirst($class)])) {
-            return self::$classMaps[str_replace("\\", "/", $namespace) . "/" . lcfirst($class)];
+        if (isset(self::$classMaps[$namespace . "/" . lcfirst($class)])) {
+            return self::$classMaps[$namespace . "/" . lcfirst($class)];
         } elseif (isset(self::$classMaps[str_replace("/", "\\", $namespace) . "\\" . lcfirst($class)])) {
             return self::$classMaps[str_replace("/", "\\", $namespace) . "\\" . lcfirst($class)];
         }
@@ -324,8 +326,8 @@ class Loader
     private static function getNamespaceFor($namespace)
     {
 
-        if (isset(self::$classMaps[str_replace("\\", "/", $namespace)])) {
-            return self::$classMaps[str_replace("\\", "/", $namespace)];
+        if (isset(self::$classMaps[$namespace])) {
+            return self::$classMaps[$namespace];
         } elseif (isset(self::$classMaps[str_replace("/", "\\", $namespace)])) {
             return self::$classMaps[str_replace("/", "\\", $namespace)];
         }

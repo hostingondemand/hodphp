@@ -8,6 +8,8 @@ use hodphp\core\Loader;
 class Model extends Lib
 {
 
+
+
     public function __construct()
     {
         Loader::loadClass("baseModel", "lib\\model");
@@ -16,10 +18,18 @@ class Model extends Lib
 
     public function __get($name)
     {
+        static $namespaceInstances=[];
         $result = Loader::createInstance($name, "model");
         if (!$result) {
-            $result = Loader::createInstance("modelNamespace", "lib\\model");
-            $result->init("model\\" . $name);
+            if(!isset($namespaceInstances[$name])) {
+                $namespaceInstances[$name] = Loader::createInstance("modelNamespace", "lib\\model");
+                if($namespaceInstances[$name]) {
+                    $namespaceInstances[$name]->init("model\\" . $name);
+                    $namespaceInstances[$name]=$namespaceInstances[$name]->instance;
+                }
+
+            }
+            $result=$namespaceInstances[$name];
         }
         return $result;
     }
