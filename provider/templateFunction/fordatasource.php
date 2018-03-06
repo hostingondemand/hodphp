@@ -30,7 +30,7 @@ class FuncFordatasource extends \hodphp\lib\template\AbstractFunction
 
             $result = "";
             //first check if the given variable is an array in the first place
-            if (is_array($datasource["data"])) {
+            if (is_array($datasource["data"])) { 
 
                 //loop through the items
                 foreach ($datasource["data"] as $val) {
