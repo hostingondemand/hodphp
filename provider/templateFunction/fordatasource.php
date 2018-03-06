@@ -9,6 +9,11 @@ class FuncFordatasource extends \hodphp\lib\template\AbstractFunction
     function call($parameters, $data, $content = "", $unparsed = Array(), $module = false)
     {
 
+        if(!@$parameters[2]) {
+            $skipDouble=true;
+        }
+        $activeElements = [];
+
         if (is_object($parameters[0])) {
             $datasource = $parameters[0]->getData();
 
@@ -40,7 +45,11 @@ class FuncFordatasource extends \hodphp\lib\template\AbstractFunction
                     }
 
 
-                    $result .= $this->interpreter->interpret($content, $this->template->dataHandler($data));
+                    $key=md5($data->_value."_".$data->_text);
+                    if(!$skipDouble || !isset($activeElements[$key])){
+                        $activeElements[$key]=true;
+                        $result .= $this->interpreter->interpret($content, $this->template->dataHandler($data));
+                    }
                 }
 
             }
