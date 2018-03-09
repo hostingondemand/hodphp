@@ -29,7 +29,7 @@ abstract class Serializer extends \hodphp\core\Lib
                         $newData[$key] = $_dataNew["data"];
                         $newDataAnnotated[$key] = $_dataNew["annotated"];
                     } else {
-                        $newData[$key] = utf8_encode($val);
+                        $newData[$key] = $this->helper->str->ensureUTF8($val);
                         $newDataAnnotated[$key] = array("annotations" => array(), "value" => $this->prepareObject($val));
                     }
                 }
@@ -39,7 +39,7 @@ abstract class Serializer extends \hodphp\core\Lib
                 if (!is_array($data["type"])) {
                     foreach ($data["data"] as $key => $value) {
                         if(is_string($value)||is_numeric($value)){
-                            $newData[$key]=utf8_encode($newData[$key]);
+                            $newData[$key]=$this->helper->str->ensureUTF8($newData[$key]);
                         }
                         $dkey = $key;
                         $annotations = $this->annotation->getAnnotationsForField($data["type"], $key, "serialize");

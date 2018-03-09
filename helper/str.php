@@ -40,15 +40,15 @@ class Str extends BaseHelper
 
         $result = "";
         $length = 9 - sqrt(rand(1, 91)) + 2;
-        $noVowel=0;
+        $noVowel = 0;
         for ($i = 0; $i < $length; $i++) {
-            if($noVowel==1 && rand(1,2)==2 || $noVowel==2){
+            if ($noVowel == 1 && rand(1, 2) == 2 || $noVowel == 2) {
                 if (rand(1, 4) == 1) {
                     $result .= $uncommonVowels[rand(0, count($uncommonVowels) - 1)];
-                }else{
+                } else {
                     $result .= $commonVowels[rand(0, count($commonVowels) - 1)];
                 }
-                $noVowel=0;
+                $noVowel = 0;
             } else {
                 if (rand(1, 80) == 80) {
                     $result .= $uncommon[rand(0, count($uncommon) - 1)];
@@ -105,6 +105,25 @@ class Str extends BaseHelper
         }
 
         return $string;
+    }
+
+
+    //implemented as recommended by w3: https://www.w3.org/International/questions/qa-forms-utf-8.en
+    function ensureUTF8($string)
+    {
+        if (preg_match('%^(?:
+              [\x09\x0A\x0D\x20-\x7E]            # ASCII
+            | [\xC2-\xDF][\x80-\xBF]             # non-overlong 2-byte
+            | \xE0[\xA0-\xBF][\x80-\xBF]         # excluding overlongs
+            | [\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}  # straight 3-byte
+            | \xED[\x80-\x9F][\x80-\xBF]         # excluding surrogates
+            | \xF0[\x90-\xBF][\x80-\xBF]{2}      # planes 1-3
+            | [\xF1-\xF3][\x80-\xBF]{3}          # planes 4-15
+            | \xF4[\x80-\x8F][\x80-\xBF]{2}      # plane 16
+        )*$%xs', $string))
+            return $string;
+        else
+            return iconv('CP1252', 'UTF-8', $string);
     }
 }
 
