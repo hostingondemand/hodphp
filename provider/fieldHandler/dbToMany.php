@@ -24,7 +24,7 @@ class DbToMany extends BaseFieldHandler
         $key=md5(print_r([$parameters,$type,$field],true));
         if(self::$settings[$key]){
             foreach(self::$settings[$key] as $name=>$value){
-                $this->name=$value;
+                $this->$name=$value;
             }
         }else {
             self::$settings[$key]=[];
