@@ -107,6 +107,8 @@ class Str extends BaseHelper
         return $string;
     }
 
+
+    //implemented as recommended by w3: https://www.w3.org/International/questions/qa-forms-utf-8.en
     function ensureUTF8($string)
     {
         if (preg_match('%^(?:
