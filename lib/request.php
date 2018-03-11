@@ -1,4 +1,5 @@
 <?php
+
 namespace hodphp\lib;
 class Request extends \hodphp\core\Lib
 {
@@ -16,7 +17,7 @@ class Request extends \hodphp\core\Lib
         $this->get = $this->initialize($_GET);
         $this->post = $this->initialize($_POST);
         $this->method = @$_SERVER['REQUEST_METHOD'] ?: 'GET';
-        $this->files=$this->initialize($_FILES);
+        $this->files = $this->initialize($_FILES);
     }
 
     private function initialize(&$var)
@@ -29,10 +30,10 @@ class Request extends \hodphp\core\Lib
     public function getData($assoc = false, $type = null)
     {
         $data = $this->getRawData();
-        if($data) {
+        if ($data) {
             return $this->http->parse($this->getHeaders(), $data, $assoc, $type);
-        }elseif(count($this->post)>0){
-            return array_merge($this->post,$this->files);
+        } elseif (count($this->post) > 0) {
+            return array_merge($this->post, $this->files);
         }
         return $this->get;
     }
@@ -44,16 +45,17 @@ class Request extends \hodphp\core\Lib
 
     public function getHeaders()
     {
-        if(function_exists("getallheaders")) {
+        if (function_exists("getallheaders")) {
             return array(array_change_key_case(getallheaders(), CASE_LOWER));
-        }else{
-            return array(array_change_key_case( $this->getallheadersFallback(), CASE_LOWER));
+        } else {
+            return array(array_change_key_case($this->getallheadersFallback(), CASE_LOWER));
         }
     }
 
-    function getallheadersFallback(){
+    function getallheadersFallback()
+    {
         static $headers = false;
-        if(!$headers) {
+        if (!$headers) {
             $headers = [];
             foreach ($_SERVER as $name => $value) {
                 if (substr($name, 0, 5) == 'HTTP_') {
@@ -61,8 +63,8 @@ class Request extends \hodphp\core\Lib
                 }
             }
         }
-        if(isset($_SERVER["CONTENT_TYPE"])){
-            $headers["content-type"]=$_SERVER["CONTENT_TYPE"];
+        if (isset($_SERVER["CONTENT_TYPE"])) {
+            $headers["content-type"] = $_SERVER["CONTENT_TYPE"];
         }
         return $headers;
     }
@@ -82,18 +84,41 @@ class Request extends \hodphp\core\Lib
         return "";
     }
 
-    public function getClientLanguage(){
+    public function getClientLanguage()
+    {
         return substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
     }
 
     public function getIp()
     {
-        return @$_SERVER['HTTP_CLIENT_IP'] ? $_SERVER['HTTP_CLIENT_IP'] : (@$_SERVER['HTTP_X_FORWARDE‌​D_FOR'] ? $_SERVER['HTTP_X_FORWARDED_FOR'] : (@$_SERVER['REMOTE_ADDR']?$_SERVER['REMOTE_ADDR']:"127.0.0.1"));
+        return @$_SERVER['HTTP_CLIENT_IP'] ? $_SERVER['HTTP_CLIENT_IP'] : (@$_SERVER['HTTP_X_FORWARDE‌​D_FOR'] ? $_SERVER['HTTP_X_FORWARDED_FOR'] : (@$_SERVER['REMOTE_ADDR'] ? $_SERVER['REMOTE_ADDR'] : "127.0.0.1"));
     }
 
-    public function getReferer()
+    public function getUrl()
     {
-        return $_SERVER["HTTP_REFERER"];
+        return (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+    }
+
+    public function skipReferer()
+    {
+        $session=\hodphp\core\core()->session;
+        $session->_fakeRefererCurrent = $this->getUrl();
+        $session->_fakeRefererReferer = $this->getReferer();
+    }
+
+    public function getReferer($real = false)
+    {
+        $session=\hodphp\core\core()->session;
+        if ($session->_fakeRefererReferer && !$real) {
+            if ($this->getReferer(true) == $session->_fakeRefererCurrent) {
+                return $session->_fakeRefererReferer;
+            } else {
+                return $this->getReferer(true);
+            }
+
+        } else {
+            return $_SERVER["HTTP_REFERER"];
+        }
     }
 
 }
