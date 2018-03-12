@@ -8,7 +8,7 @@ abstract class Serializer extends \hodphp\core\Lib
 
     abstract function unserialize($data, $assoc = false, $type = null);
 
-    function prepareObject($data)
+    function prepareObject($data,$fields=false)
     {
         $original=$data;
         try {
@@ -18,6 +18,16 @@ abstract class Serializer extends \hodphp\core\Lib
             $newData = $data["data"];
             if (is_array($data["type"])) {
                 foreach ($data["data"] as $key => $val) {
+
+                    if(!empty($fields) && !in_array($key,$fields)){
+                        if(array_key_exists($key,$newData)) {
+                            unset($newData[$key]);
+                        }
+                        if(array_key_exists($key,$newDataAnnotated)) {
+                            unset($newDataAnnotated[$key]);
+                        }
+                        continue;
+                    }
 
                     if ($data["type"][$key] != "array" && $data["type"][$key] != "value") {
                         $_data = array(
@@ -38,6 +48,15 @@ abstract class Serializer extends \hodphp\core\Lib
             if ($data["type"] != "array" && $data["type"] != "value") {
                 if (!is_array($data["type"])) {
                     foreach ($data["data"] as $key => $value) {
+                        if(!empty($fields) && !in_array($key,$fields)){
+                            if(array_key_exists($key,$newData)) {
+                                unset($newData[$key]);
+                            }
+                            if(array_key_exists($key,$newDataAnnotated)) {
+                                unset($newDataAnnotated[$key]);
+                            }
+                            continue;
+                        }
                         if(is_string($value)||is_numeric($value)){
                             $newData[$key]=$this->helper->str->ensureUTF8($newData[$key]);
                         }
@@ -196,14 +215,21 @@ abstract class Serializer extends \hodphp\core\Lib
     {
         $tempData = $data["original"]->$key;
 
+        $fields=false;
+        $annotations = $this->annotation->getAnnotationsForField($data["type"], $key, "serializeFields");
+        if(count($annotations)){
+            $translation=$this->annotation->translate($annotations[0]);
+            $fields=$translation->parameters;
+        }
+
         if (is_array($tempData)) {
             foreach ($tempData as $_key => $_value) {
                 if (is_object($_value)) {
-                    $tempData[$_key] = $this->prepareObject($_value);
+                    $tempData[$_key] = $this->prepareObject($_value,$fields);
                 }
             }
         } elseif (is_object($tempData)) {
-            $tempData = $this->prepareObject($tempData);
+            $tempData = $this->prepareObject($tempData,$fields);
             $tempData["isNotArray"] = true;
         }
 
