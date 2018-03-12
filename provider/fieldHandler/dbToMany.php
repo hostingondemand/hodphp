@@ -22,7 +22,7 @@ class DbToMany extends BaseFieldHandler
     function fromAnnotation($parameters, $type, $field)
     {
         $key=md5(print_r([$parameters,$type,$field],true));
-        if(self::$settings[$key]){
+        if(isset(self::$settings[$key])){
             foreach(self::$settings[$key] as $name=>$value){
                 $this->$name=$value;
             }
