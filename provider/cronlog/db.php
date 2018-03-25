@@ -26,7 +26,7 @@ class Db extends BaseCronlogProvider
         }
     }
 
-    function needCron($name, $interval = false)
+    function needCronInterval($name, $interval = false)
     {
         if (!$interval) {
             return true;
@@ -42,5 +42,17 @@ class Db extends BaseCronlogProvider
         }
 
         return true;
+    }
+
+    function needCronSchedule($name, $schedule)
+    {
+        $prefix = $this->db->getPrefix();
+        $query = $this->db->query("select lastRun from " . $prefix . "hodcron where cron='" . $name . "'");
+        $lastRun=false;
+        if ($query->numRows()) {
+            $row = $query->fetch();
+            $lastRun=$row['lastRun'];
+        }
+        return $this->helper->schedule->needUpdate($schedule,$lastRun);
     }
 }
