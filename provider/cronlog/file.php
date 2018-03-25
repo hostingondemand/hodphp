@@ -28,7 +28,7 @@ class File extends BaseCronlogProvider
         ];
     }
 
-    function needCron($name, $interval)
+    function needCronInterval($name, $interval)
     {
         if (!$interval) {
             return true;
@@ -37,6 +37,12 @@ class File extends BaseCronlogProvider
         $minTime = time() - $interval;
 
         return (isset($this->data[$name]) && $this->data[$name]["lastRun"] < $minTime) || !isset($this->data[$name]);
+    }
+
+    function needCronSchedule($name, $schedule)
+    {
+        $lastRun=@$this->data[$name]["lastRun"]?:0;
+        return $this->helper->schedule->needUpdate($schedule,$lastRun);
     }
 
     function __destruct()

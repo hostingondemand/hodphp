@@ -9,6 +9,7 @@ abstract class BaseCronlogProvider extends Lib
 
     abstract function cronFinished($name);
 
-    abstract function needCron($name, $interval);
+    abstract function needCronInterval($name, $interval);
+    abstract function needCronSchedule($name, $schedule);
 }
 
