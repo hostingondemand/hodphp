@@ -1,5 +1,6 @@
 <?php
 namespace hodphp\lib\model;
+
 use hodphp\core\Base;
 
 abstract class BaseModel extends Base
@@ -22,53 +23,59 @@ abstract class BaseModel extends Base
         }
 
         $this->setupFieldHandlers();
-        $this->_validationResult = ["success"=>true,"errors"=>[]];
+        $this->_validationResult = ["success" => true, "errors" => []];
     }
 
     function setupFieldHandlers()
     {
         $this->_fieldHandlers = $this->__fieldHandlers();
         if (is_array($this->_fieldHandlers)) {
-            foreach ($this->_fieldHandlers as $fieldName => $handler) {
-                $handler->init($this, $fieldName);
+            foreach ($this->_fieldHandlers as $fieldName => $field) {
+                if(is_object($field)){
+                    $field=[$field];
+                    $this->_fieldHandlers[$fieldName]=$field;
+                }
+                foreach($field as $handler) {
+                    $handler->init($this, $fieldName);
+                }
             }
         } else {
             $this->_fieldHandlers = [];
         }
     }
 
-    static $annotatedFieldHandlers=[];
+    static $annotatedFieldHandlers = [];
 
     function __fieldHandlers()
     {
-        static $modelLib=false;
-        static $annotationLib=false;
-        if(!$modelLib||!$annotationLib){
-            $modelLib=$this->model;
-            $annotationLib=$this->annotation;
+        static $modelLib = false;
+        static $annotationLib = false;
+        if (!$modelLib || !$annotationLib) {
+            $modelLib = $this->model;
+            $annotationLib = $this->annotation;
         }
 
 
-        $type=$this->_getType();
-        if(!isset(self::$annotatedFieldHandlers[$type])){
-            self::$annotatedFieldHandlers[$type]=array();
+        $type = $this->_getType();
+        if (!isset(self::$annotatedFieldHandlers[$type])) {
+            self::$annotatedFieldHandlers[$type] = array();
             $type = $this->_getType();
             $vars = get_class_vars($type);
             foreach ($vars as $var => $val) {
                 $annotations = $annotationLib->getAnnotationsForField($type, $var, "handle");
                 foreach ($annotations as $annotation) {
                     $annotation = $annotationLib->translate($annotation);
-                   self::$annotatedFieldHandlers[$type][]=["annotation"=>$annotation,"var"=>$var];
+                    self::$annotatedFieldHandlers[$type][] = ["annotation" => $annotation, "var" => $var];
                 }
             }
         }
 
         $result = [];
-        foreach(self::$annotatedFieldHandlers[$type] as $handlerInfo){
+        foreach (self::$annotatedFieldHandlers[$type] as $handlerInfo) {
             $handler = $modelLib->fieldHandler($handlerInfo["annotation"]->function);
             if ($handler) {
                 $handler->fromAnnotation($handlerInfo["annotation"]->parameters, $type, $handlerInfo["var"]);
-                $result[$handlerInfo["var"]] = $handler;
+                $result[$handlerInfo["var"]][] = $handler;
             }
         }
         return $result;
@@ -87,10 +94,13 @@ abstract class BaseModel extends Base
             $this->_debugOut();
             $this->goBackModule();
             return $result;
-        } elseif (isset($this->_fieldHandlers[$name])) {
+        } elseif (isset($this->_fieldHandlers[$name][0])) {
             $this->goMyModule();
             $this->_debugIn("Fieldhandler get", $name);
-            $result = $this->_fieldHandlers[$name]->get(isset($this->_data[$name]) ? $this->_data[$name] : false);
+            $result = isset($this->_data[$name]) ? $this->_data[$name] : false;
+            foreach ($this->_fieldHandlers[$name] as $handler) {
+                $result = $handler->get($result);
+            }
             $this->_debugOut();
             $this->goBackModule();
             return $result;
@@ -113,9 +123,15 @@ abstract class BaseModel extends Base
             $this->_debugIn("Dynamic set", $name);
             $this->$funcName($value);
             $this->_debugOut();
-        } elseif (isset($this->_fieldHandlers[$name])) {
+        } elseif (isset($this->_fieldHandlers[$name][0])) {
             $this->_debugIn("Fieldhandler set", $name);
-            $this->_fieldHandlers[$name]->set($value);
+
+
+            foreach ($this->_fieldHandlers[$name] as $handler) {
+                $handler->set($value);
+                $value = $handler->get($value);
+            }
+
             $this->_debugOut();
         } else {
             $this->_data[$name] = $value;
@@ -140,11 +156,11 @@ abstract class BaseModel extends Base
         return $result;
     }
 
-    function fromArray($data,$skipNull=false)
+    function fromArray($data, $skipNull = false)
     {
         if (is_array($data)) {
             foreach ($data as $key => $val) {
-                if(!($skipNull&&$val===null)) {
+                if (!($skipNull && $val === null)) {
                     $this->__set($key, $val);
                 }
             }
@@ -204,8 +220,10 @@ abstract class BaseModel extends Base
 
     function _preSave()
     {
-        foreach ($this->_fieldHandlers as $handler) {
-            $handler->preSave();
+        foreach ($this->_fieldHandlers as $field) {
+            foreach($field as $handler) {
+                $handler->preSave();
+            }
         }
 
     }
@@ -213,16 +231,20 @@ abstract class BaseModel extends Base
 
     function _saved()
     {
-        foreach ($this->_fieldHandlers as $handler) {
-            $handler->save();
+        foreach ($this->_fieldHandlers as $field) {
+            foreach($field as $handler) {
+                $handler->save();
+            }
         }
         $this->_invalidated = false;
     }
 
     function _deleted()
     {
-        foreach ($this->_fieldHandlers as $handler) {
-            $handler->delete();
+        foreach ($this->_fieldHandlers as $field) {
+            foreach ($field as $handler) {
+                $handler->delete();
+            }
         }
         $this->_invalidated = false;
     }
@@ -276,8 +298,8 @@ abstract class BaseModel extends Base
                 $annotations = $this->annotation->getAnnotationsForField($type, $var, "validate");
                 foreach ($annotations as $annotation) {
                     $annotation = $this->annotation->translate($annotation);
-                    $validator=$this->validation->validator($annotation->function);
-                    $required[$var] = $validator?$validator->isRequired():false;
+                    $validator = $this->validation->validator($annotation->function);
+                    $required[$var] = $validator ? $validator->isRequired() : false;
                 }
             }
             $this->__requiredFieldsCache = $required;
@@ -286,22 +308,25 @@ abstract class BaseModel extends Base
         return $this->__requiredFieldsCache;
     }
 
-    function __hash(){
-        return md5(print_r($this->_data,true));
+    function __hash()
+    {
+        return md5(print_r($this->_data, true));
     }
 
-    function __equals($obj){
-        return $this->__hash()==$obj->__hash();
+    function __equals($obj)
+    {
+        return $this->__hash() == $obj->__hash();
     }
 
-    function __unload($handler=false){
-        if($handler){
-            $handlers=[$this->_fieldHandlers[$handler]];
-        }else{
-            $handlers=$this->_fieldHandlers;
+    function __unload($handler = false)
+    {
+        if ($handler) {
+            $handlers = [$this->_fieldHandlers[$handler]];
+        } else {
+            $handlers = $this->_fieldHandlers;
         }
 
-        foreach($handlers as $handler){
+        foreach ($handlers as $handler) {
             $handler->unload();
         }
     }
