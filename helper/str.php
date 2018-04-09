@@ -90,18 +90,22 @@ class Str extends BaseHelper
     }
 
     /* Remove all HTML from supplied string, replace breaks with newlines */
-    function removeHTML($string, $exclude = '', $br2nl = false)
+    function removeHTML($string, $exclude = '', $reformat = false, $listChar = "*")
     {
-        if (strpos($exclude, '<br>') === false) {
-            $exclude .= '<br>';
+        if ($reformat) {
+            $exclude .= '<br><p><li>';
         }
 
         $string = html_entity_decode($string);
         $string = strip_tags($string, $exclude);
 
-        if ($br2nl) {
-            $replace = is_string($br2nl) ? $br2nl : "\n";
-            $string = str_replace(['<br>', '<br/>', '<br />'], $replace, $string);
+        if ($reformat) {
+            $newLine = is_string($reformat) ? $reformat : "\n";
+            $string = str_ireplace(['<br>', '<br/>', '<br />'], $newLine, $string);
+            $string = str_ireplace(['</p>', '<p />'], $newLine . $newLine, $string);
+            $string = str_ireplace('<p>', "" . $newLine, $string);
+            $string = str_ireplace("<li>", $listChar, $string);
+            $string = str_ireplace("</li>", $newLine, $string);
         }
 
         return $string;
