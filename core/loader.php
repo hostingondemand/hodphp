@@ -152,11 +152,27 @@ class Loader
                     $className = $exp[1];
                 }
 
+
                 if (strpos("\\" . $namespace, $prefix) !== false) {
-                    $fullclass = "\\" . $namespace . "\\" . ucfirst($classPrefix) . ucfirst($className);
+                    $fullNamespace = "\\" . $namespace . "\\";
+
                 } else {
-                    $fullclass = $prefix . $namespace . "\\" . ucfirst($classPrefix) . ucfirst($className);
+                    $fullNamespace = $prefix . $namespace . "\\";
                 }
+
+                if ($classPrefix && class_exists($fullNamespace . ucfirst($classPrefix) . ucfirst($className))) {
+                    $fullclass = $fullNamespace . ucfirst($classPrefix) . ucfirst($className);
+                } elseif (class_exists($fullNamespace . ucfirst($className))) {
+                    $fullclass = $fullNamespace . ucfirst($className);
+                } elseif (class_exists($fullNamespace . "_" . ucfirst($className))) {
+                    $fullclass = $fullNamespace . "_" . ucfirst($className);
+                }else{
+                    //fallback to avoid fatals
+                    //todo:good error logging on this to find better solutions
+                    $fullclass="\\hodphp\\core\\Base";
+                }
+
+
                 $info = (object)array("type" => $fullclass, "module" => $module);
             }
             $infoCache[$infoKey] = $info;

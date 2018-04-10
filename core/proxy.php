@@ -13,7 +13,8 @@ class Proxy
         $this->__setModule();
         $this->instance = new $fullclass();
         $this->instance->__module = $this->module;
-        if(!$this->instance->__turboMode){}
+        if (!$this->instance->__turboMode) {
+        }
         $this->__raise("classPostConstruct", array("class" => $fullclass), $fullclass);
         $this->__unsetModule();
     }
