@@ -9,12 +9,12 @@ class Cache extends Lib
 
     var $projectSize = 0;
     var $cacheRoute;
+    var $ready=false;
 
     function __construct()
     {
-        if (!$this->filesystem->exists("data/cache")) {
-            $this->filesystem->mkDir("data/cache");
-        }
+        $this->provider->cache->default->setup();
+        $this->ready=true;
     }
 
     function runCachedProject($key, $input, $function)
@@ -22,60 +22,61 @@ class Cache extends Lib
         if ($this->projectSize == 0) {
             $this->projectSize = $this->filesystem->codeSize("project");
         }
-        $filename = "data/cache/" . $key . "_" . md5(print_r($input, true)) . ".php";
-        $data = array();
-        if ($this->filesystem->exists($filename)) {
-            $data = $this->filesystem->getArray($filename);
-            if ($data["projectSize"] == $this->projectSize) {
-                return $data["content"];
-            }
+
+        $name =  $key . "_" . md5(print_r($input, true));
+
+        $entry=$this->provider->cache->default->loadEntry($name);
+        if (is_array($entry) && $entry["projectSize"] == $this->projectSize) {
+            return $entry["content"];
         }
+
 
         if ($this->debug->getLevel() <= 2) {
             $this->debug->info("Rebuilt cache for", array("key" => $key, "data" => $input), "cache");
         }
 
         $result = $function($input);
-        $data["projectSize"] = $this->projectSize;
-        $data["content"] = $result;
-        $this->filesystem->writeArray($filename, $data);
+        $entry["projectSize"] = $this->projectSize;
+        $entry["content"] = $result;
+        $this->provider->cache->default->saveEntry($name,$entry);
         return $result;
     }
 
     function runCached($key, $data, $minDate, $function)
     {
-        $filename = "data/cache/" . $key . "_" . md5(print_r($data, true)) . ".php";
-        if ($this->filesystem->exists($filename) && $this->filesystem->getModified($filename) > $minDate) {
-            return $this->filesystem->getArray($filename);
-        } else {
-            $this->debug->info("Rebuilt cache for", array("key" => $key, "data" => $data), "cache");
-            $result = $function($data);
-            $this->filesystem->writeArray($filename, $result);
-            return $result;
+        $name= $key . "_" . md5(print_r($data, true));
+
+        $entry=$this->provider->cache->default->loadEntry($name);
+        if(is_array($entry)&&$entry["creationDate"]>$minDate){
+            return $entry["content"];
         }
 
+        if ($this->debug->getLevel() <= 2) {
+            $this->debug->info("Rebuilt cache for", array("key" => $key, "data" => $input), "cache");
+        }
+
+        $result = $function($data);
+        $entry["creationDate"] = time();
+        $entry["content"] = $result;
+
+        $this->provider->cache->default->saveEntry($name,$entry);
+        return $result;
     }
 
     function destroy()
     {
         $this->debug->info("Destroyed cache", array("files" => "All"), "cache");
-
-        $this->filesystem->rm("data/cache");
-        $this->filesystem->mkdir("data/cache");
+        $this->provider->cache->default->clear();
     }
 
     function pageCacheRecordStart($route,$settings,$user)
     {
         ob_start();
         $route=$this->getCorrectRoute($route,$settings);
-
-        $file = 'data/cache/pageCache_' . md5($user."_".print_r($route, true)) . '.php';
-        if($this->filesystem->exists($file)) {
-            $result = $this->filesystem->getArray($file);
-            $result["locked"]=true;
-           $this->filesystem->writeArray($file,$result);
-        }
-
+        $name=md5($user."_".print_r($route, true));
+        $entry=$this->provider->cache->default->loadEntry($name);
+        $entry["locked"]=true;
+        $this->provider->cache->default->saveEntry($name,$entry);
     }
 
     function pageCacheRecordSave($route,$settings, $user = false)
@@ -107,15 +108,16 @@ class Cache extends Lib
             'locked'=>false
         ];
         $this->debug->info("saved cache" ,["route"=>$route,"settings"=>$settings,"user"=>$user], "cache");
-        $this->filesystem->writeArray('data/cache/pageCache_' . md5($user."_".print_r($route, true)) . '.php', $data);
+        $name="pageCache_".md5($user."_".print_r($route, true));
+        $this->provider->cache->default->saveEntry($name,$data);
     }
 
     function pageCacheGetPage($route,$settings,$user)
     {
         $route=$this->getCorrectRoute($route,$settings);
 
-        $file = 'data/cache/pageCache_' . md5($user."_".print_r($route, true)) . '.php';
-        $result = $this->filesystem->getArray($file);
+        $name = 'pageCache_' . md5($user."_".print_r($route, true));
+        $result = $this->provider->cache->default->loadEntry($name);
 
         echo $result['output'];
     }
@@ -124,12 +126,11 @@ class Cache extends Lib
     {
         $route=$this->getCorrectRoute($route,$settings);
 
-        $file = 'data/cache/pageCache_' . md5($user."_".print_r($route, true)) . '.php';
-        $result = $this->filesystem->getArray($file);
-        if (!$this->filesystem->exists($file) || ($result['validUntil'] < time() && !$result["locked"])) {
+        $name=md5($user."_".print_r($route, true));
+        $entry=$this->provider->cache->default->loadEntry($name);
+        if (!$entry || ($entry['validUntil'] < time() && !$entry["locked"])) {
             return true;
         }
-
         return false;
     }
 

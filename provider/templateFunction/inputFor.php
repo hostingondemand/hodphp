@@ -4,7 +4,7 @@ namespace hodphp\provider\templateFunction;
 use hodphp\core\Loader;
 use hodphp\lib\template\ExpressionParser;
 
-class FuncInputFor extends \hodphp\lib\template\AbstractFunction
+class InputFor extends \hodphp\lib\template\AbstractFunction
 {
 
     //make a text lowercase

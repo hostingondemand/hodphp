@@ -2,7 +2,7 @@
 
 namespace hodphp\provider\templateFunction;
 
-class FuncRenderHead extends \hodphp\lib\template\AbstractFunction
+class RenderHead extends \hodphp\lib\template\AbstractFunction
 {
 
     //make a text lowercase

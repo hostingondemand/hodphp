@@ -54,9 +54,13 @@ class Annotation extends \hodphp\core\Lib
         return array();
     }
 
+    //todo:get rid of this all together.. cache was nice on php 5.4 but 7+ its faster to just use reflection.
     function getAllAnnotations()
     {
         static $annotations = false;
+        if(!$this->cache->ready){
+            return false;
+        }
         if (!$annotations) {
             $annotations = $this->cache->runCachedProject(
                 "annotation_", array(),

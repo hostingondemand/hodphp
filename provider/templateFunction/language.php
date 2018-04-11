@@ -1,7 +1,7 @@
 <?php
 namespace hodphp\provider\templateFunction;
 
-class FuncLanguage extends \hodphp\lib\template\AbstractFunction
+class Language extends \hodphp\lib\template\AbstractFunction
 {
     function call($parameters, $data, $content = "", $unparsed = Array(), $module = false)
     {

@@ -1,7 +1,7 @@
 <?php
 namespace hodphp\provider\templateFunction;
 
-class FuncForeach extends \hodphp\lib\template\AbstractFunction
+class _Foreach extends \hodphp\lib\template\AbstractFunction
 {
     var $requireContent = true;
 

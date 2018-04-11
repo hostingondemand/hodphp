@@ -1,7 +1,7 @@
 <?php
 namespace hodphp\provider\templateFunction;
 
-class FuncUcfirst extends \hodphp\lib\template\AbstractFunction
+class Ucfirst extends \hodphp\lib\template\AbstractFunction
 {
 
     //make the first letter uppercase
