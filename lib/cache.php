@@ -92,7 +92,7 @@ class Cache extends Lib
 
         if($settings["schedule"]){
             $now=time();
-            $bestTime=$this->helper->schedule->nextUpdate($now);
+            $bestTime=$this->helper->schedule->nextUpdate($settings["schedule"],$now);
             if($bestTime<$validUntil ||$validUntil==0){
                 $validUntil=$bestTime;
             }

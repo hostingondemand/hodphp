@@ -6,7 +6,7 @@ use hodphp\lib\helper\BaseHelper;
 class Schedule extends BaseHelper
 {
 
-    function nextUpdate($schedule,$lastDone){
+    function nextUpdate($schedule,$lastDone=false){
         if(!$lastDone){
             $lastDone=mktime(0,0,0,date("m"),date("d"),date("Y"));
         }
