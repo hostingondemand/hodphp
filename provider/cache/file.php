@@ -7,7 +7,7 @@ class File extends BaseCacheProvider
     function setup()
     {
         if (!$this->filesystem->exists("data/cache")) {
-            $this->filesystem->mkDir("data/cache");
+            $this->filesystem->mkdir("data/cache");
         }
     }
 
