@@ -25,7 +25,9 @@ class DbManyToMany extends BaseFieldHandler
         $key = md5(print_r([$parameters, $type, $field],true));
         if (isset(self::$settings[$key])) {
             foreach (self::$settings[$key] as $name => $value) {
-                $this->$name = $value;
+                if(empty($this->$name)) {
+                    $this->$name = $value;
+                }
             }
         } else {
             self::$settings[$key] = [];
