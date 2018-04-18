@@ -22,7 +22,9 @@ class DbReference extends BaseFieldHandler
         $key = md5(print_r([$parameters, $type, $field],true));
         if (isset(self::$settings[$key])) {
             foreach (self::$settings[$key] as $name => $value) {
-                $this->$name = $value;
+                if(empty($this->$name)) {
+                    $this->$name = $value;
+                }
             }
         } else {
             self::$settings[$key] = [];
@@ -165,6 +167,9 @@ class DbReference extends BaseFieldHandler
             if ($this->_field) {
                 $field = $this->_field;
                 $id = $this->_model->$field;
+                if(!$id){
+                    return false;
+                }
             } else {
                 $id = $inModel;
             }
