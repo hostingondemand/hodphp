@@ -3,7 +3,7 @@ namespace hodphp\provider\templateFunction;
 
 use hodphp\core\Loader;
 
-class FuncRenderAction extends \hodphp\lib\template\AbstractFunction
+class RenderAction extends \hodphp\lib\template\AbstractFunction
 {
 
     //make a text lowercase

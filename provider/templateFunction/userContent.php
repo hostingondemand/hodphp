@@ -3,7 +3,7 @@ namespace hodphp\provider\templateFunction;
 
 use hodphp\core\Loader;
 
-class funcUserContent extends \hodphp\lib\template\AbstractFunction
+class UserContent extends \hodphp\lib\template\AbstractFunction
 {
     function call($parameters, $data, $content = "", $unparsed = Array(), $module = false)
     {

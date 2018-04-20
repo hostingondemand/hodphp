@@ -2,7 +2,7 @@
 
 namespace hodphp\provider\templateFunction;
 
-class FuncEvery extends \hodphp\lib\template\AbstractFunction
+class Every extends \hodphp\lib\template\AbstractFunction
 {
     var $requireContent = true;
 

@@ -1,7 +1,7 @@
 <?php
 namespace hodphp\provider\templateFunction;
 
-class FuncFor extends \hodphp\lib\template\AbstractFunction
+class _For extends \hodphp\lib\template\AbstractFunction
 {
     var $requireContent = true;
 
