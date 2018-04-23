@@ -62,6 +62,9 @@ class InputFor extends \hodphp\lib\template\AbstractFunction
 
         $input["attributes"] = $attributes;
 
+        $input["value"]=htmlspecialchars($input["value"]);
+        $input["name"]=htmlspecialchars($input["name"]);
+
         return $this->template->parseFile("editorTemplates/" . $input["type"], $input, "editorTemplates/string");
     }
 }
