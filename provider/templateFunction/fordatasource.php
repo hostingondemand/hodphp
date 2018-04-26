@@ -35,12 +35,12 @@ class Fordatasource extends \hodphp\lib\template\AbstractFunction
                 //loop through the items
                 foreach ($datasource["data"] as $val) {
                     if (is_object($val)) {
-                        $data->_value = $val->{$datasource["value"]};
-                        $data->_text = $val->{$datasource["text"]};
+                        $data->_value = htmlspecialchars($val->{$datasource["value"]});
+                        $data->_text = htmlspecialchars($val->{$datasource["text"]});
                         $data->_selected = isset($dataSelected[$val->{$datasource["value"]}]) && $dataSelected[$val->{$datasource["value"]}];
                     }elseif(is_array($val)){
-                        $data->_value = $val[$datasource["value"]];
-                        $data->_text = $val[$datasource["text"]];
+                        $data->_value = htmlspecialchars($val[$datasource["value"]]);
+                        $data->_text = htmlspecialchars($val[$datasource["text"]]);
                         $data->_selected = isset($dataSelected[$val[$datasource["value"]]]) && $dataSelected[$val[$datasource["value"]]];
                     }
 
