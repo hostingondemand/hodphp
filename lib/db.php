@@ -1,11 +1,11 @@
 <?php
+
 namespace hodphp\lib;
 
 use hodphp\core\Loader;
 
 class Db extends \hodphp\core\Lib
 {
-    var $parent = false;
     var $testMode = false;
     var $_provider;
     private $connections;
@@ -13,8 +13,10 @@ class Db extends \hodphp\core\Lib
 
     function __construct()
     {
-        $this->_provider=$this->provider->db->default;
+        $this->_provider = $this->provider->db->default;
         $this->connectConfigName("default");
+        //potential base model problem
+        $this->model;
     }
 
     function connectConfigName($name)
@@ -33,7 +35,7 @@ class Db extends \hodphp\core\Lib
 
     function connect($host, $username, $password, $db, $connection)
     {
-        return  call_user_func_array(array($this->_provider,"connect"),func_get_args());
+        return call_user_func_array(array($this->_provider, "connect"), func_get_args());
     }
 
     function getPrefix()
@@ -46,7 +48,7 @@ class Db extends \hodphp\core\Lib
 
     function numRows($query)
     {
-        return  call_user_func_array(array($this->_provider,"numRows"),func_get_args());
+        return call_user_func_array(array($this->_provider, "numRows"), func_get_args());
     }
 
     function fetchAll($query, $data = null)
@@ -59,7 +61,26 @@ class Db extends \hodphp\core\Lib
 
     function fetch($query)
     {
-        return  call_user_func_array(array($this->_provider,"fetch"),func_get_args());
+        return call_user_func_array(array($this->_provider, "fetch"), func_get_args());
+    }
+
+    function getModules($ignore = [])
+    {
+        static $modules = [];
+        $key = md5(print_r($ignore,true));
+        if (!isset($modules[$key])) {
+            $defaults = $this->provider->dbModule->defaults;
+            foreach ($ignore as $ignoreModule) {
+                foreach ($defaults as $key => $default) {
+                    if (strpos($default->_getType(), $ignoreModule) !== false) {
+                        unset($defaults[$key]);
+                    }
+                }
+            }
+            $modules[$key] = $defaults;
+        }
+        return $modules[$key];
+
     }
 
     function cast($data, $from, $to)
@@ -101,36 +122,36 @@ class Db extends \hodphp\core\Lib
 
     function escape($string, $con = "default")
     {
-        return  call_user_func_array(array($this->_provider,"escape"),func_get_args());
+        return call_user_func_array(array($this->_provider, "escape"), func_get_args());
     }
 
     //dummy for now thought this could be useful in the future or when errors occur
 
     function saveModel($model, $table = false, $ignoreParent = false, $con = "default")
     {
-        return  call_user_func_array(array($this->_provider,"saveModel"),func_get_args());
+        return call_user_func_array(array($this->_provider, "saveModel"), func_get_args());
     }
 
 
     function query($queryString, $connection = "default")
     {
-        return  call_user_func_array(array($this->_provider,"query"),func_get_args());
+        return call_user_func_array(array($this->_provider, "query"), func_get_args());
     }
 
 
     function lastId($connection = "default")
     {
-        return  call_user_func_array(array($this->_provider,"lastId"),func_get_args());
+        return call_user_func_array(array($this->_provider, "lastId"), func_get_args());
     }
 
     function deleteModel($model, $table = false)
     {
-        return  call_user_func_array(array($this->_provider,"deleteModel"),func_get_args());
+        return call_user_func_array(array($this->_provider, "deleteModel"), func_get_args());
     }
 
     function execute($queryString, $connection = "default", $params)
     {
-        return  call_user_func_array(array($this->_provider,"execute"),func_get_args());
+        return call_user_func_array(array($this->_provider, "execute"), func_get_args());
     }
 
     function refValues($arr)
@@ -145,23 +166,44 @@ class Db extends \hodphp\core\Lib
         return $arr;
     }
 
-    function select($table, $alias = false,$con = "default")
+    function select($table, $alias = false, $con = "default")
     {
         $select = Loader::createInstance("select", "lib/db");
-        $select->table($table, $alias,false,$con);
+        $select->table($table, $alias, false, $con);
         return $select;
     }
 
-    function selectModel($class, $namespace = "", $alias = false,$con = "default")
+    function selectModel($class, $namespace = "", $alias = false, $con = "default")
     {
         $select = Loader::createInstance("select", "lib/db");
-        $select->byModel($class, $namespace, $alias,$con);
+        $select->byModel($class, $namespace, $alias, $con);
         return $select;
     }
 
     function workWithParent($id, $module = false)
     {
         $this->parent = array("id" => $id, "module" => $module ? $module : Loader::$actionModule);
+    }
+
+    //rerouting for backwards compatibility
+    function __get($name)
+    {
+        if ($name == "parent") {
+            return $this->provider->dbModule->parentModule->parent;
+        }
+        if (isset($this->$name)) {
+            return $this->$name;
+        }
+        return parent::__get($name);
+    }
+
+    function __set($name, $value)
+    {
+        if ($name == "parent") {
+            $this->provider->dbModule->parentModule->parent = $value;
+        } else {
+            $this->$name = $value;
+        }
     }
 
     function startTestMode()
@@ -186,15 +228,17 @@ class Db extends \hodphp\core\Lib
         return $table;
     }
 
-    function paginationInfo(){
-        return Loader::getSingleton("pagination","lib/db");
+    function paginationInfo()
+    {
+        return Loader::getSingleton("pagination", "lib/db");
     }
 
-    function paginated($function,$perPage,$params=array()){
-        $pagination=$this->paginationInfo();
+    function paginated($function, $perPage, $params = array())
+    {
+        $pagination = $this->paginationInfo();
         $pagination->turnOn($perPage);
-        $result["result"]=$function($params);
-        $result["pagination"]=$pagination->pagination();
+        $result["result"] = $function($params);
+        $result["pagination"] = $pagination->pagination();
         $pagination->turnOff();
         return (object)$result;
 

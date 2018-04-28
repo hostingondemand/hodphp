@@ -30,10 +30,26 @@ class Providernamespace extends Lib
     {
         if ($name == "default") {
             $default = $this->getDefaultName($name);
+            if(is_array($default)){
+                $default=$default[0];
+            }
             if ($default) {
-                return Loader::getSingleton($default, "provider/" . $this->namespace);
+                return $this->$default;
             }
         }
+        if($name=="defaults"){
+            $result=[];
+            $default = $this->getDefaultName($name);
+            if(!is_array($default)){
+                $default=[$default];
+            }
+
+            foreach($default as $provider){
+                $result[]=$this->$provider;
+            }
+            return $result;
+        }
+
         return Loader::getSingleton($name, "provider/" . $this->namespace);
     }
 

@@ -16,6 +16,7 @@ class Table extends Lib
 
     function save()
     {
+
         if ($this->exists()) {
             $this->update();
         } else {
@@ -50,6 +51,13 @@ class Table extends Lib
 
     function update()
     {
+
+        foreach($this->db->getModules() as $module){
+            if($module->prePatchSave($this)){
+                return false;
+            }
+        }
+
         $prefix = $this->db->getPrefix();
         $query = "ALTER TABLE `" . $prefix . $this->name . "` ";
         $i = 0;
@@ -100,8 +108,14 @@ class Table extends Lib
 
     function create()
     {
+        foreach($this->db->getModules() as $module){
+            if($module->prePatchSave($this)){
+                return false;
+            }
+        }
+
         $prefix = $this->db->getPrefix();
-        $query = "CREATE TABLE `" . $prefix . $this->name . "` (`id` INT NOT NULL AUTO_INCREMENT, `parent_id` int, `parent_module` varchar(50)";
+        $query = "CREATE TABLE `" . $prefix . $this->name . "` (`id` INT NOT NULL AUTO_INCREMENT";
 
         if (isset($this->actions["addField"])) {
             foreach ($this->actions["addField"] as $action) {
@@ -113,9 +127,6 @@ class Table extends Lib
             $query .= " ENGINE = MEMORY;";
         }
         $this->db->query($query);
-
-        $this->actions['addIndex'][] = ['name' => 'parent_id'];
-        $this->actions['addIndex'][] = ['name' => 'parent_module'];
 
         if (isset($this->actions["addIndex"])) {
             foreach ($this->actions["addIndex"] as $action) {
