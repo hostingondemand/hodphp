@@ -1,7 +1,7 @@
 <?php
 namespace hodphp\provider\templateFunction;
 
-class FuncHasValue extends \hodphp\lib\template\AbstractFunction
+class HasValue extends \hodphp\lib\template\AbstractFunction
 {
     function call($parameters, $data, $content = "", $unparsed = Array(), $module = false)
     {

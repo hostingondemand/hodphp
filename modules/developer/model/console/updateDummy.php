@@ -200,7 +200,7 @@ class UpdateDummy extends BaseModel
         $r = new ReflectionMethod($cls, $methodName);
         $returnType= $r->getReturnType();
         if(!$returnType){
-            $annot=$this->annotation->getAnnotationsForMethod($cls, $methodName, $prefix = "return ", $uncached = true, $noClass = true);
+            $annot=$this->annotation->getAnnotationsForMethod($cls, $methodName, "return ",true);
             if(count($annot)){
                 $returnType= $annot[0];
             }

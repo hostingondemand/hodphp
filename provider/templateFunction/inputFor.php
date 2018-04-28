@@ -4,7 +4,7 @@ namespace hodphp\provider\templateFunction;
 use hodphp\core\Loader;
 use hodphp\lib\template\ExpressionParser;
 
-class FuncInputFor extends \hodphp\lib\template\AbstractFunction
+class InputFor extends \hodphp\lib\template\AbstractFunction
 {
 
     //make a text lowercase
@@ -61,6 +61,9 @@ class FuncInputFor extends \hodphp\lib\template\AbstractFunction
         }
 
         $input["attributes"] = $attributes;
+
+        $input["value"]=htmlspecialchars($input["value"]);
+        $input["name"]=htmlspecialchars($input["name"]);
 
         return $this->template->parseFile("editorTemplates/" . $input["type"], $input, "editorTemplates/string");
     }

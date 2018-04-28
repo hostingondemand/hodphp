@@ -1,7 +1,7 @@
 <?php
 namespace hodphp\provider\templateFunction;
 
-class FuncJson extends \hodphp\lib\template\AbstractFunction
+class Json extends \hodphp\lib\template\AbstractFunction
 {
     function call($parameters, $data, $content = "", $unparsed = Array(), $module = false)
     {
