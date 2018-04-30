@@ -115,13 +115,14 @@ class Annotation extends \hodphp\core\Lib
     {
         $annotationKey = md5("fieldsearch" . $class . "_" . $annotation);
         if (!isset($this->found[$annotationKey])) {
+            $result=[];
             $vars = get_class_vars($class);
             foreach ($vars as $key => $var) {
                 if ($this->fieldHasAnnotations($class, $key, $annotation)) {
                     $result[] = $key;
                 }
             }
-            $this->found[$annotationKey];
+            $this->found[$annotationKey]=$result;
         }
         return $this->found[$annotationKey];
     }
