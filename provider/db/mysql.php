@@ -28,9 +28,6 @@ class Mysql extends BaseDbProvider
         $alias = array_keys($from->_table)[0];
 
         $prefix = $this->db->getPrefix();
-        if ($from->db->parent && !$from->_ignoreParent) {
-            $from->where($alias . ".parent_id='" . $from->db->parent["id"] . "' && " . $alias . ".parent_module='" . $from->db->parent["module"] . "'");
-        }
 
 
         if($from->_distinct){
@@ -234,7 +231,7 @@ class Mysql extends BaseDbProvider
     }
 
 
-    function saveModel($model, $table = false, $ignoreParent = false, $con = "default")
+    function saveModel($model, $table = false, $ignoreParent = false, $con = "default",$ignoreModules=[])
     {
         if($model->hasMethod('_preSave')) {
             $model->_preSave();
@@ -244,9 +241,9 @@ class Mysql extends BaseDbProvider
         if (!$table) {
             $table = $this->provider->mapping->default->getTableForClass($model->_getType());
         }
-        if ($this->db->parent && !$ignoreParent) {
-            $model->parent_id = $this->db->parent["id"];
-            $model->parent_module = $this->db->parent["module"];
+        //left there for backwards compatibility
+        if($ignoreParent){
+            $ignoreModules[]="parentModule";
         }
 
         if (!isset($this->fields[$table])) {
@@ -254,11 +251,11 @@ class Mysql extends BaseDbProvider
         }
 
         if ($model->id) {
-            $this->updateModel($model, $table, $con);
+            $this->updateModel($model, $table, $con,$ignoreModules);
             $mode = "update";
             $id = $this->db->lastId();
         } else {
-            $this->insertModel($model, $table, $con);
+            $this->insertModel($model, $table, $con,$ignoreModules);
             $mode = "insert";
             $id = $model->id;
         }
@@ -266,12 +263,17 @@ class Mysql extends BaseDbProvider
         return array("mode" => $mode, "id" => $id);
     }
 
-    function updateModel($model, $table, $con)
+    function updateModel($model, $table, $con,$ignoreModules)
     {
         $prefix = $this->db->getPrefix();
         if ((method_exists($model, "_isInvalidated") && $model->_isInvalidated()) || !method_exists($model, "_isInvalidated")) {
             $query = "update `" . $prefix . $table . "` set ";
             $data = $model->toArray();
+            foreach($this->db->getModules($ignoreModules) as $module){
+                if($module->instance->preSaveData($data)){
+                    return false;
+                }
+            }
             $i = 0;
             foreach ($this->fields[$table] as $field) {
                 $fieldName = $field["Field"];
@@ -315,11 +317,16 @@ class Mysql extends BaseDbProvider
         return $result;
     }
 
-    function insertModel($model, $table, $con)
+    function insertModel($model, $table, $con,$ignoreModules)
     {
         $prefix = $this->db->getPrefix();
         $query = "insert into `" . $prefix . $table . "` set id=null";
         $data = $model->toArray();
+        foreach($this->db->getModules($ignoreModules) as $module){
+            if($module->instance->preSaveData($data)){
+                return false;
+            }
+        }
         foreach ($this->fields[$table] as $field) {
             $fieldName = $field["Field"];
             if (isset($data[$fieldName]) && !is_array($data[$fieldName]) && !is_array($fieldName) && $fieldName != "id") {
@@ -339,8 +346,14 @@ class Mysql extends BaseDbProvider
         return MySqli_Insert_Id($this->connections[$connection]);
     }
 
-    function deleteModel($model, $table = false)
+    function deleteModel($model, $table = false,$ignoreModules=[])
     {
+        foreach($this->db->getModules($ignoreModules) as $module){
+            if($module->instance->preDeleteModel($model,$table)){
+                return false;
+            }
+        }
+
         if (!$table) {
             $table = $this->provider->mapping->default->getTableForClass($model->_getType());
         }

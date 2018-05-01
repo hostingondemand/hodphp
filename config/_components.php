@@ -6,5 +6,6 @@ return array(
     "provider.route" => "query",
     "provider.db" => "mysql",
     "provider.search"=>"db",
+    "provider.dbModule"=>["parentModule"], //for backwards compatibility
     "provider.cache"=>"file"
 );

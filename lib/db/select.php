@@ -1,4 +1,5 @@
 <?php
+
 namespace hodphp\lib\db;
 
 use hodphp\core\Lib;
@@ -14,7 +15,7 @@ class Select extends Lib
     var $_group = array();
     var $_limit = 0;
     var $_offset = 0;
-    var $_ignoreParent = false;
+    var $_ignoredModules = [];
     var $executed = null;
     var $model = null;
     var $_con;
@@ -27,30 +28,38 @@ class Select extends Lib
 
     }
 
-    function distinct(){
-        $this->_distinct=true;
+    function distinct()
+    {
+        $this->_distinct = true;
         return $this;
+    }
+
+    function ignoreModule($name)
+    {
+        $this->_ignoredModules[] = $name;
     }
 
     function ignoreParent()
     {
-        $this->_ignoreParent = true;
+        $this->ignoreModule("parentModule");
         return $this;
     }
+
     /**
      * @return \hodphp\lib\db\Select
      */
-    function byModel($model, $namespace, $alias = false,$con = "default")
+    function byModel($model, $namespace, $alias = false, $con = "default")
     {
         $this->model = $namespace . "\\" . $model;
         $table = $this->db->tableForModel($model, $namespace);
-        $this->table($table, $alias,$con);
+        $this->table($table, $alias, $con);
         return $this;
     }
+
     /**
      * @return \hodphp\lib\db\Select
      */
-    function table($table, $alias = false, $ignoreModel = false,$con = "default")
+    function table($table, $alias = false, $ignoreModel = false, $con = "default")
     {
         if (!$ignoreModel) {
             $this->model = $this->provider->mapping->default->getModelForTable($table);
@@ -63,10 +72,11 @@ class Select extends Lib
         }
 
         $this->_table = $table;
-        $this->_con=$con;
+        $this->_con = $con;
         return $this;
 
     }
+
     /**
      * @return \hodphp\lib\db\Select
      */
@@ -85,6 +95,7 @@ class Select extends Lib
 
         return $this;
     }
+
     /**
      * @return \hodphp\lib\db\Select
      */
@@ -94,6 +105,7 @@ class Select extends Lib
         $this->join($table, $onLeft, $onRight, $alias);
         return $this;
     }
+
     /**
      * @return \hodphp\lib\db\Select
      */
@@ -115,6 +127,7 @@ class Select extends Lib
 
         return $this;
     }
+
     /**
      * @return \hodphp\lib\db\Select
      */
@@ -134,6 +147,7 @@ class Select extends Lib
 
         return $this;
     }
+
     /**
      * @return \hodphp\lib\db\Select
      */
@@ -153,6 +167,7 @@ class Select extends Lib
 
         return $this;
     }
+
     /**
      * @return \hodphp\lib\db\Select
      */
@@ -163,6 +178,7 @@ class Select extends Lib
 
         return $this;
     }
+
     /**
      * @return \hodphp\lib\db\QueryResult[]
      */
@@ -177,14 +193,22 @@ class Select extends Lib
     function execute()
     {
 
+        foreach ($this->db->getModules($this->_ignoredModules) as $module) {
+            if($module->preFetch($this)){
+                return false;
+            }
+        }
+
         $queryString = $this->getQueryString();
-        $this->executed = $this->db->query($queryString,$this->_con);
+        $this->executed = $this->db->query($queryString, $this->_con);
     }
 
     function getQuerystring()
     {
-       return $this->db->_provider->createSelectQuery($this);
+
+        return $this->db->_provider->createSelectQuery($this);
     }
+
     /**
      * @return \hodphp\lib\db\Select
      */
@@ -209,6 +233,7 @@ class Select extends Lib
         $name = implode(".", $corrected);
         return $name;
     }
+
     /**
      * @return \hodphp\lib\db\QueryResult
      */
@@ -223,9 +248,9 @@ class Select extends Lib
     function fetchModel($class = false, $namespace = false)
     {
         if ($class == false) {
-            $info=$this->getModelInfo();
-            $class=$info["class"];
-            $namespace=$info["namespace"];
+            $info = $this->getModelInfo();
+            $class = $info["class"];
+            $namespace = $info["namespace"];
         }
         if ($this->executed === null) {
             $this->execute();
@@ -236,9 +261,9 @@ class Select extends Lib
     function fetchAllModel($class = false, $namespace = false)
     {
         if ($class == false) {
-            $info=$this->getModelInfo();
-            $class=$info["class"];
-            $namespace=$info["namespace"];
+            $info = $this->getModelInfo();
+            $class = $info["class"];
+            $namespace = $info["namespace"];
         }
 
         if ($this->executed === null) {
@@ -261,30 +286,34 @@ class Select extends Lib
         return @array_values($result)[0] ?: false;
     }
 
-    function ignorePagination(){
-        $this->_noPagination=true;
+    function ignorePagination()
+    {
+        $this->_noPagination = true;
     }
 
-    function search($keyword){
-        $instance=Loader::createInstance("search","lib/db");
-        $instance->initialize($keyword,$this);
+    function search($keyword)
+    {
+        $instance = Loader::createInstance("search", "lib/db");
+        $instance->initialize($keyword, $this);
         return $instance;
     }
 
     public function getModelInfo()
     {
         if (!$this->model) {
-           $this->model=$this->provider->mapping->default->getModelForTable($this->_table);
+            $this->model = $this->provider->mapping->default->getModelForTable($this->_table);
         }
         $exp = explode("\\", $this->model);
         $class = $exp[1];
         $namespace = $exp[0];
-        return array("class"=>$class, "namespace"=>$namespace);
+        return array("class" => $class, "namespace" => $namespace);
     }
-    function getAllValues(){
-        $result=[];
-        $fetched=$this->fetchAll();
-        if(is_array($fetched)) {
+
+    function getAllValues()
+    {
+        $result = [];
+        $fetched = $this->fetchAll();
+        if (is_array($fetched)) {
             foreach ($fetched as $fetch) {
                 $result[] = @array_values($fetch)[0] ?: false;
             }
