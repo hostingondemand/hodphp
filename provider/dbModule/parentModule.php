@@ -12,7 +12,7 @@ class parentModule extends BaseDbModuleProvider
 
     function preFetch($query)
     {
-        $alias = array_values($query->_table)[0];
+        $alias = array_keys($query->_table)[0];
         if ($this->parent && $this->parent["id"] && $this->parent["module"]) {
             $query->where($alias . ".parent_id='" . $this->parent["id"] . "' && " . $alias . ".parent_module='" . $this->parent["module"] . "'");
         }
