@@ -18,7 +18,7 @@ class SoftDelete extends BaseDbModuleProvider
 
     function preFetch($query)
     {
-        $alias = array_values($query->_table)[0];
+        $alias = array_keys($query->_table)[0];
         $query->where($alias . ".deleted!='1' || ".$alias.".deleted IS NULL");
     }
 
