@@ -13,7 +13,9 @@ class parentModule extends BaseDbModuleProvider
     function preFetch($query)
     {
         $alias = array_values($query->_table)[0];
-        $query->where($alias . ".parent_id='" . $this->parent["id"] . "' && " . $alias . ".parent_module='" . $this->parent["module"] . "'");
+        if ($this->parent && $this->parent["id"] && $this->parent["module"]) {
+            $query->where($alias . ".parent_id='" . $this->parent["id"] . "' && " . $alias . ".parent_module='" . $this->parent["module"] . "'");
+        }
     }
 
     function prePatchSave($table)
@@ -24,9 +26,9 @@ class parentModule extends BaseDbModuleProvider
 
     function preSaveData(&$data)
     {
-        if(!$data["id"] && $this->parent){
-            $data["parent_id"]=$this->parent["id"];
-            $data["parent_module"]=$this->parent["module"];
+        if (!$data["id"] && $this->parent) {
+            $data["parent_id"] = $this->parent["id"];
+            $data["parent_module"] = $this->parent["module"];
         }
 
     }
