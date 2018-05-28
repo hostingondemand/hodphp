@@ -8,28 +8,44 @@ class CSV extends Serializer
 {
     function serialize($data)
     {
-        $data = $this->prepareObject($data);
-        $this->arrayToCsv($data["data"], $out);
-        return $out;
+        if (is_object($data)) {
+            $data = $this->prepareObject($data);
+            foreach ($data["annotated"] as $field => $value) {
+                if (isset($value["_annotations"]["mainData"])) {
+                    return $this->arrayToCsv($data["data"][$field], $value["_annotations"]);
+                }
+            }
+        } elseif (is_array($data)) {
+            return $this->arrayToCsv($data,[]);
+        }
+
+        return false;
     }
 
-    function arrayToCsv($data = [], &$target = '', $delimiter = ',')
+    function arrayToCsv($data, $annotations = [])
     {
-        if (is_array($data)) {
-            $target = join(',', array_keys($data[0])) . "\n";
-
-            foreach ($data as &$row) {
-                foreach ($row as $value) {
-                    if (strpos($value, '"') !== false) {
-                        $value = '"' . str_replace('"', '""', $value) . '"';
-                    } elseif (strpos($value, ' ') !== false || strpos($value, "\n") !== false || strpos($value, "\r\n") !== false) {
-                        $value = '"' . $value . '"';
-                    }
-                    $target .= $value . $delimiter;
-                }
-                $target = substr($target, 0, -1) . "\n";
+        if($annotations["header"]){
+            $header=[];
+            foreach($data[0] as $key=>$val){
+                $header[$key]=$key;
             }
+            array_unshift($data,$header);
         }
+        $delimiter=isset($annotations["delimiter"])?$annotations["delimiter"]->parameters[0]:",";
+        $escape=isset($annotations["escape"])?$annotations["escape"]->parameters[0]:"\\";
+        $enclosure=isset($annotations["enclosure"])?$annotations["enclosure"]->parameters[0]:"'";
+
+        $stream=fopen("php://memory","w+");
+        foreach($data as $row){
+            fputcsv($stream,$row,$delimiter,$enclosure,$escape);
+        }
+        rewind($stream);
+        while(!feof($stream)) {
+            $result.=fgets($stream).PHP_EOL;
+        }
+        return $result;
+
+
     }
 
     function unserialize($data, $assoc = false, $type = null)
@@ -38,35 +54,18 @@ class CSV extends Serializer
         return $out;
     }
 
-    function csvToArray($file = '', &$target = [], $delimiter = ',', $enclosure = '"')
+    function csvToArray($data = '', &$target = [], $delimiter = ',', $enclosure = '"')
     {
         $rows = [];
-        if (file_exists($file) && is_readable($file)) {
-            $handle = fopen($file, 'r');
-            $headers = fgetcsv($handle, 0, $delimiter, $enclosure);
-            while (!feof($handle)) {
-                $row = fgetcsv($handle, 0, $delimiter, $enclosure);
-                if (is_array($row)) {
-                    array_splice($row, count($headers));
-                    $rows[] = array_combine($headers, $row);
-                }
+        $rows = str_getcsv($data, "\n");
+        $headers = false;
+        foreach ($rows as &$row) {
+            if (!$headers) {
+                $headers = str_getcsv($data, $delimiter);
             }
-            fclose($handle);
-        } elseif (!empty($file)) {
-            $rows = str_getcsv($file, "\n");
-            $headers = false;
-            foreach ($rows as &$row) {
-                if (!$headers) {
-                    $headers = str_getcsv($row, $delimiter);
-                }
-                $row = array_combine($headers, str_getcsv($row, $delimiter));
-            }
-
-            array_shift($rows);
-        } else {
-            $rows = array();
+            $row = array_combine($headers, str_getcsv($row, $delimiter));
         }
-
+        array_shift($rows);
         $target = $rows;
     }
 }
