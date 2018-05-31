@@ -287,7 +287,7 @@ class Loader
                 }
                 if (file_exists($path)) {
                     include_once($path);
-                    return "\\hodphp\\modules\\" . self::$module . "\\";
+                    return "\\framework\\modules\\" . self::$module . "\\";
                 }
 
             }
@@ -323,7 +323,7 @@ class Loader
             }
             if (file_exists($path)) {
                 include_once($path);
-                return "\\hodphp\\";
+                return "\\framework\\";
             }
         }
         return false;
