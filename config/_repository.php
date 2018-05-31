@@ -4,12 +4,12 @@ return [
         [
             "release" => [
                 "type" => "githubRelease",
-                "source" => "hostingondemand/hodphp"
+                "source" => "hostingondemand/framework"
             ],
 
             "dev" => [
                 "type" => "git",
-                "source" => "git@github.com:hostingondemand/hodphp.git"
+                "source" => "git@github.com:hostingondemand/framework.git"
             ]
         ],
     "modules" => [

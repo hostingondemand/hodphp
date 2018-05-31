@@ -15,7 +15,7 @@ $app->setConfig($config);
 $app->includeCore();
 
 //create a class to execute the function
-class ExecutionCode extends \hodphp\core\Base
+class ExecutionCode extends \framework\core\Base
 {
         function execute(){
                 //Run the code in the right context
@@ -40,7 +40,7 @@ class ExecutionCode extends \hodphp\core\Base
                 $this->db->parent=$data["dbParent"];
                 $this->session->simulateFakeSession($data["session"]);
 
-                \hodphp\core\Loader::setup();
+                \framework\core\Loader::setup();
                 $this->event->registerGarbageCollector([$this, 'finish']);
 
                 return ["data"=>$data["data"],"paramNames"=>$data["paramNames"]];

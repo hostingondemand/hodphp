@@ -1,8 +1,8 @@
 <?php
-namespace hodphp\lib\cron;
-use hodphp\core\Loader;
+namespace framework\lib\cron;
+use framework\core\Loader;
 
-abstract class BaseCron extends \hodphp\core\Base
+abstract class BaseCron extends \framework\core\Base
 {
     abstract function run();
 }

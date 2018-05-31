@@ -1,6 +1,6 @@
 <?php
-namespace hodphp\lib\provider\baseprovider;
-use hodphp\core\Lib;
+namespace framework\lib\provider\baseprovider;
+use framework\core\Lib;
 
 abstract class BaseRouteProvider extends Lib
 {

@@ -1,5 +1,5 @@
 <?php
-namespace hodphp\lib\db\ensureType;
+namespace framework\lib\db\ensureType;
 //This class just tells how an injector should look
 class Date extends BaseEnsure
 {

@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\provider\validator;
+namespace framework\provider\validator;
 
-use hodphp\lib\validation\BaseValidator;
+use framework\lib\validation\BaseValidator;
 
 class model extends BaseValidator
 {

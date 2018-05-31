@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\provider\route;
+namespace framework\provider\route;
 
-use hodphp\lib\provider\baseprovider\BaseRouteProvider;
+use framework\lib\provider\baseprovider\BaseRouteProvider;
 
 class Path extends BaseRouteProvider
 {

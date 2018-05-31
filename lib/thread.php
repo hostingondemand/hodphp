@@ -1,7 +1,7 @@
 <?php
 
-namespace hodphp\lib;
-use hodphp\core\Lib;
+namespace framework\lib;
+use framework\core\Lib;
 
 class Thread extends Lib
 {

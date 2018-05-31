@@ -1,11 +1,11 @@
 <?php
-namespace hodphp\lib;
+namespace framework\lib;
 
-use hodphp\core\Loader;
+use framework\core\Loader;
 
 //simple wrapper around the serializers
 //so serialization can be done by just giving a serializername and the data
-class Serialization extends \hodphp\core\Lib
+class Serialization extends \framework\core\Lib
 {
     function __construct()
     {

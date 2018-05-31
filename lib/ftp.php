@@ -1,9 +1,9 @@
 <?php
-namespace hodphp\lib;
+namespace framework\lib;
 
-use hodphp\core\Loader;
+use framework\core\Loader;
 
-class Ftp extends \hodphp\core\Lib
+class Ftp extends \framework\core\Lib
 {
 
     function connect($host, $username, $password = "")

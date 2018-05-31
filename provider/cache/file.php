@@ -1,6 +1,6 @@
-<?php namespace hodphp\provider\cache;
+<?php namespace framework\provider\cache;
 
-use hodphp\lib\provider\baseprovider\BaseCacheProvider;
+use framework\lib\provider\baseprovider\BaseCacheProvider;
 
 class File extends BaseCacheProvider
 {

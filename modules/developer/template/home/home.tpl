@@ -1,1 +1,1 @@
-Welcome to the developer console of hodphp
+Welcome to the developer console of framework

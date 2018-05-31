@@ -1,8 +1,8 @@
 <?php
 
-namespace hodphp\lib\serialization;
+namespace framework\lib\serialization;
 //a representation of a serializer
-abstract class Serializer extends \hodphp\core\Lib
+abstract class Serializer extends \framework\core\Lib
 {
     abstract function serialize($data);
 

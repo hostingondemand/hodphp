@@ -1,8 +1,8 @@
 <?php
-namespace hodphp\lib\template;
+namespace framework\lib\template;
 
-use hodphp\core\Lib;
-use hodphp\core\Loader;
+use framework\core\Lib;
+use framework\core\Loader;
 
 //this class is there to inteprete the parsed code..
 class Interpreter extends Lib

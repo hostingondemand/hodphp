@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\lib;
+namespace framework\lib;
 
-use hodphp\core\Lib;
+use framework\core\Lib;
 
 class Message extends Lib
 {

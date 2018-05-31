@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\modules\developer\model\module;
+namespace framework\modules\developer\model\module;
 
-use hodphp\lib\model\BaseModel;
+use framework\lib\model\BaseModel;
 
 class All extends BaseModel
 {

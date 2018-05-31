@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\provider\templateFunction;
+namespace framework\provider\templateFunction;
 
-class Fordatasource extends \hodphp\lib\template\AbstractFunction
+class Fordatasource extends \framework\lib\template\AbstractFunction
 {
     var $requireContent = true;
 

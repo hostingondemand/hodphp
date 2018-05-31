@@ -1,8 +1,8 @@
 <?php
-namespace hodphp\provider\templateFunction;
+namespace framework\provider\templateFunction;
 
 //just make a block which will be ignored  by the parser
-class Ignore extends \hodphp\lib\template\AbstractFunction
+class Ignore extends \framework\lib\template\AbstractFunction
 {
 
     //this 2 variables do the trick.. this needs content but we dont want it parsed

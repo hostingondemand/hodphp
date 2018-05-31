@@ -1,8 +1,8 @@
 <?php
-namespace hodphp\lib\db;
+namespace framework\lib\db;
 
-use hodphp\core\Lib;
-use hodphp\core\Loader;
+use framework\core\Lib;
+use framework\core\Loader;
 
 class Search extends Lib
 {

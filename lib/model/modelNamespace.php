@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\lib\model;
-use hodphp\core\Lib;
-use hodphp\core\Loader;
+namespace framework\lib\model;
+use framework\core\Lib;
+use framework\core\Loader;
 
 class Modelnamespace extends Lib
 {

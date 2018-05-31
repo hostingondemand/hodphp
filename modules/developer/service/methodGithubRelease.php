@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\modules\developer\service;
+namespace framework\modules\developer\service;
 
-use hodphp\lib\model\BaseModel;
+use framework\lib\model\BaseModel;
 
 class MethodGithubRelease extends BaseModel
 {
@@ -18,8 +18,8 @@ class MethodGithubRelease extends BaseModel
     }
 
     function download($source,$folder){
-        $zipPath="temp/hodphp.zip";
-        $tmpDirPath="temp/hodphp";
+        $zipPath="temp/framework.zip";
+        $tmpDirPath="temp/framework";
         if(!$this->filesystem->exists($folder)){
             $this->filesystem->mkdir($folder);
         }

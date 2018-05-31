@@ -1,10 +1,10 @@
 <?php
 
-namespace hodphp\provider\dbModule;
+namespace framework\provider\dbModule;
 
-use hodphp\core\Base;
-use hodphp\core\Loader;
-use hodphp\lib\provider\baseprovider\BaseDbModuleProvider;
+use framework\core\Base;
+use framework\core\Loader;
+use framework\lib\provider\baseprovider\BaseDbModuleProvider;
 
 class SoftDelete extends BaseDbModuleProvider
 {

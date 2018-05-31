@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\provider\search;
+namespace framework\provider\search;
 
-use hodphp\lib\provider\baseprovider\BaseSearchProvider;
+use framework\lib\provider\baseprovider\BaseSearchProvider;
 
 class Db extends BaseSearchProvider
 {

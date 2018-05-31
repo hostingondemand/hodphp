@@ -1,8 +1,8 @@
 <?php
-namespace hodphp\lib;
-use hodphp\core\Loader;
+namespace framework\lib;
+use framework\core\Loader;
 
-class Console extends \hodphp\core\Lib
+class Console extends \framework\core\Lib
 {
 
 

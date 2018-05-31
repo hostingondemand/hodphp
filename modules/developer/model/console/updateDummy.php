@@ -1,10 +1,10 @@
 <?php
 
-namespace hodphp\modules\developer\model\console;
+namespace framework\modules\developer\model\console;
 
-use hodphp\core\Loader;
-use function hodphp\core\self;
-use hodphp\lib\model\BaseModel;
+use framework\core\Loader;
+use function framework\core\self;
+use framework\lib\model\BaseModel;
 use ReflectionMethod;
 
 class UpdateDummy extends BaseModel
@@ -13,18 +13,18 @@ class UpdateDummy extends BaseModel
     function process()
     {
         self::$classes=[
-            "hodphp\\core\\base"=>[
-                "namespace"=>"hodphp\\core",
+            "framework\\core\\base"=>[
+                "namespace"=>"framework\\core",
                 "name"=>"Base",
                 "properties"=>$this->getLibs()
             ],
-            "hodphp\\core\\controller"=>[
-                "namespace"=>"hodphp\\core",
+            "framework\\core\\controller"=>[
+                "namespace"=>"framework\\core",
                 "name"=>"Controller",
                 "extends"=>"Base"
             ],
-            "hodphp\\core\\lib"=>[
-                "namespace"=>"hodphp\\core",
+            "framework\\core\\lib"=>[
+                "namespace"=>"framework\\core",
                 "name"=>"Lib",
                 "extends"=>"Base"
             ],
@@ -45,34 +45,34 @@ class UpdateDummy extends BaseModel
 
     function getLibs(){
         $result=[];
-        $this->getDynamicProperties("framework/lib","hodphp\\lib",$result);
+        $this->getDynamicProperties("framework/lib","framework\\lib",$result);
         $this->getDynamicProperties("project/lib","project\\lib",$result);
         return $result;
     }
 
     function fillDynamicClasses(){
-        $this->addFolderToClass("service","service","merge\\service","hodphp\\lib\\service",true,false);
-        $this->addFolderToClass("helper","helper","merge\\helper","hodphp\\lib\\helper",true,false);
-        $this->addFolderToClass("model","model","merge\\model","hodphp\\lib\\model",true,true);
-        $this->addFolderToClass("enum","enum","merge\\enum","hodphp\\lib\\enum",true,false);
+        $this->addFolderToClass("service","service","merge\\service","framework\\lib\\service",true,false);
+        $this->addFolderToClass("helper","helper","merge\\helper","framework\\lib\\helper",true,false);
+        $this->addFolderToClass("model","model","merge\\model","framework\\lib\\model",true,true);
+        $this->addFolderToClass("enum","enum","merge\\enum","framework\\lib\\enum",true,false);
     }
 
     function getBaseClasses(){
         $files=$this->filesystem->getFilesRecursive("framework",false,"base");
         foreach($files as $file){
-            $relativePath=str_replace($this->filesystem->calculatePath("framework"),"hodphp/",$file);
+            $relativePath=str_replace($this->filesystem->calculatePath("framework"),"framework/",$file);
 
             $explode=explode("/",$relativePath);
             $file=$explode[count($explode)-1];
             unset($explode[count($explode)-1]);
             $namespace=implode("\\",$explode);
-            $path=str_replace("hodphp","framework",$namespace);
-            $this->getClassForFile($path,$file,$namespace,false,"\\hodphp\\core\\Base");
+            $path=str_replace("framework","framework",$namespace);
+            $this->getClassForFile($path,$file,$namespace,false,"\\framework\\core\\Base");
         }
     }
 
     function getLibClasses(){
-        $this->getClassesForDir("framework/lib","hodphp\\lib");
+        $this->getClassesForDir("framework/lib","framework\\lib");
         $this->getClassesForDir("project/lib","project\\lib");
     }
 
@@ -213,7 +213,7 @@ class UpdateDummy extends BaseModel
             unset($explode[count($explode)-1]);
             unset($explode[0]);
             $namespace=implode("\\",$explode);
-            $path=str_replace("hodphp","framework",$namespace);
+            $path=str_replace("framework","framework",$namespace);
             $this->getClassForFile($path,$cls.".php",$namespace);
 
         }

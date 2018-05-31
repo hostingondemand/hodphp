@@ -1,6 +1,6 @@
 <?php
-namespace hodphp\lib\event;
-abstract class BaseListener extends \hodphp\core\Base
+namespace framework\lib\event;
+abstract class BaseListener extends \framework\core\Base
 {
     abstract function handle($data);
 

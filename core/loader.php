@@ -1,6 +1,6 @@
 <?php
 
-namespace hodphp\core;
+namespace framework\core;
 class Loader
 {
     static $instances;
@@ -169,7 +169,7 @@ class Loader
                 }else{
                     //fallback to avoid fatals
                     //todo:good error logging on this to find better solutions
-                    $fullclass="\\hodphp\\core\\Base";
+                    $fullclass="\\framework\\core\\Base";
                 }
 
 
@@ -257,7 +257,7 @@ class Loader
                 include_once($path);
 
                 if (strpos($path, 'developer') !== false) {
-                    return "\\hodphp\\modules\\" . self::$module . "\\";
+                    return "\\framework\\modules\\" . self::$module . "\\";
                 } else {
                     if (substr($namespace, 0, 7) == "modules") {
 

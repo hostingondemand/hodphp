@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\provider\templateFunction;
+namespace framework\provider\templateFunction;
 
-class RenderSection extends \hodphp\lib\template\AbstractFunction
+class RenderSection extends \framework\lib\template\AbstractFunction
 {
 
         function call($parameters, $data, $content = "", $unparsed = Array(), $module = false)

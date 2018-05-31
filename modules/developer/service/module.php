@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\modules\developer\service;
+namespace framework\modules\developer\service;
 
-use hodphp\lib\service\BaseService;
+use framework\lib\service\BaseService;
 
 class Module extends BaseService
 {

@@ -1,7 +1,7 @@
 <?php
 
-namespace hodphp\lib;
-class Request extends \hodphp\core\Lib
+namespace framework\lib;
+class Request extends \framework\core\Lib
 {
 
     var $request;
@@ -101,14 +101,14 @@ class Request extends \hodphp\core\Lib
 
     public function skipReferer()
     {
-        $session=\hodphp\core\core()->session;
+        $session=\framework\core\core()->session;
         $session->_fakeRefererCurrent = $this->getUrl();
         $session->_fakeRefererReferer = $this->getReferer();
     }
 
     public function getReferer($real = false)
     {
-        $session=\hodphp\core\core()->session;
+        $session=\framework\core\core()->session;
         if ($session->_fakeRefererReferer && !$real) {
             if ($this->getReferer(true) == $session->_fakeRefererCurrent) {
                 return $session->_fakeRefererReferer;

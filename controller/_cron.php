@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\controller;
-use hodphp\core\Controller;
-use hodphp\core\Loader;
+namespace framework\controller;
+use framework\core\Controller;
+use framework\core\Loader;
 
 class _cron extends Controller
 {
@@ -50,7 +50,7 @@ class _cron extends Controller
 
                     //run the cache
                     try {
-                        \hodphp\core\Loader::loadAction($data['route']);
+                        \framework\core\Loader::loadAction($data['route']);
                     } catch (\Exception $ex) {
                     }
 

@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\lib;
+namespace framework\lib;
 
-class Session extends \hodphp\core\Lib
+class Session extends \framework\core\Lib
 {
     function __get($name)
     {

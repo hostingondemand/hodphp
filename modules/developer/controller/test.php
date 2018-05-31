@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\modules\developer\controller;
+namespace framework\modules\developer\controller;
 
-use hodphp\core\Controller;
+use framework\core\Controller;
 
 class Test extends Controller
 {

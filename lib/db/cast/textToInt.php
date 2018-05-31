@@ -1,5 +1,5 @@
 <?php
-namespace hodphp\lib\db\cast;
+namespace framework\lib\db\cast;
 //This class just tells how an injector should look
 class TextToInt extends BaseCaster
 {

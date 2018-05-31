@@ -1,8 +1,8 @@
 <?php
 
-namespace hodphp\provider\templateFunction;
+namespace framework\provider\templateFunction;
 
-class RenderHead extends \hodphp\lib\template\AbstractFunction
+class RenderHead extends \framework\lib\template\AbstractFunction
 {
 
     //make a text lowercase

@@ -1,8 +1,8 @@
 <?php
-namespace hodphp\lib;
-use hodphp\core\Loader;
+namespace framework\lib;
+use framework\core\Loader;
 
-class Cron extends \hodphp\core\Lib
+class Cron extends \framework\core\Lib
 {
     public function __construct()
     {

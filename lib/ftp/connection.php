@@ -1,5 +1,5 @@
 <?php
-namespace hodphp\lib\ftp;
+namespace framework\lib\ftp;
 class Connection
 {
     private $con;

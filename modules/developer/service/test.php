@@ -1,8 +1,8 @@
 <?php
-namespace hodphp\modules\developer\service;
+namespace framework\modules\developer\service;
 
-use hodphp\core\Loader;
-use hodphp\lib\service\BaseService;
+use framework\core\Loader;
+use framework\lib\service\BaseService;
 
 class Test extends BaseService
 {

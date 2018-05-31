@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\modules\developer\model;
+namespace framework\modules\developer\model;
 
-use hodphp\lib\model\BaseModel;
+use framework\lib\model\BaseModel;
 
 class ClearCache extends BaseModel
 {

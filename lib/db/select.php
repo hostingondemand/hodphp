@@ -1,9 +1,9 @@
 <?php
 
-namespace hodphp\lib\db;
+namespace framework\lib\db;
 
-use hodphp\core\Lib;
-use hodphp\core\Loader;
+use framework\core\Lib;
+use framework\core\Loader;
 
 class Select extends Lib
 {
@@ -46,7 +46,7 @@ class Select extends Lib
     }
 
     /**
-     * @return \hodphp\lib\db\Select
+     * @return \framework\lib\db\Select
      */
     function byModel($model, $namespace, $alias = false, $con = "default")
     {
@@ -57,7 +57,7 @@ class Select extends Lib
     }
 
     /**
-     * @return \hodphp\lib\db\Select
+     * @return \framework\lib\db\Select
      */
     function table($table, $alias = false, $ignoreModel = false, $con = "default")
     {
@@ -78,7 +78,7 @@ class Select extends Lib
     }
 
     /**
-     * @return \hodphp\lib\db\Select
+     * @return \framework\lib\db\Select
      */
     function field($fields)
     {
@@ -97,7 +97,7 @@ class Select extends Lib
     }
 
     /**
-     * @return \hodphp\lib\db\Select
+     * @return \framework\lib\db\Select
      */
     function joinModel($model, $namespace, $onLeft, $onRight, $alias)
     {
@@ -107,7 +107,7 @@ class Select extends Lib
     }
 
     /**
-     * @return \hodphp\lib\db\Select
+     * @return \framework\lib\db\Select
      */
     function join($table, $onLeft, $onRight = false, $alias = false)
     {
@@ -129,7 +129,7 @@ class Select extends Lib
     }
 
     /**
-     * @return \hodphp\lib\db\Select
+     * @return \framework\lib\db\Select
      */
     function orderBy($fields)
     {
@@ -149,7 +149,7 @@ class Select extends Lib
     }
 
     /**
-     * @return \hodphp\lib\db\Select
+     * @return \framework\lib\db\Select
      */
     function group($fields)
     {
@@ -169,7 +169,7 @@ class Select extends Lib
     }
 
     /**
-     * @return \hodphp\lib\db\Select
+     * @return \framework\lib\db\Select
      */
     function limit($max, $offset = 0)
     {
@@ -180,7 +180,7 @@ class Select extends Lib
     }
 
     /**
-     * @return \hodphp\lib\db\QueryResult[]
+     * @return \framework\lib\db\QueryResult[]
      */
     function fetchAll()
     {
@@ -210,7 +210,7 @@ class Select extends Lib
     }
 
     /**
-     * @return \hodphp\lib\db\Select
+     * @return \framework\lib\db\Select
      */
     function where($condition)
     {
@@ -235,7 +235,7 @@ class Select extends Lib
     }
 
     /**
-     * @return \hodphp\lib\db\QueryResult
+     * @return \framework\lib\db\QueryResult
      */
     function fetch()
     {

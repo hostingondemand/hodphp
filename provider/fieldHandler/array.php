@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\provider\fieldHandler;
+namespace framework\provider\fieldHandler;
 
-use hodphp\lib\model\BaseFieldHandler;
+use framework\lib\model\BaseFieldHandler;
 
 class _Array extends BaseFieldHandler
 {

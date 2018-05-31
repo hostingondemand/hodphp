@@ -1,6 +1,6 @@
 <?php
-namespace hodphp\lib\test;
-use hodphp\core\Base;
+namespace framework\lib\test;
+use framework\core\Base;
 
 class assert extends Base
 {

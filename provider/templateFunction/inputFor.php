@@ -1,10 +1,10 @@
 <?php
-namespace hodphp\provider\templateFunction;
+namespace framework\provider\templateFunction;
 
-use hodphp\core\Loader;
-use hodphp\lib\template\ExpressionParser;
+use framework\core\Loader;
+use framework\lib\template\ExpressionParser;
 
-class InputFor extends \hodphp\lib\template\AbstractFunction
+class InputFor extends \framework\lib\template\AbstractFunction
 {
 
     //make a text lowercase

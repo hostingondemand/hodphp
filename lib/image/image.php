@@ -1,8 +1,8 @@
 <?php
 
-namespace hodphp\lib\image;
+namespace framework\lib\image;
 
-use hodphp\core\Lib;
+use framework\core\Lib;
 
 class Image extends Lib
 {

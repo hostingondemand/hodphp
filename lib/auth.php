@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\lib;
+namespace framework\lib;
 
-use hodphp\core\Lib;
+use framework\core\Lib;
 
 //this is a simple service to write some config to the harddrive
 class Auth extends Lib

@@ -1,8 +1,8 @@
 <?php
-namespace hodphp\lib\console;
+namespace framework\lib\console;
 
 //this class is made to handle optional parameters
-class Options extends \hodphp\core\Lib
+class Options extends \framework\core\Lib
 {
     private $options;
     private $registeredOptions;

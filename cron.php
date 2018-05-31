@@ -13,7 +13,7 @@ $app->prepare(
             $config["app_mode"]="console";
             $app->setConfig($config);
         }
-        $console = hodphp\core\Loader::getSingleton("console", "lib");
+        $console = framework\core\Loader::getSingleton("console", "lib");
 
         if (!$console->isConsole()) {
             die("This request is not in console mode");

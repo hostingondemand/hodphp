@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\provider\templateFunction;
+namespace framework\provider\templateFunction;
 
-class Toupper extends \hodphp\lib\template\AbstractFunction
+class Toupper extends \framework\lib\template\AbstractFunction
 {
     //make a text uppercase
     function call($parameters, $data, $content = "", $unparsed = Array(), $module = false)

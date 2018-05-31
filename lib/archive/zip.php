@@ -1,8 +1,8 @@
 <?php
-namespace hodphp\lib\archive;
+namespace framework\lib\archive;
 
 //this class is made to handle optional parameters
-use hodphp\core\Lib;
+use framework\core\Lib;
 
 class Zip extends Lib
 {

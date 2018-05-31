@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\provider\templateFunction;
+namespace framework\provider\templateFunction;
 
-class CamelCase extends \hodphp\lib\template\AbstractFunction
+class CamelCase extends \framework\lib\template\AbstractFunction
 {
 
     function call($parameters, $data, $content = "", $unparsed = "", $module = false)

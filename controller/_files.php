@@ -1,6 +1,6 @@
 <?php
-namespace hodphp\controller;
-use hodphp\core\Controller;
+namespace framework\controller;
+use framework\core\Controller;
 
 class _files extends Controller
 {
