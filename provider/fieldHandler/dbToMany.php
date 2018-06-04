@@ -151,7 +151,7 @@ class DbToMany extends BaseFieldHandler
             $where = "`" . $this->_field . "` ='" . $this->_model->id . "'";
         }
 
-        $originalData = $this->db->query("select * from where ".$where)->fetchAll();
+        $originalData = $this->db->query("select * from `" . $this->_toTable . "` where  ".$where)->fetchAll();
         $originalData = $this->toIdMap($originalData);
         $data = $this->get(false);
 
