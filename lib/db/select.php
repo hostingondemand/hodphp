@@ -320,5 +320,17 @@ class Select extends Lib
         }
         return $result;
     }
+
+    function updateModels($function,$class = false, $namespace = false){
+        $models=$this->fetchAllModel($class,$namespace);
+        if(is_array($models)){
+            foreach($models as $model){
+                $function($model);
+                $this->db->saveModel($model);
+            }
+        }
+        return $this;
+    }
+
 }
 
