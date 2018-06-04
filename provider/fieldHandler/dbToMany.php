@@ -144,7 +144,14 @@ class DbToMany extends BaseFieldHandler
 
     function save()
     {
-        $originalData = $this->db->query("select * from `" . $this->_toTable . "` where `" . $this->_field . "` ='" . $this->_model->id . "'")->fetchAll();
+
+        if ($this->_field == "parent") {
+            $where = "parent_id='" . $this->db->parent["id"] . "' and parent_module='" . $this->db->parent["module"] . "'";
+        } else {
+            $where = "`" . $this->_field . "` ='" . $this->_model->id . "'";
+        }
+
+        $originalData = $this->db->query("select * from where ".$where)->fetchAll();
         $originalData = $this->toIdMap($originalData);
         $data = $this->get(false);
 
