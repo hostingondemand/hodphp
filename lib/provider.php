@@ -1,9 +1,9 @@
 <?php
-namespace hodphp\lib;
+namespace framework\lib;
 
-use hodphp\core\Loader;
+use framework\core\Loader;
 
-class Provider extends \hodphp\core\Lib
+class Provider extends \framework\core\Lib
 {
 
     var $namespaces = array();

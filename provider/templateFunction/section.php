@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\provider\templateFunction;
+namespace framework\provider\templateFunction;
 
-class Section extends \hodphp\lib\template\AbstractFunction
+class Section extends \framework\lib\template\AbstractFunction
 {
         var $requireContent = true;
 

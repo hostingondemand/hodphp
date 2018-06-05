@@ -1,10 +1,10 @@
 <?php
 
-namespace hodphp\lib;
+namespace framework\lib;
 
-use hodphp\core\Loader;
+use framework\core\Loader;
 
-class Db extends \hodphp\core\Lib
+class Db extends \framework\core\Lib
 {
     var $testMode = false;
     var $_provider;

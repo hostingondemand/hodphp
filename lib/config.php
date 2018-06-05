@@ -1,8 +1,8 @@
 <?php
-namespace hodphp\lib;
+namespace framework\lib;
 
-use hodphp\core\Lib;
-use hodphp\core\Loader;
+use framework\core\Lib;
+use framework\core\Loader;
 
 //this is a simple service to write some config to the harddrive
 class Config extends Lib

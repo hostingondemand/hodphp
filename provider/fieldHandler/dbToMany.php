@@ -1,8 +1,8 @@
 <?php
-namespace hodphp\provider\fieldHandler;
+namespace framework\provider\fieldHandler;
 
-use hodphp\lib\model\BaseFieldHandler;
-use hodphp\lib\model\BaseModel;
+use framework\lib\model\BaseFieldHandler;
+use framework\lib\model\BaseModel;
 
 class DbToMany extends BaseFieldHandler
 {

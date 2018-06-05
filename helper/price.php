@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\helper;
+namespace framework\helper;
 
-use hodphp\lib\helper\BaseHelper;
+use framework\lib\helper\BaseHelper;
 
 class Price extends BaseHelper
 {

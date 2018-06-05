@@ -1,6 +1,6 @@
 <?php
-namespace hodphp\lib\provider\baseprovider;
-abstract class BaseDbProvider extends \hodphp\core\Lib
+namespace framework\lib\provider\baseprovider;
+abstract class BaseDbProvider extends \framework\core\Lib
 {
     abstract function createSelectQuery($from);
     abstract function connect($host, $username, $password, $db, $connection);

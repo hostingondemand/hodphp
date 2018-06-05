@@ -12,7 +12,7 @@ $app->prepare(
             $config["app_mode"]="framework";
             $app->setConfig($config);
         }
-        $router = \hodphp\core\Loader::getSingleton("route", "lib");
+        $router = \framework\core\Loader::getSingleton("route", "lib");
         $app->setRoute($router->getRoute());
     }
 );

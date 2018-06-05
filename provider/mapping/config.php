@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\provider\mapping;
+namespace framework\provider\mapping;
 
-use hodphp\lib\provider\baseprovider\BaseMappingProvider;
+use framework\lib\provider\baseprovider\BaseMappingProvider;
 
 class Config extends BaseMappingProvider
 {

@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\provider\templateFunction;
+namespace framework\provider\templateFunction;
 
-class CutText extends \hodphp\lib\template\AbstractFunction
+class CutText extends \framework\lib\template\AbstractFunction
 {
     function call($parameters, $data, $content = "", $unparsed = Array(), $module = false)
     {

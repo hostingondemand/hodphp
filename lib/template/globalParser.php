@@ -1,8 +1,8 @@
 <?php
-namespace hodphp\lib\template;
+namespace framework\lib\template;
 
-use hodphp\Core\Lib;
-use hodphp\Core\Loader;
+use framework\Core\Lib;
+use framework\Core\Loader;
 
 class GlobalParser extends Lib
 {

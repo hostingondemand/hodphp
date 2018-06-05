@@ -1,8 +1,8 @@
 <?php
-namespace hodphp\lib\db;
+namespace framework\lib\db;
 
-use hodphp\core\Lib;
-use hodphp\mysqli;
+use framework\core\Lib;
+use framework\mysqli;
 
 class Condition extends Lib
 {

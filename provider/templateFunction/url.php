@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\provider\templateFunction;
+namespace framework\provider\templateFunction;
 
-class Url extends \hodphp\lib\template\AbstractFunction
+class Url extends \framework\lib\template\AbstractFunction
 {
     function call($parameters, $data, $content = "", $unparsed = Array(), $module = false)
     {

@@ -1,9 +1,9 @@
 <?php
-namespace hodphp\lib;
+namespace framework\lib;
 
-use hodphp\core\Loader;
+use framework\core\Loader;
 
-class Mail extends \hodphp\core\Lib
+class Mail extends \framework\core\Lib
 {
     function createMessage()
     {

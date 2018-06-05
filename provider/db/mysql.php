@@ -1,9 +1,9 @@
 <?php
-namespace hodphp\provider\db;
+namespace framework\provider\db;
 
-use hodphp\core\Base;
-use hodphp\core\Loader;
-use hodphp\lib\provider\baseprovider\BaseDbProvider;
+use framework\core\Base;
+use framework\core\Loader;
+use framework\lib\provider\baseprovider\BaseDbProvider;
 
 class Mysql extends BaseDbProvider
 {

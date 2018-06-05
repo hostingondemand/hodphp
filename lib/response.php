@@ -1,8 +1,8 @@
 <?php
-namespace hodphp\lib;
-use hodphp\core\Loader;
+namespace framework\lib;
+use framework\core\Loader;
 
-class Response extends \hodphp\core\Lib
+class Response extends \framework\core\Lib
 {
 
     var $partialMode = false;
@@ -38,7 +38,7 @@ class Response extends \hodphp\core\Lib
         }
 
         if (!$path) {
-            $path = \hodphp\core\Loader::$controller . "/" . (\hodphp\core\Loader::$action);
+            $path = \framework\core\Loader::$controller . "/" . (\framework\core\Loader::$action);
         }
 
         $this->debug->info("Render view", array("view"=>$path),"response");
@@ -55,7 +55,7 @@ class Response extends \hodphp\core\Lib
         }
 
         if (!$path) {
-            $path = \hodphp\core\Loader::$controller . "/" . \hodphp\core\Loader::$action;
+            $path = \framework\core\Loader::$controller . "/" . \framework\core\Loader::$action;
         }
 
         $this->debug->info("Render partial view", array("view"=>$path),"response");

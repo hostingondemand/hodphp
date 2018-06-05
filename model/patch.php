@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\model;
+namespace framework\model;
 
-use hodphp\lib\model\BaseModel;
+use framework\lib\model\BaseModel;
 
 class Patch extends BaseModel
 {

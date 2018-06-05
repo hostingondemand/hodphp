@@ -1,9 +1,9 @@
 <?php
-namespace hodphp\lib;
+namespace framework\lib;
 
-use hodphp\core\Loader;
+use framework\core\Loader;
 
-class Event extends \hodphp\core\Lib
+class Event extends \framework\core\Lib
 {
     var $garbageCollectors = array();
     var $eventListeners = array();

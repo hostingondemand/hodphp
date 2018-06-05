@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\lib\provider;
-use hodphp\core\Lib;
-use hodphp\core\Loader;
+namespace framework\lib\provider;
+use framework\core\Lib;
+use framework\core\Loader;
 
 class Providernamespace extends Lib
 {
@@ -15,11 +15,11 @@ class Providernamespace extends Lib
     }
 
     function getDefaultName(){
-        $default = \hodphp\core\core()->config->get("provider." . $this->namespace, "components");
+        $default = \framework\core\core()->config->get("provider." . $this->namespace, "components");
         if($default){
             return $default;
         }
-        $default = \hodphp\core\core()->config->get("provider." . $this->namespace, "_components");
+        $default = \framework\core\core()->config->get("provider." . $this->namespace, "_components");
         if($default) {
           return $default;
         }

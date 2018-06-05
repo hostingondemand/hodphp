@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\modules\developer\model\test;
+namespace framework\modules\developer\model\test;
 
-use hodphp\lib\model\BaseModel;
+use framework\lib\model\BaseModel;
 
 class UnitTest extends BaseModel
 {
@@ -25,13 +25,13 @@ class UnitTest extends BaseModel
     function runTests()
     {
         //load test library
-        \hodphp\core\core()->test;
+        \framework\core\core()->test;
 
         //get tests
         $tests = $this->service->test->getTestInstances();
         foreach ($tests as $test) {
             $test->run();
         }
-        $this->result = \hodphp\core\core()->test->getResults();
+        $this->result = \framework\core\core()->test->getResults();
     }
 }

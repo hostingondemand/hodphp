@@ -1,6 +1,6 @@
 <?php
-namespace hodphp\lib\test;
-abstract class BaseTest extends \hodphp\core\Base
+namespace framework\lib\test;
+abstract class BaseTest extends \framework\core\Base
 {
     //dummy setup.. in case no setup is needed
     function run()

@@ -1,6 +1,6 @@
 <?php
-namespace hodphp\lib;
-class Language extends \hodphp\core\Lib
+namespace framework\lib;
+class Language extends \framework\core\Lib
 {
     var $data = array();
     var $languageInfo = array();

@@ -1,10 +1,10 @@
 <?php
-namespace hodphp\lib;
+namespace framework\lib;
 
 //a simple wrapper around the filesystem to be able to use files in the right directory
-use hodphp\core\Loader;
+use framework\core\Loader;
 
-class Annotation extends \hodphp\core\Lib
+class Annotation extends \framework\core\Lib
 {
 
     var $found;

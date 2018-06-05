@@ -1,9 +1,9 @@
 <?php
 
-namespace hodphp\provider\serializer;
+namespace framework\provider\serializer;
 
 //simple json serializer
-use hodphp\lib\serialization\Serializer;
+use framework\lib\serialization\Serializer;
 
 class Form extends Serializer
 {

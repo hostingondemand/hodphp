@@ -29,7 +29,7 @@ class App
         $prepare = $this->_prepare;
         $prepare($this);
         $this->setConfig();
-        \hodphp\core\Loader::loadAction($this->_route);
+        \framework\core\Loader::loadAction($this->_route);
     }
 
     public function includeCore()

@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\provider\patchlog;
+namespace framework\provider\patchlog;
 
-use hodphp\lib\provider\baseprovider\BasePatchlogProvider;
+use framework\lib\provider\baseprovider\BasePatchlogProvider;
 
 class Db extends BasePatchlogProvider
 {

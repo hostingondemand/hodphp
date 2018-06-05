@@ -1,6 +1,6 @@
 <?php
-namespace hodphp\lib\provider\baseprovider;
-abstract class BaseConfigProvider extends \hodphp\core\Lib
+namespace framework\lib\provider\baseprovider;
+abstract class BaseConfigProvider extends \framework\core\Lib
 {
     abstract function get($key, $section);
 

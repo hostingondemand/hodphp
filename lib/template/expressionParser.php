@@ -1,8 +1,8 @@
 <?php
-namespace hodphp\lib\template;
+namespace framework\lib\template;
 
-use hodphp\core\Lib;
-use hodphp\core\Loader;
+use framework\core\Lib;
+use framework\core\Loader;
 
 //this is a subparser used by the globalParser
 //this parser is specifically used to parse expressions

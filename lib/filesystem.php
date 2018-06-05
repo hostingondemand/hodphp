@@ -1,12 +1,12 @@
 <?php
-namespace hodphp\lib;
+namespace framework\lib;
 
 //a simple wrapper around the filesystem to be able to use files in the right directory
-use hodphp\core\Loader;
+use framework\core\Loader;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
-class Filesystem extends \hodphp\core\Lib
+class Filesystem extends \framework\core\Lib
 {
 
     var $customExtensions = array("css" => "text/css", "svg" => "image/svg+xml");

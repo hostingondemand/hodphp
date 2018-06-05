@@ -1,8 +1,8 @@
 <?php
 
-namespace hodphp\modules\developer\model\console;
+namespace framework\modules\developer\model\console;
 
-use hodphp\lib\model\BaseModel;
+use framework\lib\model\BaseModel;
 
 class Update extends BaseModel
 {

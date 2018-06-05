@@ -1,8 +1,8 @@
 <?php
-namespace hodphp\lib;
+namespace framework\lib;
 
 //this class handles http
-class Http extends \hodphp\core\Lib
+class Http extends \framework\core\Lib
 {
     //content type headers
     private $headersFormat;

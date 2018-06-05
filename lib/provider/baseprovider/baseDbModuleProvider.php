@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\lib\provider\baseprovider;
+namespace framework\lib\provider\baseprovider;
 
-use hodphp\core\Lib;
+use framework\core\Lib;
 
 abstract class BaseDbModuleProvider extends Lib
 {

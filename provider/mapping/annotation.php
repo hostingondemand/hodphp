@@ -1,8 +1,8 @@
 <?php
-namespace hodphp\provider\mapping;
+namespace framework\provider\mapping;
 
-use hodphp\core\Loader;
-use hodphp\lib\provider\baseprovider\BaseMappingProvider;
+use framework\core\Loader;
+use framework\lib\provider\baseprovider\BaseMappingProvider;
 
 class Annotation extends BaseMappingProvider
 {

@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\lib\db\cast;
+namespace framework\lib\db\cast;
 //This class just tells how an injector should look
-use hodphp\core\Lib;
+use framework\core\Lib;
 
 abstract class BaseCaster extends Lib
 {

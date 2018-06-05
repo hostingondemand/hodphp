@@ -1,6 +1,6 @@
 <?php
-namespace hodphp\lib\mail;
-use hodphp\core\Lib;
+namespace framework\lib\mail;
+use framework\core\Lib;
 
 class Message extends Lib
 {

@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\lib\db;
+namespace framework\lib\db;
 
-use hodphp\core\Lib;
+use framework\core\Lib;
 
 class Pagination extends Lib
 {

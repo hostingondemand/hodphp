@@ -1,6 +1,6 @@
 <?php
-namespace hodphp\controller;
-class Home extends \hodphp\core\controller
+namespace framework\controller;
+class Home extends \framework\core\controller
 {
     function home($param1 = "")
     {

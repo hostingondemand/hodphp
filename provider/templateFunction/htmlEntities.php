@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\provider\templateFunction;
+namespace framework\provider\templateFunction;
 
-class HtmlEntities extends \hodphp\lib\template\AbstractFunction
+class HtmlEntities extends \framework\lib\template\AbstractFunction
 {
     function call($parameters, $data, $content = "", $unparsed = "", $module = false)
     {

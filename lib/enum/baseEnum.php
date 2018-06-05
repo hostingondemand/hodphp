@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\lib\enum;
+namespace framework\lib\enum;
 
-abstract class BaseEnum extends \hodphp\core\Lib
+abstract class BaseEnum extends \framework\core\Lib
 {
     var $__values;
     var $__names;
@@ -66,7 +66,7 @@ abstract class BaseEnum extends \hodphp\core\Lib
     {
         $class = lcfirst(array_pop(explode('\\', $class)));
         if (!self::$__translations[$class]) {
-            self::$__translations[$class] = \hodphp\core\core()->language->get($class, 'enum');
+            self::$__translations[$class] = \framework\core\core()->language->get($class, 'enum');
         }
 
         return self::$__translations[$class][$key];

@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\provider\cronlog;
+namespace framework\provider\cronlog;
 
-use hodphp\lib\provider\baseprovider\BaseCronlogProvider;
+use framework\lib\provider\baseprovider\BaseCronlogProvider;
 
 class Db extends BaseCronlogProvider
 {

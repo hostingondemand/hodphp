@@ -1,6 +1,6 @@
 <?php
-namespace hodphp\helper;
-use hodphp\lib\helper\BaseHelper;
+namespace framework\helper;
+use framework\lib\helper\BaseHelper;
 
 class Dns extends BaseHelper
 {

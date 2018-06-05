@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\lib;
+namespace framework\lib;
 
-class Git extends \hodphp\core\Lib
+class Git extends \framework\core\Lib
 {
 
     function addRemote($folder, $name, $url)

@@ -1,7 +1,7 @@
 <?php
-namespace hodphp\lib\template;
+namespace framework\lib\template;
 
-use hodphp\core\Lib;
+use framework\core\Lib;
 
 class DataHandler extends Lib
 {
@@ -39,7 +39,7 @@ class DataHandler extends Lib
             if ($result) {
 
                 if (is_object($result) || is_array($result)) {
-                    return \hodphp\core\core()->template->dataHandler($result);
+                    return \framework\core\core()->template->dataHandler($result);
                 }
                 return $result;
             }

@@ -1,6 +1,6 @@
 <?php
-namespace hodphp\lib\model;
-use hodphp\core\Lib;
+namespace framework\lib\model;
+use framework\core\Lib;
 
 abstract class BaseFieldHandler extends Lib
 {
