@@ -128,7 +128,7 @@ class DbToMany extends BaseFieldHandler
     {
         if (is_array($value)) {
             $this->_initArray = $value;
-            $this->loaded = false;
+            $this->loaded = true;
         }
     }
 
@@ -144,6 +144,10 @@ class DbToMany extends BaseFieldHandler
 
     function save()
     {
+
+        if(!$this->loaded){
+            return true;
+        }
 
         if ($this->_field == "parent") {
             $where = "parent_id='" . $this->db->parent["id"] . "' and parent_module='" . $this->db->parent["module"] . "'";
@@ -173,6 +177,9 @@ class DbToMany extends BaseFieldHandler
             if ($this->_cascadeSave) {
                 if (!$val->$idField) {
                     $val->$idField = $this->_model->id;
+                }
+                if ($this->_saveReset) {
+                    (object)$val->id=null;
                 }
                 $this->db->saveModel($val, $this->_toTable);
                 if (isset($originalData[$val->id])) {
@@ -217,7 +224,7 @@ class DbToMany extends BaseFieldHandler
 
     function get($inModel)
     {
-        if (!$this->loaded) {
+        if (!$this->loaded || $this->_initArray) {
             if ($this->_initArray) {
 
                 $this->obj = array();
