@@ -100,6 +100,7 @@ class Cache extends Lib
         }
 
         $data = [
+            'headers'=> $this->response->sentHeaders,
             'output' => $result,
             'route' => $route,
             'user'=>$user,
@@ -119,14 +120,14 @@ class Cache extends Lib
         $name = 'pageCache_' . md5($user."_".print_r($route, true));
         $result = $this->provider->cache->default->loadEntry($name);
 
-        echo $result['output'];
+        return $result;
     }
 
     function pageCacheNeedRefresh($route, $settings, $user=false)
     {
         $route=$this->getCorrectRoute($route,$settings);
 
-        $name=md5($user."_".print_r($route, true));
+        $name = 'pageCache_' . md5($user."_".print_r($route, true));
         $entry=$this->provider->cache->default->loadEntry($name);
         if (!$entry || ($entry['validUntil'] < time() && !$entry["locked"])) {
             return true;
