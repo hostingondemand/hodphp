@@ -39,7 +39,15 @@ class Controller extends Base
             if ($this->cache->pageCacheNeedRefresh($originalParams, $annotation->parameters,$this->auth->getUserId())) {
                 $this->cache->pageCacheRecordStart($originalParams, $annotation->parameters,$this->auth->getUserId());
             } else {
-                echo $this->cache->pageCacheGetPage($originalParams,$annotation->parameters,$this->auth->getUserId());
+                $cache=$this->cache->pageCacheGetPage($originalParams,$annotation->parameters,$this->auth->getUserId());
+                if (isset($cache["headers"]) && is_array($cache["headers"])){
+                    foreach ($cache['headers'] as $header) {
+                        $this->response->header($header["key"],$header["value"]);
+                    }
+                }
+
+
+                echo $cache["output"];
                 return false;
             }
         }

@@ -7,6 +7,7 @@ class Response extends \framework\core\Lib
 
     var $partialMode = false;
     var $masterView = "main";
+    var $sentHeaders=[];
     var $contentTypes = [
         "json" => "application/json",
         "form" => "application/x-www-form-urlencoded",
@@ -89,6 +90,7 @@ class Response extends \framework\core\Lib
 
     function header($key, $value)
     {
+        $this->sentHeaders[]=["key"=>$key,"val"=>$value];
         header($key . ": " . $value);
     }
 
