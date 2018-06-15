@@ -241,6 +241,7 @@ class DbToMany extends BaseFieldHandler
                     } else {
                         $this->obj[] = $val;
                     }
+                    $this->_initArray=false;
 
                 }
             } else {
