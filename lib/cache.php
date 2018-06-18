@@ -73,10 +73,14 @@ class Cache extends Lib
     {
         ob_start();
         $route=$this->getCorrectRoute($route,$settings);
-        $name = 'pageCache_' . md5($user."_".print_r($route, true));
+        $name = $this->getPageCacheName($user,$route);
         $entry=$this->provider->cache->default->loadEntry($name);
         $entry["locked"]=true;
         $this->provider->cache->default->saveEntry($name,$entry);
+    }
+
+    function getPageCacheName($user,$route){
+        return 'pageCache_' . md5($user."_".print_r($route, true));
     }
 
     function pageCacheRecordSave($route,$settings, $user = false)
@@ -109,7 +113,7 @@ class Cache extends Lib
             'locked'=>false
         ];
         $this->debug->info("saved cache" ,["route"=>$route,"settings"=>$settings,"user"=>$user], "cache");
-        $name="pageCache_".md5($user."_".print_r($route, true));
+        $name = $this->getPageCacheName($user,$route);
         $this->provider->cache->default->saveEntry($name,$data);
     }
 
@@ -117,7 +121,7 @@ class Cache extends Lib
     {
         $route=$this->getCorrectRoute($route,$settings);
 
-        $name = 'pageCache_' . md5($user."_".print_r($route, true));
+        $name = $this->getPageCacheName($user,$route);
         $result = $this->provider->cache->default->loadEntry($name);
 
         return $result;
@@ -127,7 +131,7 @@ class Cache extends Lib
     {
         $route=$this->getCorrectRoute($route,$settings);
 
-        $name = 'pageCache_' . md5($user."_".print_r($route, true));
+        $name = $this->getPageCacheName($user,$route);
         $entry=$this->provider->cache->default->loadEntry($name);
         if (!$entry || ($entry['validUntil'] < time() && !$entry["locked"])) {
             return true;
