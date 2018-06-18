@@ -73,7 +73,7 @@ class Cache extends Lib
     {
         ob_start();
         $route=$this->getCorrectRoute($route,$settings);
-        $name=md5($user."_".print_r($route, true));
+        $name = 'pageCache_' . md5($user."_".print_r($route, true));
         $entry=$this->provider->cache->default->loadEntry($name);
         $entry["locked"]=true;
         $this->provider->cache->default->saveEntry($name,$entry);
