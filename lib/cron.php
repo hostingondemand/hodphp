@@ -27,7 +27,7 @@ class Cron extends \framework\core\Lib
         if (!empty($annotations) && (!$useInterval || !$canRun)) {
             $translated = $this->annotation->translate($annotations[0]);
             $schedule = $translated->parameters[0];
-            $pattern = $translated->parameters[0] ?: "time";
+            $pattern = $translated->parameters[1] ?: "time";
             $canRun = $this->provider->cronlog->default->needCronSchedule($name, $schedule, $pattern);
         }
 
