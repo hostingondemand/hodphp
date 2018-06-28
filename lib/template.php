@@ -10,6 +10,8 @@ class template extends Lib
     var $globals;
     var $globalModules = array();
 
+    var $_inlineMode=false;
+
     function __construct()
     {
         $this->globals["path"] = $this->path->getHttp();
@@ -34,6 +36,16 @@ class template extends Lib
         return $interpreter->interpret($parsed, $data);
     }
 
+    function inlineMode($function){
+        $oldInlineMode=$this->_inlineMode;
+        $this->_inlineMode=true;
+            return $function();
+        $this->_inlineMode=$oldInlineMode;
+    }
+
+    function isInlineMode(){
+        return $this->_inlineMode;
+    }
     //use parse to parse the content of a file
 
     function dataHandler($data)

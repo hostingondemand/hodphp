@@ -1,5 +1,6 @@
 <?php
 namespace framework\lib;
+
 use framework\core\Loader;
 
 class Cron extends \framework\core\Lib
@@ -15,7 +16,7 @@ class Cron extends \framework\core\Lib
         $info = Loader::getInfo($name, 'cron');
         $annotations = $this->annotation->getAnnotationsForClass($info->type, 'interval', true);
         $canRun = true;
-        $useInterval=!empty($annotations);
+        $useInterval = !empty($annotations);
         if ($useInterval) {
             $translated = $this->annotation->translate($annotations[0]);
             $interval = $translated->parameters[0] * 60;
@@ -23,10 +24,11 @@ class Cron extends \framework\core\Lib
         }
 
         $annotations = $this->annotation->getAnnotationsForClass($info->type, 'schedule', true);
-        if (!empty($annotations) && (!$useInterval||!$canRun)) {
+        if (!empty($annotations) && (!$useInterval || !$canRun)) {
             $translated = $this->annotation->translate($annotations[0]);
             $schedule = $translated->parameters[0];
-            $canRun = $this->provider->cronlog->default->needCronSchedule($name,$schedule);
+            $pattern = @$translated->parameters[1] ?: "time";
+            $canRun = $this->provider->cronlog->default->needCronSchedule($name, $schedule, $pattern);
         }
 
 

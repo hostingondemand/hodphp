@@ -8,11 +8,22 @@ class Message extends Lib
     private $_content;
     private $_subject;
     private $_headers;
+    private $_files=[];
 
     function __construct()
     {
-        $this->addHeader("MIME-Version", "1.0");
         $this->addHeader("Content-Type", "text/html; charset=ISO-8859-1");
+    }
+
+
+    function addFileContent($content,$fileName){
+        $this->_files[]=(object)["content"=>$content,"fileName"=>$fileName];
+        return $this;
+    }
+
+    function addFile($file){
+        $content=$this->filesystem->getFile($file);
+        return $this->addFileContent($content,basename($file));
     }
 
     function addHeader($key, $value)
@@ -60,7 +71,35 @@ class Message extends Lib
 
     function send()
     {
-        mail($this->getTo(), $this->_subject, $this->_content, $this->getHeaders());
+        if(!count($this->_files)) {
+            mail($this->getTo(), $this->_subject, $this->_content, $this->getHeaders());
+        }else{
+
+            $bound = md5(time());
+            $headers = 'MIME-Version: 1.0' . "\r\n";
+            $headers .= "Content-Type: multipart/mixed; boundary=\"" . $bound . "\"\r\n";
+
+            $body = "This is a multi-part message in MIME format.\r\n";
+            $body .= "--" . $bound . "\r\n";
+            $body .= $this->getHeaders();
+            $body .= "Content-Transfer-Encoding: 7bit\r\n";
+            $body .= "\r\n";
+            $body .= $this->_content."\r\n";
+            
+            foreach($this->_files as $file){
+                $body .= "--" . $bound . "\r\n";
+                $body .= "Content-Type: application/octet-stream; name=" . $file->fileName . "\r\n";
+                $body .= "Content-Transfer-Encoding: base64\r\n";
+                $body .= "Content-disposition: attachment; filename=" . $file->fileName . "\r\n";
+                $body .= "\n";
+                $body .= chunk_split(base64_encode($file->content)) . "\r\n";
+            }
+
+            $body .= "--" . $bound . "--";
+
+
+            mail($this->getTo(), $this->_subject, $body,$headers);
+        }
     }
 
     private function getTo()

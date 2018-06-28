@@ -7,6 +7,7 @@ class Content extends \framework\lib\template\AbstractFunction
 {
     function call($parameters, $data, $content = "", $unparsed = Array(), $module = false)
     {
+        $inlineMode = $this->template->isInlineMode();
         foreach ($parameters as $key => $parameter) {
             if (is_object($parameter)) {
                 $parameters[$key] = $parameter->getData();
@@ -31,18 +32,50 @@ class Content extends \framework\lib\template\AbstractFunction
             $path = "";
         }
 
-        if ($module) {
-            $parameters = array_merge(array($module, "_files", "content"), array($path));
+        if ($inlineMode) {
+            $result= $this->getContentFor($path,$module);
+            return $result;
         } else {
-            $parameters = array_merge(array("_files", "content"), array($path));
+
+            if ($module) {
+                $parameters = array_merge(array($module, "_files", "content"), array($path));
+            } else {
+                $parameters = array_merge(array("_files", "content"), array($path));
+            }
+
+            $oldAutoRoute = $this->route->autoRoute;
+            $this->route->setAutoRoute(array());
+            $route = $this->route->createRoute($parameters);
+            $this->route->setAutoRoute($oldAutoRoute);
+            return $route;
+        }
+    }
+
+
+
+    function getContentFor($file,$module)
+    {
+        if ($module) {
+            Loader::goModule($module);
+            $loadedFile=$this->loadFile($file);
+            Loader::goBackModule();
+        } else {
+            $loadedFile=$this->loadFile($file);
         }
 
-        $oldAutoRoute = $this->route->autoRoute;
-        $this->route->setAutoRoute(array());
-        $route = $this->route->createRoute($parameters);
-        $this->route->setAutoRoute($oldAutoRoute);
-        return $route;
+        $result="data:".$loadedFile->type.";base64,".base64_encode($loadedFile->content);
 
+        return $result;
     }
+
+
+    function loadFile($file){
+        $fileContent = $this->filesystem->getFile("content/" . $file);
+        $fileContent = $this->template->parse($fileContent);
+        $contentType=$this->filesystem->getContentType("content/" .$file);
+        return (object)["type"=>$contentType,"content"=>$fileContent];
+    }
+
+
 }
 
