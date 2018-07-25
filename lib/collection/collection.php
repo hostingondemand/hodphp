@@ -1,4 +1,5 @@
-<?php
+<?phpdoen nu ook verschillen
+
 namespace framework\lib\collection;
 
 //this class is made to handle optional parameters
@@ -13,13 +14,24 @@ class Collection extends \framework\core\Lib implements \Iterator, \arrayAccess,
         return $this;
     }
 
-
     function where($lambda, $onlyValues = true)
     {
         $this->data = array_filter($this->data, $this->getCallable($lambda));
         if ($onlyValues) {
             $this->data = array_values($this->data);
         }
+        return $this;
+    }
+
+    function group($lambda)
+    {
+        $result = [];
+        foreach ($this->data as $key => $value) {
+            $groupKeyData=$this->execute($lambda, [$value]);
+            $groupKey = md5(print_r($groupKeyData, true));
+            $result[$groupKey][$key] = $value;
+        }
+        $this->data = array_values($result);
         return $this;
     }
 
@@ -139,7 +151,8 @@ class Collection extends \framework\core\Lib implements \Iterator, \arrayAccess,
     }
 
 
-    function count(){
+    function count()
+    {
         return count($this->data);
     }
 
