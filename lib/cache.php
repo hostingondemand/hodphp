@@ -133,7 +133,7 @@ class Cache extends Lib
 
         $name = $this->getPageCacheName($user,$route);
         $entry=$this->provider->cache->default->loadEntry($name);
-        if (!$entry || ($entry['validUntil'] < time() && !$entry["locked"])) {
+        if (!$entry || (@$entry['validUntil'] < time() && !$entry["locked"])) {
             return true;
         }
         return false;
