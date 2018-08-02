@@ -71,7 +71,7 @@ class Schedule extends BaseHelper
 
     function needUpdate($schedule, $lastDone, $pattern = "time")
     {
-        $nextUpdate = $this->nextUpdate($schedule, $lastDone, $pattern = time());
+        $nextUpdate = $this->nextUpdate($schedule, $lastDone, $pattern);
         return $nextUpdate < time();
     }
 }
