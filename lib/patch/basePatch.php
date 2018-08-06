@@ -5,5 +5,6 @@ use framework\core\Base;
 
 abstract class BasePatch extends Base
 {
-    abstract function patch();
+    function patch(){return true;}
+    function noTest(){return true;}
 }

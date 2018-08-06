@@ -14,13 +14,19 @@ abstract class BaseTest extends \framework\core\Base
                 $className = $exp[count($exp) - 1];
                 $this->test->setCurrentTest($className . "->" . $method . "");
 
-                $this->$method();
+                //$this is not used because it will break some annotations. For example: inModule()
+                \framework\core\self()->$method();
             }
         }
+        $this->destruct();
     }
 
     function setup()
     {
+    }
+
+    function destruct(){
+
     }
 }
 

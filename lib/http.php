@@ -6,6 +6,10 @@ class Http extends \framework\core\Lib
 {
     //content type headers
     private $headersFormat;
+    /**
+     * @var callable
+     */
+    private $_proxy = false;
     private $formatHeaders = array(
         "json" => "application/json",
         "form" => "application/x-www-form-urlencoded",
@@ -20,15 +24,32 @@ class Http extends \framework\core\Lib
         $this->headersFormat['text/xml'] = $this->headersFormat['application/xml'];
     }
 
-    function post($url, $data, $format, $headers = array(),$raw=false)
+    function proxyResponse($body,$headers=[]){
+        if(is_array($headers)){
+            $newHeaders="200\r\n";
+            foreach($headers as $key=>$val){
+                $newHeaders.=$key.":".$val."\r\n";
+            }
+            $headers=$newHeaders."\r\n\r\n";
+        }
+        return (object)["body"=>$body,"headers"=>$headers];
+    }
+
+    function proxy($callable)
     {
-        return $this->requestWithInputData('post', $url, $data, $format, $headers,$raw);
+        $this->_proxy = $callable;
+    }
+
+    function post($url, $data, $format, $headers = array(), $raw = false)
+    {
+        return $this->requestWithInputData('post', $url, $data, $format, $headers, $raw);
     }
 
     //do a post request
-
-    function requestWithInputData($method, $url, $data, $format, $headers = array(),$raw=false)
+    function requestWithInputData($method, $url, $data, $format, $headers = array(), $raw = false, $ignoreProxy = false)
     {
+
+
         $dataString = $this->serialization->serialize($format, $data);
 
         if (!in_array('Content-Type: ' . $this->formatHeaders[$format], $headers) && !empty($format)) {
@@ -37,37 +58,48 @@ class Http extends \framework\core\Lib
             ));
         }
 
-        $ch = curl_init();
-
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_URL, $url);
-        if ($method == 'put') {
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        if ($this->_proxy && !$ignoreProxy) {
+            $proxyMethod=$this->_proxy;
+            $result = ($proxyMethod)(strtoupper($method), $url, $data, $headers);
+            $header = $result->headers;
+            $body = $result->body;
         } else {
-            curl_setopt($ch, CURLOPT_POST, 1);
+
+
+            $ch = curl_init();
+
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_HEADER, 1);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_URL, $url);
+            if ($method == 'put') {
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+            } else {
+                curl_setopt($ch, CURLOPT_POST, 1);
+            }
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+            $server_output = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+
+            $this->debug->info("http." . $method, [
+                'url' => $url,
+                'requestHeaders' => $headers,
+                'requestBody' => $dataString,
+                'responseHeaders' => $header,
+                'responseBody' => $body
+            ], "http");
+
+            curl_close($ch);
         }
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        
-        $server_output = curl_exec($ch);
-        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        $header = substr($server_output, 0, $header_size);
-        $body = substr($server_output, $header_size);
 
-        $this->debug->info("http." . $method , [
-           'url' => $url,
-           'requestHeaders' => $headers,
-           'requestBody' => $dataString,
-           'responseHeaders' => $header,
-           'responseBody' => $body
-        ],"http");
 
-        curl_close($ch);
-        if($raw){
-            return (object)array("body"=>$body,"header"=>$header);
+        if ($raw) {
+            return (object)array("body" => $body, "header" => $header);
         }
         return $this->parse($header, $body);
     }
@@ -111,64 +143,74 @@ class Http extends \framework\core\Lib
         return $result;
     }
 
-    function put($url, $data, $format, $headers = array(),$raw=false)
+    function put($url, $data, $format, $headers = array(), $raw = false)
     {
-        return $this->requestWithInputData('put', $url, $data, $format, $headers,$raw);
+        return $this->requestWithInputData('put', $url, $data, $format, $headers, $raw);
     }
 
-    function download($from,$to){
-        $data=$this->get($from,[],[],true);
-        $this->filesystem->clearWrite($to,$data->body);
+    function download($from, $to)
+    {
+        $data = $this->get($from, [], [], true);
+        $this->filesystem->clearWrite($to, $data->body);
     }
 
-    function get($url, $headers = array(), $data = null,$raw=false)
+    function get($url, $headers = array(), $data = null, $raw = false, $ignoreProxy = false)
     {
-        if (!empty($data)) {
-            $suffix = '?';
-            foreach ($data as $k => $v) {
-                $suffix .= (($suffix !== '?') ? '&' : '') . urlencode($k) . '=' . urlencode($v);
+
+        if ($this->_proxy && !$ignoreProxy) {
+            $proxyMethod=$this->_proxy;
+            $result = ($proxyMethod)("GET", $url, $data, $headers);
+            $header = $result->headers;
+            $body = $result->body;
+        } else {
+
+            if (!empty($data)) {
+                $suffix = '?';
+                foreach ($data as $k => $v) {
+                    $suffix .= (($suffix !== '?') ? '&' : '') . urlencode($k) . '=' . urlencode($v);
+                }
+                $url .= $suffix;
             }
-            $url .= $suffix;
+
+            $ch = curl_init();
+
+            //allow all https requests
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+            //ask for headers
+            curl_setopt($ch, CURLOPT_HEADER, 1);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 1800);
+            curl_setopt($ch, CURLOPT_USERAGENT, "	Mozilla/5.0");
+            //set url
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+
+            if (count($headers)) {
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            }
+
+            //execute the curl command
+            $server_output = curl_exec($ch);
+
+            //split header and body
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($server_output, 0, $header_size);
+            $body = substr($server_output, $header_size);
+
+            $this->debug->info("http.get", [
+                'url' => $url,
+                'requestHeaders' => $headers,
+                'responseHeaders' => $header,
+                'responseBody' => $body
+            ], "http");
+
+            //close the request
+            curl_close($ch);
         }
-
-        $ch = curl_init();
-
-        //allow all https requests
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-
-        //ask for headers
-        curl_setopt($ch, CURLOPT_HEADER, 1);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,0);
-        curl_setopt($ch,CURLOPT_TIMEOUT,1800);
-        curl_setopt($ch,CURLOPT_USERAGENT,"	Mozilla/5.0");
-        //set url
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch,CURLOPT_FOLLOWLOCATION,true);
-
-        if (count($headers)) {
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        }
-
-        //execute the curl command
-        $server_output = curl_exec($ch);
-
-        //split header and body
-        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        $header = substr($server_output, 0, $header_size);
-        $body = substr($server_output, $header_size);
-
-        $this->debug->info("http.get", [
-           'url' => $url,
-           'requestHeaders' => $headers,
-           'responseHeaders' => $header,
-           'responseBody' => $body
-        ],"http");
-
-        //close the request
-        curl_close($ch);
-        if($raw){
-            return (object)array("body"=>$body,"header"=>$header);
+        if ($raw) {
+            return (object)array("body" => $body, "header" => $header);
         }
         //parse the result
         return $this->parse($header, $body);
