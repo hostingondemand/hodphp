@@ -17,12 +17,12 @@ class Patch extends BaseService
         }
     }
 
-    function doPatchProject()
+    function doPatchProject($test=false)
     {
-        $this->doPatch("project");
+        $this->doPatch("project",$test);
     }
 
-    function doPatch($name)
+    function doPatch($name,$test=false)
     {
         if ($name == "project") {
             $folder = "project/patch";
@@ -47,6 +47,10 @@ class Patch extends BaseService
                     $this->goModule($name);
                     $patch = Loader::getSingleton($file, $folder);
                     $success = $patch->patch();
+                    if(!$test && $success){
+                        $success=$patch->noTest();
+                    }
+
                     $this->goBackModule();
 
                     $patchModel = $this->model->patch->initialize($patchName, $success, time());

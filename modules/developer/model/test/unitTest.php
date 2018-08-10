@@ -10,10 +10,10 @@ class UnitTest extends BaseModel
     function setupDatabase()
     {
         $this->service->patch->setup();
-        $this->service->patch->doPatchProject();
+        $this->service->patch->doPatchProject(true);
         $modules = $this->service->module->getInstalledModules();
         foreach ($modules as $module) {
-            $this->service->patch->doPatch($module["name"]);
+            $this->service->patch->doPatch($module["name"],true);
         }
     }
 
