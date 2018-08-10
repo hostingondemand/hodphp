@@ -12,7 +12,7 @@ abstract class Serializer extends \framework\core\Lib
     {
         $original=$data;
         try {
-            if(!(is_array($data) && isset($data["data"]) && isset($data["type"]) && isset($data["original"]))) {
+            if((is_array($data) && !(isset($data["data"]) && isset($data["type"]) && isset($data["original"]))) || !is_array($data)) {
                 $data = $this->getArrayData($data);
             }
             $newData = $data["data"];
@@ -191,7 +191,7 @@ abstract class Serializer extends \framework\core\Lib
         }
 
         $translatedAnnotations = array();
-        if ($type != "array" && $type != "value") {
+        if (!is_array($type) && $type != "array" && $type != "value") {
             if($type) {
                 $annotations = $this->annotation->getAnnotationsForClass($type, "serialize");
             }else{

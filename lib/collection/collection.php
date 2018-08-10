@@ -1,4 +1,4 @@
-<?phpdoen nu ook verschillen
+<?php
 
 namespace framework\lib\collection;
 
