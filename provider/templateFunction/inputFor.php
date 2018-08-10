@@ -41,17 +41,17 @@ class InputFor extends \framework\lib\template\AbstractFunction
 
         $attributes = "";
         if (isset($parameters[2])) {
-            $array = json_decode(str_replace("'", '"', stripslashes($parameters[2])), true);
+            $attributeData = json_decode(str_replace("'", '"', stripslashes($parameters[2])), true);
 
             if ($input["invalid"]) {
-                if (isset($array["class"])) {
-                    $array["class"] .= " invalid";
+                if (isset($attributeData["class"])) {
+                    $attributeData["class"] .= " invalid";
                 } else {
-                    $array["class"] = "invalid";
+                    $attributeData["class"] = "invalid";
                 }
             }
 
-            foreach ($array as $attribute => $value) {
+            foreach ($attributeData as $attribute => $value) {
                 $attributes .= $attribute . '="' . $value . '"';
             }
         }
@@ -61,12 +61,18 @@ class InputFor extends \framework\lib\template\AbstractFunction
         }
 
         $input["attributes"] = $attributes;
+        $input["attributeData"] = $attributeData;
 
         if(is_string($input["value"])) {
             $input["value"] = htmlspecialchars($input["value"]);
         }
 
         $input["name"]=htmlspecialchars($input["name"]);
+
+        if(!isset($input[$input["name"]])){
+            $input[$input["name"]]=$input["value"];
+        }
+
 
         return $this->template->parseFile("editorTemplates/" . $input["type"], $input, "editorTemplates/string");
     }
