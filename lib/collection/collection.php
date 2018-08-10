@@ -23,13 +23,18 @@ class Collection extends \framework\core\Lib implements \Iterator, \arrayAccess,
         return $this;
     }
 
-    function group($lambda)
+    function group($lambda,$arrayValues=true)
     {
         $result = [];
         foreach ($this->data as $key => $value) {
             $groupKeyData=$this->execute($lambda, [$value]);
             $groupKey = md5(print_r($groupKeyData, true));
-            $result[$groupKey][$key] = $value;
+            if($arrayValues) {
+                $result[$groupKey][] = $value;
+            }else{
+                $result[$groupKey][$key] = $value;
+
+            }
         }
         $this->data = array_values($result);
         return $this;
