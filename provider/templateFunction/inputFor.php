@@ -64,10 +64,10 @@ class InputFor extends \framework\lib\template\AbstractFunction
         $input["attributeData"] = $attributeData;
 
         if(is_string($input["value"])) {
-            $input["value"] = htmlspecialchars($input["value"]);
+            $input["value"] =  str_replace(['"',"'"], ['&quot;','&#39;'], $input["value"]);
         }
 
-        $input["name"]=htmlspecialchars($input["name"]);
+        $input["name"]=str_replace(['"',"'"], ['&quot;','&#39;'], $input["name"]);
 
         if(!isset($input[$input["name"]])){
             $input[$input["name"]]=$input["value"];
