@@ -1,4 +1,5 @@
 <?php
+
 namespace framework\provider\fieldHandler;
 
 use framework\lib\model\BaseFieldHandler;
@@ -16,20 +17,23 @@ class DbToMany extends BaseFieldHandler
     private $_cascadeDelete;
     private $_saveReset;
     private $_initArray;
+    private $_discriminatorField;
+    private $_discriminatorValue;
+
 
     static $settings;
 
     function fromAnnotation($parameters, $type, $field)
     {
-        $key=md5(print_r([$parameters,$type,$field],true));
-        if(isset(self::$settings[$key])){
-            foreach(self::$settings[$key] as $name=>$value){
-                if(empty($this->$name)) {
+        $key = md5(print_r([$parameters, $type, $field], true));
+        if (isset(self::$settings[$key])) {
+            foreach (self::$settings[$key] as $name => $value) {
+                if (empty($this->$name)) {
                     $this->$name = $value;
                 }
             }
-        }else {
-            self::$settings[$key]=[];
+        } else {
+            self::$settings[$key] = [];
             $mapping = $this->provider->mapping->default;
             if (isset($parameters["model"])) {
                 $this->toTable($mapping->getTableForClass($parameters["model"]))
@@ -43,6 +47,10 @@ class DbToMany extends BaseFieldHandler
                 $this->field($parameters["key"]);
             } else {
                 $this->field($mapping->getTableForClass($type) . "_id");
+            }
+
+            if (isset($parameters["discriminatorField"]) && isset($parameters["discriminatorValue"])) {
+                $this->discriminateOn($parameters["discriminatorField"], $parameters["discriminatorValue"]);
             }
 
             if (isset($parameters["saveReset"]) && $parameters["saveReset"] == "true") {
@@ -62,11 +70,17 @@ class DbToMany extends BaseFieldHandler
             }
 
             foreach (get_object_vars($this) as $name => $value) {
-                self::$settings[$key][$name]=$value;
+                self::$settings[$key][$name] = $value;
             }
 
         }
 
+    }
+
+    function discriminateOn($discriminatorField, $discriminatorValue)
+    {
+        $this->_discriminatorField = $discriminatorField;
+        $this->_discriminatorValue = $discriminatorValue;
     }
 
     function toModel($model, $namespace = false)
@@ -136,8 +150,8 @@ class DbToMany extends BaseFieldHandler
     {
         if ($this->_cascadeDelete) {
             $data = $this->get(false);
-            foreach($data as $model) {
-               $this->db->deleteModel($model,$this->_toTable);
+            foreach ($data as $model) {
+                $this->db->deleteModel($model, $this->_toTable);
             }
         }
     }
@@ -145,7 +159,7 @@ class DbToMany extends BaseFieldHandler
     function save()
     {
 
-        if(!$this->loaded){
+        if (!$this->loaded) {
             return true;
         }
 
@@ -154,8 +168,11 @@ class DbToMany extends BaseFieldHandler
         } else {
             $where = "`" . $this->_field . "` ='" . $this->_model->id . "'";
         }
+        if ($this->_discriminatorField && $this->_discriminatorValue) {
+            $where .= " and `" . $this->_discriminatorField . "`= '" . $this->_discriminatorValue . "'";
+        }
 
-        $originalData = $this->db->query("select * from `" . $this->_toTable . "` where  ".$where)->fetchAll();
+        $originalData = $this->db->query("select * from `" . $this->_toTable . "` where  " . $where)->fetchAll();
         $originalData = $this->toIdMap($originalData);
         $data = $this->get(false);
 
@@ -169,6 +186,10 @@ class DbToMany extends BaseFieldHandler
                 $where = "`" . $this->_field . "` ='" . $this->_model->id . "'";
             }
 
+            if ($this->_discriminatorField && $this->_discriminatorValue) {
+                $where .= " and `" . $this->_discriminatorField . "`= '" . $this->_discriminatorValue . "'";
+            }
+
             $this->db->query("delete from " . $this->_toTable . " where " . $where);
         }
 
@@ -179,8 +200,13 @@ class DbToMany extends BaseFieldHandler
                     $val->$idField = $this->_model->id;
                 }
                 if ($this->_saveReset) {
-                    (object)$val->id=null;
+                    (object)$val->id = null;
                 }
+
+                if ($this->_discriminatorField && $this->_discriminatorValue) {
+                    $val->{$this->_discriminatorField}=$this->_discriminatorValue;
+                }
+
                 $this->db->saveModel($val, $this->_toTable);
                 if (isset($originalData[$val->id])) {
                     unset($originalData[$val->id]);
@@ -210,15 +236,16 @@ class DbToMany extends BaseFieldHandler
         return $result;
     }
 
-    function unload(){
-        $this->loaded=false;
-        if($this->obj) {
-            foreach($this->obj as $obj) {
+    function unload()
+    {
+        $this->loaded = false;
+        if ($this->obj) {
+            foreach ($this->obj as $obj) {
                 $obj->__unload();
             }
         }
 
-        $this->obj=null;
+        $this->obj = null;
     }
 
 
@@ -241,7 +268,7 @@ class DbToMany extends BaseFieldHandler
                     } else {
                         $this->obj[] = $val;
                     }
-                    $this->_initArray=false;
+                    $this->_initArray = false;
 
                 }
             } else {
@@ -249,6 +276,10 @@ class DbToMany extends BaseFieldHandler
                     $where = "parent_id='" . $this->db->parent["id"] . "' and parent_module='" . $this->db->parent["module"] . "'";
                 } else {
                     $where = "`" . $this->_field . "` ='" . $this->_model->id . "'";
+                }
+
+                if ($this->_discriminatorField && $this->_discriminatorValue) {
+                    $where .= " and `" . $this->_discriminatorField . "`= '" . $this->_discriminatorValue . "'";
                 }
 
                 $query = $this->db->query("select * from `" . $this->_toTable . "` where " . $where);

@@ -103,13 +103,27 @@ class XML extends Serializer
                     $this->arrayToXml($inputValue, $child);
                 } elseif (is_array($inputValue)) {
                     if (!isset($inputValue["_annotations"]["noWrap"])) {
-                        $child = $xml_data->addChild($namespacePrefix . $key, null, $namespace);
+                        if($value["_classAnnotations"]["value"]){
+                            $subValue="";
+                            foreach($inputValue as $subInputValue){
+                                if(@$subInputValue["_annotations"]["content"]){
+                                    $subValue.=$subInputValue["_value"];
+                                }
+                            }
+                            $child = $xml_data->addChild($namespacePrefix . $key, $subValue, $namespace);
+                        }else {
+                            $child = $xml_data->addChild($namespacePrefix . $key, null, $namespace);
+                        }
                     } else {
                         $child = $xml_data;
                     }
                     $this->arrayToXml($inputValue, $child);
                 } else {
-                    $xml_data->addChild($namespacePrefix . $namespace . $key, htmlspecialchars($inputValue), $namespace);
+                    if (@$value["_annotations"]["attribute"]) {
+                        $xml_data->addAttribute($key, htmlspecialchars($inputValue), $namespace);
+                    }elseif(!@$value["_annotations"]["content"]){
+                        $xml_data->addChild($namespacePrefix . $namespace . $key, htmlspecialchars($inputValue), $namespace);
+                    }
                 }
             }
 
