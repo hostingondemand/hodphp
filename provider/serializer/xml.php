@@ -103,15 +103,15 @@ class XML extends Serializer
                     $this->arrayToXml($inputValue, $child);
                 } elseif (is_array($inputValue)) {
                     if (!isset($inputValue["_annotations"]["noWrap"])) {
-                        if($value["_classAnnotations"]["value"]){
-                            $subValue="";
-                            foreach($inputValue as $subInputValue){
-                                if(@$subInputValue["_annotations"]["content"]){
-                                    $subValue.=$subInputValue["_value"];
+                        if ($value["_classAnnotations"]["value"]) {
+                            $subValue = "";
+                            foreach ($inputValue as $subInputValue) {
+                                if (@$subInputValue["_annotations"]["content"]) {
+                                    $subValue .= $subInputValue["_value"];
                                 }
                             }
                             $child = $xml_data->addChild($namespacePrefix . $key, $subValue, $namespace);
-                        }else {
+                        } else {
                             $child = $xml_data->addChild($namespacePrefix . $key, null, $namespace);
                         }
                     } else {
@@ -119,9 +119,9 @@ class XML extends Serializer
                     }
                     $this->arrayToXml($inputValue, $child);
                 } else {
-                    if (@$value["_annotations"]["attribute"]) {
+                    if (is_array($value) && @$value["_annotations"]["attribute"]) {
                         $xml_data->addAttribute($key, htmlspecialchars($inputValue), $namespace);
-                    }elseif(!@$value["_annotations"]["content"]){
+                    } elseif (!is_array(@$value["_annotations"]) || !@$value["_annotations"]["content"]) {
                         $xml_data->addChild($namespacePrefix . $namespace . $key, htmlspecialchars($inputValue), $namespace);
                     }
                 }
